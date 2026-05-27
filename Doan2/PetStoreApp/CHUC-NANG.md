@@ -13,7 +13,7 @@
 | 1 | `User.java` | Người dùng (Admin, Nhân viên) | ĐT |
 | 2 | `Pet.java` | Thú cưng (chó, mèo,...) | ĐT |
 | 3 | `PetCategory.java` | Loại thú cưng | ĐT |
-| 4 | `Customer.java` | Khách hàng | ĐT |
+| 4 | `Customer.java` | Khách hàng (có đăng nhập, lịch sử, tích điểm) | ĐT |
 | 5 | `Product.java` | Sản phẩm (thức ăn, phụ kiện, thuốc) | ĐT |
 | 6 | `ProductCategory.java` | Loại sản phẩm | ĐT |
 | 7 | `Supplier.java` | Nhà cung cấp | ĐT |
@@ -24,8 +24,14 @@
 | 12 | `InventoryDetail.java` | Chi tiết phiếu nhập | ĐT |
 | 13 | `Service.java` | Dịch vụ (tắm, cắt tỉa, khám) | ĐT |
 | 14 | `Promotion.java` | Khuyến mãi / Giảm giá | ĐT |
+| 15 | **`Review.java`** | **Đánh giá dịch vụ của khách hàng** | ĐT |
+| 16 | **`LoyaltyPoint.java`** | **Tích điểm / Hạng thành viên** | ĐT |
+| 17 | **`Cart.java`** | **Giỏ hàng online của khách** | ĐT |
+| 18 | **`FavoritePet.java`** | **Thú cưng yêu thích / Theo dõi** | ĐT |
+| 19 | **`CustomerNotification.java`** | **Thông báo cho khách hàng** | ĐT |
+| 20 | **`PetHealthRecord.java`** | **Hồ sơ sức khỏe / Lịch tiêm chủng** | ĐT |
 
-**Tổng: 14 chức năng đối tượng** ✅ *(yêu cầu ≥10 ĐT)*
+**Tổng: 20 chức năng đối tượng** ✅ *(yêu cầu ≥10 ĐT)*
 
 ---
 
@@ -38,7 +44,7 @@
 | 1 | `UserDao.java` | Thêm, sửa, xóa, tìm user; đăng nhập |
 | 2 | `PetDao.java` | CRUD thú cưng, tìm theo tên/loại/chủ |
 | 3 | `PetCategoryDao.java` | CRUD loại thú cưng |
-| 4 | `CustomerDao.java` | CRUD khách hàng, tìm theo SĐT/tên |
+| 4 | `CustomerDao.java` | CRUD khách hàng, tìm theo SĐT/tên, **đăng nhập khách** |
 | 5 | `ProductDao.java` | CRUD sản phẩm, kiểm tra tồn kho |
 | 6 | `ProductCategoryDao.java` | CRUD loại sản phẩm |
 | 7 | `SupplierDao.java` | CRUD nhà cung cấp |
@@ -49,6 +55,12 @@
 | 12 | `InventoryDetailDao.java` | CRUD chi tiết phiếu nhập |
 | 13 | `ServiceDao.java` | CRUD dịch vụ |
 | 14 | `PromotionDao.java` | CRUD khuyến mãi |
+| 15 | **`ReviewDao.java`** | CRUD đánh giá, lọc theo dịch vụ/khách hàng |
+| 16 | **`LoyaltyPointDao.java`** | Truy vấn điểm, hạng, lịch sử tích điểm |
+| 17 | **`CartDao.java`** | CRUD giỏ hàng theo khách |
+| 18 | **`FavoritePetDao.java`** | CRUD thú cưng yêu thích |
+| 19 | **`CustomerNotificationDao.java`** | CRUD thông báo, đánh dấu đã đọc |
+| 20 | **`PetHealthRecordDao.java`** | CRUD hồ sơ sức khỏe, lọc theo thú cưng |
 
 ### 2.2 Repository
 
@@ -63,6 +75,12 @@
 | 7 | `InventoryRepository.java` | InventoryDao, InventoryDetailDao (QT) |
 | 8 | `ServiceRepository.java` | ServiceDao |
 | 9 | `PromotionRepository.java` | PromotionDao |
+| 10 | **`ReviewRepository.java`** | ReviewDao |
+| 11 | **`LoyaltyPointRepository.java`** | LoyaltyPointDao |
+| 12 | **`CartRepository.java`** | CartDao |
+| 13 | **`FavoritePetRepository.java`** | FavoritePetDao |
+| 14 | **`CustomerNotificationRepository.java`** | CustomerNotificationDao |
+| 15 | **`PetHealthRecordRepository.java`** | PetHealthRecordDao |
 
 ---
 
@@ -70,7 +88,8 @@
 
 | # | ViewModel | Xử lý |
 |---|---|---|
-| 1 | `LoginViewModel.java` | Xác thực đăng nhập, lưu session |
+| 1 | `LoginViewModel.java` | Xác thực đăng nhập **Staff/Admin** |
+| 2 | **`CustomerLoginViewModel.java`** | **Xác thực đăng nhập + đăng ký Khách hàng** |
 | 2 | `DashboardViewModel.java` | Thống kê tổng quan (doanh thu, số lượng, lịch hẹn hôm nay) |
 | 3 | `PetViewModel.java` | Tìm kiếm, lọc, CRUD thú cưng |
 | 4 | `CustomerViewModel.java` | Tìm kiếm, CRUD khách hàng |
@@ -81,6 +100,12 @@
 | 9 | `ServiceViewModel.java` | CRUD dịch vụ |
 | 10 | `PromotionViewModel.java` | CRUD khuyến mãi, áp mã giảm giá |
 | 11 | `StatisticViewModel.java` | Thống kê doanh thu theo ngày/tháng/năm (Report) |
+| 12 | **`CustomerStatisticViewModel.java`** | **Thống kê cá nhân: số lần sử dụng dịch vụ, chi tiêu, lịch sử** |
+| 13 | **`ReviewViewModel.java`** | Tạo/xem đánh giá dịch vụ |
+| 14 | **`CartViewModel.java`** | Quản lý giỏ hàng online |
+| 15 | **`FavoritePetViewModel.java`** | Thêm/xóa thú cưng yêu thích |
+| 16 | **`CustomerNotificationViewModel.java`** | Xem thông báo, đánh dấu đã đọc |
+| 17 | **`PetHealthViewModel.java`** | Xem hồ sơ sức khỏe, lịch tiêm |
 
 ---
 
@@ -103,6 +128,19 @@
 | 13 | Quản lý nhà cung cấp | `SupplierFragment.java` + `SupplierFormActivity.java` | CRUD nhà cung cấp |
 | 14 | **Thống kê / Báo cáo** | **`StatisticActivity.java`** | **Biểu đồ doanh thu, báo cáo (Report)** |
 | 15 | Quản lý tài khoản | `UserManagementActivity.java` | CRUD người dùng (Admin) |
+|---|---|---|---|---|
+| | **=== CUSTOMER APP (App khách hàng) ===** | | |
+| 16 | **Đăng nhập / Đăng ký KH** | **`CustomerLoginActivity.java`** | **Đăng nhập bằng SĐT/mật khẩu, đăng ký tài khoản** |
+| 17 | **Trang chủ khách hàng** | **`CustomerHomeActivity.java`** | **DS dịch vụ, sản phẩm, khuyến mãi, thông báo** |
+| 18 | **Đặt lịch hẹn** | **`BookingActivity.java`** | **Chọn dịch vụ → chọn thú cưng → chọn ngày/giờ → xác nhận** |
+| 19 | **Lịch sử giao dịch** | **`OrderHistoryActivity.java`** | **DS đơn hàng, hóa đơn đã mua, chi tiết** |
+| 20 | **Lịch sử đặt lịch** | **`BookingHistoryActivity.java`** | **DS lịch hẹn (sắp tới, đã hoàn thành, đã hủy)** |
+| 21 | **Thống kê cá nhân** | **`MyStatisticActivity.java`** | **Biểu đồ: chi tiêu theo tháng, dịch vụ đã dùng, số lần mua** |
+| 22 | **Đánh giá dịch vụ** | **`ReviewActivity.java`** | **Đánh giá sao + nhận xét cho dịch vụ đã sử dụng** |
+| 23 | **Giỏ hàng** | **`CartActivity.java`** | **Giỏ hàng online, áp mã giảm giá, thanh toán** |
+| 24 | **Thú cưng của tôi** | **`MyPetActivity.java`** | **DS thú cưng, hồ sơ sức khỏe, lịch tiêm** |
+| 25 | **Hồ sơ cá nhân** | **`ProfileActivity.java`** | **Thông tin tài khoản, đổi mật khẩu, hạng thành viên** |
+| 26 | **Thông báo** | **`NotificationActivity.java`** | **Danh sách thông báo (nhắc lịch, khuyến mãi, …)** |
 
 ---
 
@@ -110,11 +148,11 @@
 
 | Loại | Số lượng | Yêu cầu | Đạt |
 |---|---|---|---|
-| Chức năng đối tượng (ĐT) | 14 | ≥ 10 | ✅ |
-| Chức năng quy trình (QT) | 2 (Tạo đơn hàng, Nhập kho) | ≥ 2 | ✅ |
+| Chức năng đối tượng (ĐT) | 20 | ≥ 10 | ✅ |
+| Chức năng quy trình (QT) | 3 (Tạo đơn hàng, Nhập kho, **Đặt lịch hẹn**) | ≥ 2 | ✅ |
 | Form Master-Detail | 2 (Order, Inventory) | Có | ✅ |
-| Tổng số form | 15 | ≥ 10 | ✅ |
-| Report / Thống kê | 1 (Statistic) | Có | ✅ |
-| Chức năng hỗ trợ | Phân quyền, tìm kiếm, lọc | Cộng điểm | ✅ |
+| Tổng số form | 26 | ≥ 10 | ✅ |
+| Report / Thống kê | 2 (Staff Statistic, **Customer Statistic**) | Có | ✅ |
+| Chức năng hỗ trợ | Phân quyền, tìm kiếm, lọc, **đánh giá, tích điểm, thông báo** | Cộng điểm | ✅ |
 
 > Dựa theo thang điểm mục 2.1 và 2.2 (APP): đủ ≥10 chức năng đối tượng, ≥2 chức năng quy trình, ≥10 form, có form master-detail, có report.
