@@ -125,6 +125,9 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | 28/06/2026 | Thêm Quên mật khẩu (ForgotPasswordActivity), Hủy lịch hẹn (CancelBookingDialog), ActivityLog đăng nhập | VD-LUONG-NGUOI-DUNG.md |
 | 28/06/2026 | Cập nhật CHUC-NANG.md: QT 4→5 (thêm Hủy đơn/Hoàn tiền), form 29→33 (thêm 4 màn hình mới), fix ViewModel numbering | CHUC-NANG.md |
 | 28/06/2026 | Cập nhật nhiệm-vụ.md: thêm tasks cho hủy đơn, xung đột, quên MK, điều chỉnh tồn | nhiệm-vụ.md |
+| 28/06/2026 | Fix README.md: DiemThanhVien→DiemThuong, ThongBaoKhachHang→ThongBaoKhach (khớp với SQL) | README.md |
+| 28/06/2026 | Fix CHUC-NANG.md: ViewModel #4 duplicate→21 VMs, summary table header | CHUC-NANG.md |
+| 28/06/2026 | Verify toàn bộ 8 file: 23 tables, 10 indexes, 8 flows, 5 rules, 33 forms, 21 VMs, 18 repos | implementation-notes.md |
 
 ---
 

@@ -84,10 +84,10 @@ com.petstore.app/
 | 13 | `Service` | DichVu | dichVuId | Tắm, cắt tỉa, khám |
 | 14 | `Promotion` | KhuyenMai | khuyenMaiId | Mã giảm giá |
 | 15 | `Review` | DanhGia | danhGiaId | Đánh giá sao + nhận xét |
-| 16 | `LoyaltyPoint` | DiemThanhVien | diemThanhVienId | Tích điểm, hạng thành viên |
+| 16 | `LoyaltyPoint` | DiemThuong | diemId | Tích điểm, hạng thành viên |
 | 17 | `Cart` | GioHang | gioHangId | Giỏ hàng online |
 | 18 | `FavoritePet` | ThuCungYeuThich | thuCungYeuThichId | Thú cưng yêu thích |
-| 19 | `CustomerNotification` | ThongBaoKhachHang | thongBaoId | Thông báo cho khách |
+| 19 | `CustomerNotification` | ThongBaoKhach | thongBaoId | Thông báo cho khách |
 | 20 | `PetHealthRecord` | HoSoSucKhoe | hoSoSucKhoeId | Hồ sơ sức khỏe, tiêm chủng |
 | 21 | `Payment` | ThanhToan | thanhToanId | Giao dịch thanh toán (Master-Detail với Order) |
 | 22 | `ActivityLog` | NhatKyHoatDong | nhatKyHoatDongId | Audit log append-only |

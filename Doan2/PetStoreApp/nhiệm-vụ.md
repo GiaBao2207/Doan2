@@ -296,7 +296,7 @@
 | Entity class (23 bảng) | 23 | 0 | **23** |
 | DAO interface | 23 | 0 | **23** |
 | Repository | 18 | 0 | **18** |
-| ViewModel | 20 | 0 | **20** |
+| ViewModel | 21 | 0 | **21** |
 | Staff UI screens | 20 | 0 | **20** |
 | Customer UI screens | 13 | 0 | **13** |
 

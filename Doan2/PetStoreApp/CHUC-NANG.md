@@ -101,23 +101,23 @@
 | 2 | **`CustomerLoginViewModel.java`** | **Xác thực đăng nhập + đăng ký Khách hàng** |
 | 3 | `DashboardViewModel.java` | Thống kê tổng quan (doanh thu, số lượng, lịch hẹn hôm nay) |
 | 4 | `PetViewModel.java` | Tìm kiếm, lọc, CRUD thú cưng |
-| 4 | `CustomerViewModel.java` | Tìm kiếm, CRUD khách hàng |
-| 5 | `ProductViewModel.java` | CRUD sản phẩm, lọc theo danh mục |
-| 6 | **`OrderViewModel.java`** | **Tạo đơn hàng (QT) + Lịch sử giao dịch** |
-| 7 | `AppointmentViewModel.java` | CRUD lịch hẹn + nhắc hẹn |
-| 8 | `InventoryViewModel.java` | **Nhập kho (QT) + kiểm tra tồn kho** |
-| 9 | `ServiceViewModel.java` | CRUD dịch vụ |
-| 10 | `PromotionViewModel.java` | CRUD khuyến mãi, áp mã giảm giá |
-| 11 | `StatisticViewModel.java` | Thống kê doanh thu theo ngày/tháng/năm (Report) |
-| 12 | **`CustomerStatisticViewModel.java`** | **Thống kê cá nhân: số lần sử dụng dịch vụ, chi tiêu, lịch sử** |
-| 13 | **`ReviewViewModel.java`** | Tạo/xem đánh giá dịch vụ |
-| 14 | **`CartViewModel.java`** | Quản lý giỏ hàng online |
-| 15 | **`FavoritePetViewModel.java`** | Thêm/xóa thú cưng yêu thích |
-| 16 | **`CustomerNotificationViewModel.java`** | Xem thông báo, đánh dấu đã đọc |
-| 17 | **`PetHealthViewModel.java`** | Xem hồ sơ sức khỏe, lịch tiêm |
-| 18 | **`PaymentViewModel.java`** | **Xử lý thanh toán, ghi giao dịch, hoàn tiền** |
-| 19 | **`ActivityLogViewModel.java`** | **Xem nhật ký hoạt động (Admin)** |
-| 20 | **`AppointmentStaffViewModel.java`** | **Gán nhân viên phục vụ, cập nhật trạng thái** |
+| 5 | `CustomerViewModel.java` | Tìm kiếm, CRUD khách hàng |
+| 6 | `ProductViewModel.java` | CRUD sản phẩm, lọc theo danh mục |
+| 7 | **`OrderViewModel.java`** | **Tạo đơn hàng (QT) + Lịch sử giao dịch** |
+| 8 | `AppointmentViewModel.java` | CRUD lịch hẹn + nhắc hẹn (có kiểm tra xung đột) |
+| 9 | `InventoryViewModel.java` | **Nhập kho (QT) + kiểm tra tồn kho + điều chỉnh tồn** |
+| 10 | `ServiceViewModel.java` | CRUD dịch vụ |
+| 11 | `PromotionViewModel.java` | CRUD khuyến mãi, áp mã giảm giá |
+| 12 | `StatisticViewModel.java` | Thống kê doanh thu theo ngày/tháng/năm (Report) |
+| 13 | **`CustomerStatisticViewModel.java`** | **Thống kê cá nhân: số lần sử dụng dịch vụ, chi tiêu, lịch sử** |
+| 14 | **`ReviewViewModel.java`** | Tạo/xem đánh giá dịch vụ |
+| 15 | **`CartViewModel.java`** | Quản lý giỏ hàng online |
+| 16 | **`FavoritePetViewModel.java`** | Thêm/xóa thú cưng yêu thích |
+| 17 | **`CustomerNotificationViewModel.java`** | Xem thông báo, đánh dấu đã đọc |
+| 18 | **`PetHealthViewModel.java`** | Xem hồ sơ sức khỏe, lịch tiêm |
+| 19 | **`PaymentViewModel.java`** | **Xử lý thanh toán, ghi giao dịch, hoàn tiền** |
+| 20 | **`ActivityLogViewModel.java`** | **Xem nhật ký hoạt động (Admin)** |
+| 21 | **`AppointmentStaffViewModel.java`** | **Gán nhân viên phục vụ, cập nhật trạng thái** |
 
 ---
 
@@ -165,7 +165,7 @@
 ## Tổng kết
 
 | Loại | Số lượng | Yêu cầu | Đạt |
-|---|---|---|---|---|
+|---|---|---|---|
 | Chức năng đối tượng (ĐT) | 23 | ≥ 10 | ✅ |
 | Chức năng quy trình (QT) | 5 (Tạo đơn hàng, Nhập kho, **Đặt lịch hẹn, Thanh toán, Hủy đơn/Hoàn tiền**) | ≥ 2 | ✅ |
 | Form Master-Detail | 4 (Order, Inventory, **Payment, AppointmentStaff**) | Có | ✅ |
