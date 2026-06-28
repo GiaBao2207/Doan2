@@ -23,9 +23,9 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 - Sử dụng LiveData để cập nhật UI tự động.
 
 ### 3. Thiết kế database toàn diện (đã cải thiện)
-- Từ **20 bảng** nâng lên **23 bảng** — thêm `ThanhToán`, `NhậtKýHoạtĐộng`, `NhânViênPhụcVụ`.
-- Đầy đủ khóa ngoại, ràng buộc NOT NULL, UNIQUE, DEFAULT, CHECK.
-- 4 quan hệ Master-Detail (Order, Inventory, ThanhToán, NhânViênPhụcVụ).
+- Từ **20 bảng** nâng lên **24 bảng** — thêm `ThanhToán`, `NhậtKýHoạtĐộng`, `NhânViênPhụcVụ`, `Chuồng`.
+- Đầy đủ khóa ngoại (33 FK), ràng buộc NOT NULL, UNIQUE, DEFAULT, CHECK.
+- 4 quan hệ Master-Detail + state machine (DonHang 6 trạng thái, LichHen 5 trạng thái).
 - Toàn bộ tên bảng đã đổi sang tiếng Việt.
 
 ### 4. Biểu đồ Use Case đầy đủ
@@ -53,7 +53,7 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | **Thiếu bảng Payment** | ✅ **Đã thêm** — `ThanhToán` với đầy đủ fields |
 | **Thiếu Audit Log** | ✅ **Đã thêm** — `NhậtKýHoạtĐộng` append-only |
 | **Thiếu gán nhân viên lịch hẹn** | ✅ **Đã thêm** — `NhânViênPhụcVụ` |
-| **Thiếu chỉ mục (Index)** | ❌ Vẫn chưa có index |
+| **Thiếu chỉ mục (Index)** | ✅ **Đã thêm** — 10 index cho các cột thường truy vấn |
 | **Product.quantity** | ⚠️ Chưa phân biệt tồn khả dụng / tồn thực tế |
 
 ### 3. Vấn đề về Chức năng Nghiệp vụ
@@ -128,6 +128,11 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | 28/06/2026 | Fix README.md: DiemThanhVien→DiemThuong, ThongBaoKhachHang→ThongBaoKhach (khớp với SQL) | README.md |
 | 28/06/2026 | Fix CHUC-NANG.md: ViewModel #4 duplicate→21 VMs, summary table header | CHUC-NANG.md |
 | 28/06/2026 | Verify toàn bộ 8 file: 23 tables, 10 indexes, 8 flows, 5 rules, 33 forms, 21 VMs, 18 repos | implementation-notes.md |
+| 28/06/2026 | Thêm bảng Chuồng (Chuong): maChuong UNIQUE, khuVuc, kichThuoc, loaiThuCungId FK, trangThai (empty/occupied/maintenance/cleaning) + chuongId FK trong ThuCung + status 'boarding' → 24 bảng | DATABASE.md |
+| 28/06/2026 | Thêm Cage entity, CageDao, CageRepository, CageActivity vào CHUC-NANG.md → 24 ĐT, 19 Repos, 34 form | CHUC-NANG.md |
+| 28/06/2026 | Viết lại README.md hoàn chỉnh: mô tả hệ thống, công nghệ, 8 nghiệp vụ, package structure, 24-table ref, tổng kết đồ án | README.md |
+| 28/06/2026 | Cập nhật nhiệm-vụ.md: 24 bảng, 34 form, 19 repos, staff 21 màn hình, thêm Cage vào bước 4 | nhiệm-vụ.md |
+| 28/06/2026 | Chuẩn hóa anchored summary cuối mỗi phiên: mô tả toàn bộ thay đổi, tiến độ, next steps | (trong conversation) |
 
 ---
 
@@ -135,7 +140,7 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 
 ### Cửa hàng thú cưng thực tế cần thêm:
 - **Quản lý giống / nhân giống** (breeding management)
-- **Quản lý chuồng / lồng** (cage management)
+- **Quản lý chuồng / lồng** ✅ **Đã thêm** — bảng Chuồng + chuồngId trong ThuCung
 - **Bảo hành thú cưng** (sức khỏe 7-30 ngày sau khi mua)
 - **Hợp đồng mua bán thú cưng** (giấy tờ pháp lý)
 - **Dashboard realtime** (số khách trong cửa hàng, công việc đang chờ)
@@ -147,10 +152,48 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 
 ---
 
+## Việc cần làm ngay
+
+> **Thiết kế đã xong 100%.** Chuyển sang code theo thứ tự:
+
+### 🥇 Tuần 1: Xương sống + Staff cơ bản
+1. Tạo project Android + Gradle (Room, LiveData, Material)
+2. Code **24 Entity class** (ánh xạ @Entity → SQL table)
+3. Code **24 DAO interface** (@Dao)
+4. Code **AppDatabase** (RoomDatabase, version 1)
+5. Code **Core**: PreferenceManager, PasswordUtils, ServiceLocator
+6. Code **Login** (LoginActivity + LoginViewModel + UserDao)
+
+### 🥇 Tuần 2: Staff CRUD + Quy trình chính
+7. Dashboard + các CRUD (Pet, Customer, Product, Service...)
+8. **Order** (Master-Detail: Order + OrderDetail + Payment + trừ tồn + ActivityLog)
+9. **Appointment** + AppointmentStaff (có checkConflict)
+10. **Inventory** (Master-Detail: nhập kho + cộng tồn + log)
+11. Hủy đơn + Hoàn tiền (CancelOrderDialog)
+12. Điều chỉnh tồn kho (InventoryAdjustmentDialog)
+
+### 🥇 Tuần 3: Customer App
+13. Customer login + ForgotPassword (OTP giả lập)
+14. Customer Home + Booking (có checkConflict)
+15. MyPet + HealthRecord + FavoritePet
+16. OrderHistory + BookingHistory + Review
+17. Cart + Order online
+18. Profile + Notification
+19. MyStatistic (biểu đồ chi tiêu)
+
+### 🥇 Tuần 4: Hoàn thiện
+20. StatisticActivity (biểu đồ doanh thu, top sản phẩm, tồn thấp)
+21. Loading/Error/Empty state cho mọi màn hình
+22. Kiểm thử các luồng chính
+23. Bảo mật: phân quyền, validate input
+24. Ghi ActivityLog ở mọi hành động
+
+---
+
 ## Khuyến Nghị
 
 ### Priority 1 (Bắt buộc để chạy được)
-1. Viết code Entities + DAOs + Database (23 bảng)
+1. Viết code Entities + DAOs + Database (24 bảng)
 2. Viết Repositories
 3. Viết ViewModels cho các màn hình chính (Login, Dashboard, Order, Pet, Customer)
 4. UI cơ bản (XML layout) cho các form chính
@@ -180,7 +223,7 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | Tiêu chí | Đánh giá |
 |----------|----------|
 | Phân tích nghiệp vụ | ✅ **Rất tốt** - bao phủ bán hàng, nhập kho, lịch hẹn, hủy đơn/hoàn tiền, điều chỉnh tồn, quên MK |
-| Thiết kế database | ✅ **Rất tốt** - 23 bảng, state machine 6 trạng thái đơn hàng, 5 trạng thái lịch hẹn |
+| Thiết kế database | ✅ **Rất tốt** - 24 bảng (+ bảng Chuồng), 33 FK, 10 index, state machine, ActivityLog 16 actions |
 | Quy trình nghiệp vụ | ✅ **Đầy đủ** - 8 luồng chính + 3 luồng phụ (hủy đơn, gán NV, điều chỉnh tồn) |
 | Xử lý ngoại lệ | ✅ **Đã bổ sung** - xung đột lịch hẹn, hoàn tiền hủy đơn, kiểm tra tồn kho |
 | Audit log | ✅ **16 hành động** - bao phủ mọi thao tác quan trọng |
@@ -190,6 +233,6 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | Bảo mật | ⚠️ **Cơ bản** - cần cải thiện nếu production |
 | UX / UI | ⚠️ **Cần bổ sung** loading/error/empty state |
 | Khả năng mở rộng | ⚠️ **Có thể tốt hơn** - DI, Navigation, testing |
-| Phù hợp đồ án | ✅ **Vượt yêu cầu** - 33 form, 5 QT, 23 ĐT, 4 Master-Detail, 2 Report, audit log, quên MK, điều chỉnh tồn |
+| Phù hợp đồ án | ✅ **Vượt yêu cầu** - 34 form, 5 QT, 24 ĐT, 4 Master-Detail, 2 Report, audit log, quên MK, điều chỉnh tồn, quản lý chuồng |
 
 > **Tổng thể:** Thiết kế đã hoàn thiện gần như tất cả các quy trình thực tế của cửa hàng thú cưng. Điểm yếu duy nhất là chưa có code nguồn. Cần tập trung code đúng thiết kế, xử lý tốt các state và đảm bảo các luồng: bán hàng→thanh toán→log, nhập kho→cộng tồn, đặt lịch→gán NV, hủy đơn→trả tồn→hoàn tiền chạy trơn tru.

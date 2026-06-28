@@ -6,6 +6,39 @@
 - [!] = Đang làm
 - [~] = Tạm dừng / Cần xem lại
 
+## Việc cần làm ngay (Priority — thứ tự ưu tiên)
+
+> ✅ **Thiết kế đã hoàn tất: 7/7 tài liệu, 24 bảng SQL, 8 luồng, 5 quy trình, 34 form.**
+> Bắt đầu code theo thứ tự dưới đây:
+
+### Bước 1: Tạo project Android + Gradle
+- Tạo project mới trên Android Studio, đặt tên `PetStoreApp`
+- Cài dependencies: Room, LiveData, RecyclerView, Material
+- Tạo package structure (model, data, ui, viewmodel)
+
+### Bước 2: Entity + DAO + Database (24 bảng)
+- Viết 24 Entity class Java (`@Entity(tableName = "...")`)
+- Viết 24 DAO interface (`@Dao` + `@Insert`/`@Update`/`@Delete`/`@Query`)
+- Viết AppDatabase (`@Database(entities = {...}, version = 1)`)
+- Kiểm tra biên dịch không lỗi
+
+### Bước 3: Core (DI, Preference, Password)
+- ServiceLocator / Hilt
+- PreferenceManager (session login)
+- PasswordUtils (SHA-256 + Salt)
+
+### Bước 4: Staff App (21 màn hình) — theo thứ tự
+1. Login → 2. Dashboard → 3. PetCategory/ProductCategory/Service/Supplier (CRUD)
+4. Pet → 5. Customer → 6. Product → 7. Cage → 8. Order → 9. Appointment
+10. Inventory → 11. Promotion → 12. Statistic → 13. Payment
+14. CancelOrder → 15. InventoryAdjustment → 16. AssignStaff → 17. ActivityLog
+
+### Bước 5: Customer App (13 màn hình)
+- Login → ForgotPassword → Home → Booking → CancelBooking
+- History → Statistic → Review → Cart → MyPet → Profile → Notification
+
+### Bước 6: Test + Hoàn thiện
+
 ---
 
 ## GIAI ĐOẠN 1: Thiết kế (Design Phase)
@@ -14,7 +47,7 @@
 
 - [x] README.md — Giới thiệu project
 - [x] CHUC-NANG.md — Danh sách chức năng theo MVVM
-- [x] DATABASE.md — Thiết kế database 23 bảng tiếng Việt
+- [x] DATABASE.md — Thiết kế database 24 bảng tiếng Việt
 - [x] LUONG-THUC-TE.md — Mô tả luồng thực tế Staff + Customer
 - [x] VD-LUONG-NGUOI-DUNG.md — Ví dụ chi tiết theo từng role
 - [x] GOI-Y-TINH-NANG-KHACH-HANG.md — Gợi ý tính năng nâng cao
@@ -24,18 +57,22 @@
 
 ### 1.2 Database Room
 
-- [x] Liệt kê đủ 23 bảng (20 gốc + 3 bổ sung)
-- [ ] Tạo file SQL script CREATE TABLE cho 23 bảng
-- [ ] Định nghĩa các Entity class (Java)
-- [ ] Định nghĩa các DAO interface (Java)
-- [ ] Định nghĩa AppDatabase (RoomDatabase)
-- [ ] Thêm index cho các cột truy vấn thường xuyên
+- [x] Liệt kê đủ 24 bảng (20 gốc + 4 bổ sung: ThanhToán, NhậtKýHoạtĐộng, NhânViênPhụcVụ, Chuồng)
+- [x] Tạo SQL CREATE TABLE cho 24 bảng (trong DATABASE.md)
+- [x] Thêm 10 index cho các cột truy vấn thường xuyên
+- [x] Thêm state machine cho DonHang (6 trạng thái) + LichHen (5 trạng thái)
+- [x] ThanhToán CHECK (soTien != 0) hỗ trợ số âm hoàn tiền
+- [x] ActivityLog: 16 hành động đầy đủ
+- [!] **Định nghĩa các Entity class (Java)** — cần code
+- [!] **Định nghĩa các DAO interface (Java)** — cần code
+- [!] **Định nghĩa AppDatabase (RoomDatabase)** — cần code
 
 ### 1.3 Thiết kế UI (Wireframe)
 
 - [ ] Vẽ wireframe cho Staff App (Login, Dashboard, Order, Pet, ...)
 - [ ] Vẽ wireframe cho Customer App (Login, Home, Booking, History, ...)
 - [ ] Xác định Navigation Graph (luồng màn hình)
+> Có thể bỏ qua wireframe nếu code trực tiếp theo UI mô tả trong LUONG-THUC-TE.md + VD-LUONG-NGUOI-DUNG.md (đã có ASCII mockup chi tiết)
 
 ---
 
@@ -293,11 +330,14 @@
 
 | Khu vực | SL | Đã làm | Còn lại |
 |---------|----|--------|---------|
-| Entity class (23 bảng) | 23 | 0 | **23** |
-| DAO interface | 23 | 0 | **23** |
-| Repository | 18 | 0 | **18** |
+| Tài liệu thiết kế (.md) | 7 | **7** | **0** ✅ |
+| SQL CREATE TABLE | 24 | **24** | **0** ✅ |
+| Entity class (Java) | 24 | 0 | **24** |
+| DAO interface | 24 | 0 | **24** |
+| Database class | 1 | 0 | **1** |
+| Repository | 19 | 0 | **19** |
 | ViewModel | 21 | 0 | **21** |
-| Staff UI screens | 20 | 0 | **20** |
+| Staff UI screens | 21 | 0 | **21** |
 | Customer UI screens | 13 | 0 | **13** |
 
-> **Tổng tiến độ:** 7/7 tài liệu thiết kế ✅ | Bổ sung: luồng hủy đơn+hoàn tiền, xung đột lịch, gán NV, điều chỉnh tồn, quên MK | Code nguồn: chưa bắt đầu
+> **Tổng tiến độ:** Thiết kế 7/7 ✅ | SQL 24/24 ✅ | Code nguồn: chưa bắt đầu ❌ | **Việc tiếp theo: Code Entity → DAO → Database → Repository → ViewModel → UI**

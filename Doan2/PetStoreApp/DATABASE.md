@@ -1,6 +1,6 @@
 # Thiết Kế Cơ Sở Dữ Liệu (Bảng Tiếng Việt)
 
-## Danh sách bảng (23 bảng)
+## Danh sách bảng (24 bảng)
 
 ### 20 bảng gốc
 
@@ -27,7 +27,7 @@
 | 19 | Cart | **GiỏHàng** | Giỏ hàng online |
 | 20 | FavoritePet | **ThúCưngYêuThích** | Thú cưng yêu thích |
 
-### 3 bảng bổ sung
+### 4 bảng bổ sung
 
 | STT | Tên bảng (Tiếng Việt) | Tên gốc | Mô tả |
 |-----|----------------------|---------|-------|
@@ -37,9 +37,9 @@
 
 ---
 
-## Chi tiết 3 bảng bổ sung
+## Chi tiết 4 bảng bổ sung
 
-> **Lưu ý:** Cấu trúc chi tiết của 3 bảng này đã được viết dưới dạng SQL CREATE TABLE ở phần trên.
+> **Lưu ý:** Cấu trúc chi tiết của 4 bảng này đã được viết dưới dạng SQL CREATE TABLE ở phần trên.
 > Phần này chỉ giữ lại mô tả nghiệp vụ và ràng buộc quan trọng.
 
 ### 21. ThanhToán (Payment)
@@ -207,7 +207,7 @@ Ví dụ 3: Hoàn thành
 
 ---
 
-## SQL CREATE TABLE — 23 bảng
+## SQL CREATE TABLE — 24 bảng
 
 > Dùng **SQLite** (Room).  
 > `INTEGER PRIMARY KEY AUTOINCREMENT` = ID tự tăng.  
@@ -484,8 +484,9 @@ CREATE TABLE ThuCung (
     color          TEXT,
     price          REAL,
     status         TEXT    DEFAULT 'available'
-                           CHECK (status IN ('available','sold','grooming','treatment')),
+                           CHECK (status IN ('available','sold','grooming','treatment','boarding')),
     microchipId    TEXT,
+    chuongId       INTEGER REFERENCES Chuong(chuongId),
     loaiThuCungId  INTEGER REFERENCES LoaiThuCung(loaiThuCungId),
     khachHangId    INTEGER REFERENCES KhachHang(khachHangId),
     createdAt      TEXT    DEFAULT (datetime('now','localtime'))
@@ -494,7 +495,7 @@ CREATE TABLE ThuCung (
 
 ---
 
-### Nhóm 4: Bổ sung mới (New)
+### Nhóm 4: Bổ sung mới (New) — 4 bảng
 
 ```sql
 -- 22. ThanhToán (Payment)
@@ -531,6 +532,20 @@ CREATE TABLE NhatKyHoatDong (
 --   DANG_NHAP, DANG_XUAT, TAO_DON, HUY_DON, HOAN_TIEN, THANH_TOAN,
 --   NHAP_KHO, DIEU_CHINH_TON, TAO_LICH, HUY_LICH, GAN_NV,
 --   THEM_SAN_PHAM, SUA_GIA, XOA_DU_LIEU, DANH_GIA, DOI_MAT_KHAU
+
+-- 24. Chuồng (Cage) — quản lý vị trí nhốt thú trong cửa hàng
+CREATE TABLE Chuong (
+    chuongId         INTEGER PRIMARY KEY AUTOINCREMENT,
+    maChuong         TEXT    NOT NULL UNIQUE,      -- mã chuồng: "A-01", "B-12"
+    khuVuc           TEXT,                          -- khu vực: "A", "B", "C"
+    kichThuoc        TEXT    DEFAULT 'medium'       -- nhỏ/vừa/lớn
+                           CHECK (kichThuoc IN ('small','medium','large')),
+    loaiThuCungId    INTEGER REFERENCES LoaiThuCung(loaiThuCungId),  -- phù hợp loại nào
+    trangThai        TEXT    DEFAULT 'empty'
+                           CHECK (trangThai IN ('empty','occupied','maintenance','cleaning')),
+    ghiChu           TEXT,
+    createdAt        TEXT    DEFAULT (datetime('now','localtime'))
+);
 ```
 
 ---
@@ -566,10 +581,12 @@ CREATE TABLE NhatKyHoatDong (
 | 20 | ThongBaoKhach | khachHangId | KhachHang(khachHangId) |
 | 21 | ThuCung | loaiThuCungId | LoaiThuCung(loaiThuCungId) |
 | 21 | ThuCung | khachHangId | KhachHang(khachHangId) |
+| 21 | ThuCung | chuongId | Chuong(chuongId) |
 | 22 | ThanhToan | donHangId | DonHang(donHangId) |
 | 22 | ThanhToan | nguoiTaoId | NguoiDung(nguoiDungId) |
 | 23 | NhatKyHoatDong | nguoiDungId | NguoiDung(nguoiDungId) |
 | 23 | NhatKyHoatDong | khachHangId | KhachHang(khachHangId) |
+| 24 | Chuong | loaiThuCungId | LoaiThuCung(loaiThuCungId) |
 
 ---
 

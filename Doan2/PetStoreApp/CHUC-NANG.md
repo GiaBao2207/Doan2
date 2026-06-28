@@ -33,8 +33,9 @@
 | 21 | **`Payment.java`** | **Giao dịch thanh toán cho đơn hàng** | ĐT |
 | 22 | **`ActivityLog.java`** | **Nhật ký hoạt động người dùng** | ĐT |
 | 23 | **`AppointmentStaff.java`** | **Nhân viên phục vụ lịch hẹn** | ĐT |
+| 24 | **`Cage.java`** | **Chuồng nhốt thú cưng trong cửa hàng** | ĐT |
 
-**Tổng: 23 chức năng đối tượng** ✅ *(yêu cầu ≥10 ĐT)*
+**Tổng: 24 chức năng đối tượng** ✅ *(yêu cầu ≥10 ĐT)*
 
 ---
 
@@ -67,6 +68,7 @@
 | 21 | **`PaymentDao.java`** | CRUD giao dịch thanh toán, truy vấn theo đơn hàng |
 | 22 | **`ActivityLogDao.java`** | INSERT log (append-only), truy vấn lọc theo ngày/người dùng |
 | 23 | **`AppointmentStaffDao.java`** | CRUD nhân viên phục vụ, lọc theo lịch hẹn/nhân viên |
+| 24 | **`CageDao.java`** | CRUD chuồng, kiểm tra trống/bận, lọc theo khu vực |
 
 ### 2.2 Repository
 
@@ -90,6 +92,7 @@
 | 16 | **`PaymentRepository.java`** | PaymentDao |
 | 17 | **`ActivityLogRepository.java`** | ActivityLogDao |
 | 18 | **`AppointmentStaffRepository.java`** | AppointmentStaffDao |
+| 19 | **`CageRepository.java`** | CageDao |
 
 ---
 
@@ -145,6 +148,7 @@
 | 18 | **Nhật ký hoạt động** | **`ActivityLogActivity.java`** | **Xem log, lọc theo ngày/nhân viên/hành động (Admin)** |
 | 19 | **Gán nhân viên phục vụ** | **`AssignStaffDialog.java`** | **Gán nhân viên cho lịch hẹn, chọn vai trò** |
 | 20 | **Điều chỉnh tồn kho** | **`InventoryAdjustmentDialog.java`** | **Điều chỉnh tồn (hỏng, hết hạn, trả NCC, kiểm kê)** |
+| 21 | **Quản lý chuồng thú** | **`CageActivity.java`** | **Quản lý chuồng: thêm/sửa/xóa, gán thú, vệ sinh** |
 | | **=== CUSTOMER APP (App khách hàng) ===** | | |
 | 16 | **Đăng nhập / Đăng ký KH** | **`CustomerLoginActivity.java`** | **Đăng nhập bằng SĐT/mật khẩu, đăng ký tài khoản** |
 | 17 | **Quên mật khẩu** | **`ForgotPasswordActivity.java`** | **Gửi OTP qua SMS, đặt lại mật khẩu** |
@@ -166,12 +170,12 @@
 
 | Loại | Số lượng | Yêu cầu | Đạt |
 |---|---|---|---|
-| Chức năng đối tượng (ĐT) | 23 | ≥ 10 | ✅ |
+| Chức năng đối tượng (ĐT) | 24 | ≥ 10 | ✅ |
 | Chức năng quy trình (QT) | 5 (Tạo đơn hàng, Nhập kho, **Đặt lịch hẹn, Thanh toán, Hủy đơn/Hoàn tiền**) | ≥ 2 | ✅ |
 | Form Master-Detail | 4 (Order, Inventory, **Payment, AppointmentStaff**) | Có | ✅ |
-| Tổng số form | 33 (20 Staff + 13 Customer) | ≥ 10 | ✅ |
+| Tổng số form | 34 (21 Staff + 13 Customer) | ≥ 10 | ✅ |
 | Report / Thống kê | 2 (Staff Statistic, **Customer Statistic**) | Có | ✅ |
 | Audit log | 1 (ActivityLogActivity + 16 hành động tự ghi) | Cộng điểm | ✅ |
 | Chức năng hỗ trợ | Phân quyền, tìm kiếm, lọc, **đánh giá, tích điểm, thông báo, audit log, quên MK, điều chỉnh tồn** | Cộng điểm | ✅ |
 
-> Dựa theo thang điểm mục 2.1 và 2.2 (APP): đủ ≥10 chức năng đối tượng (23), ≥2 chức năng quy trình (5), ≥10 form (33), có form master-detail (4), có report (2), có audit log (16 hành động), có quản lý tồn kho (nhập + điều chỉnh), có quên mật khẩu, có hủy đơn/hoàn tiền.
+> Dựa theo thang điểm mục 2.1 và 2.2 (APP): đủ ≥10 chức năng đối tượng (24), ≥2 chức năng quy trình (5), ≥10 form (34), có form master-detail (4), có report (2), có audit log (16 hành động), có quản lý tồn kho (nhập + điều chỉnh), có quên mật khẩu, có hủy đơn/hoàn tiền.
