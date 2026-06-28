@@ -34,6 +34,7 @@
 | 21 | **ThanhToán** | Payment | Giao dịch thanh toán cho đơn hàng |
 | 22 | **NhậtKýHoạtĐộng** | ActivityLog | Ghi log hành động người dùng |
 | 23 | **NhânViênPhụcVụ** | AppointmentStaff | Gán nhân viên phục vụ cho lịch hẹn |
+| 24 | **Chuồng** | Cage | Quản lý chuồng nhốt thú cưng trong cửa hàng |
 
 ### 2 bảng bổ sung (đợt 2)
 

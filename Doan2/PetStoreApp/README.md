@@ -53,7 +53,7 @@
 │                       ▼                                        │
 │          ┌──────────────────────────┐                         │
 │          │   Room Database (SQLite)  │                         │
-│          │   24 bảng dùng chung      │                         │
+│          │   26 bảng dùng chung      │                         │
 │          └──────────────────────────┘                         │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -124,7 +124,7 @@ Room Database (SQLite)
 - Biểu đồ cột trực quan
 
 ### 8. Giám sát & Bảo mật
-- **Nhật ký hoạt động (ActivityLog)**: ghi lại 16 loại hành động
+- **Nhật ký hoạt động (ActivityLog)**: ghi lại 18 loại hành động
 - Phân quyền 3 role: Admin (full), Staff (bán hàng), Customer (cá nhân)
 - Mã hóa mật khẩu SHA-256 + Salt
 - Không cho xóa/sửa ActivityLog (append-only)
@@ -135,10 +135,10 @@ Room Database (SQLite)
 
 ```
 com.petstore.app/
-├── model/                    # Entity class (24 bảng)
+├── model/                    # Entity class (26 bảng)
 ├── data/                     # Tầng dữ liệu
-│   ├── database/             # Room Database, 24 DAOs
-│   ├── repository/           # 19 Repository
+│   ├── database/             # Room Database, 26 DAOs
+│   ├── repository/           # 21 Repository
 │   └── preference/           # SharedPreferences (session login)
 ├── ui/                       # Giao diện
 │   ├── staff/                # === STAFF APP (23 màn hình) ===

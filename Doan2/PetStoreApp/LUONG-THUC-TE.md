@@ -648,6 +648,8 @@ NHÂN VIÊN KHO / ADMIN               HỆ THỐNG
 | `XOA_DU_LIEU` | Xóa bất kỳ bản ghi nào (Admin) | AdminViewModel |
 | `DANH_GIA` | Khách hàng đánh giá dịch vụ | ReviewViewModel |
 | `DOI_MAT_KHAU` | Đổi mật khẩu | ProfileViewModel |
+| `BAO_HANH` | Tạo bảo hành / xử lý khiếu nại bảo hành | PetWarrantyViewModel |
+| `KY_HOP_DONG` | Ký hợp đồng mua bán thú cưng | PurchaseContractViewModel |
 
 ---
 

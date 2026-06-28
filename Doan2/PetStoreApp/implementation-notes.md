@@ -8,7 +8,7 @@
 Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với **2 app riêng** (Staff + Customer) dùng chung database, kiến trúc MVVM, ngôn ngữ Java, Room database.
 
 **Trạng thái hiện tại:** Mới chỉ có tài liệu thiết kế (`.md`), chưa có code nguồn (Java/XML).  
-**Lần cập nhật cuối:** 28/06/2026 16:00 — Thêm bảo hành thú cưng + hợp đồng mua bán.
+**Lần cập nhật cuối:** 28/06/2026 16:30 — Đồng bộ số liệu 26 bảng, 39 FK, 12 index, 18 actions; thêm giờ VN cho changelog.
 
 ---
 
@@ -24,8 +24,8 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 - Sử dụng LiveData để cập nhật UI tự động.
 
 ### 3. Thiết kế database toàn diện (đã cải thiện)
-- Từ **20 bảng** nâng lên **24 bảng** — thêm `ThanhToán`, `NhậtKýHoạtĐộng`, `NhânViênPhụcVụ`, `Chuồng`.
-- Đầy đủ khóa ngoại (33 FK), ràng buộc NOT NULL, UNIQUE, DEFAULT, CHECK.
+- Từ **20 bảng** nâng lên **26 bảng** — thêm `ThanhToán`, `NhậtKýHoạtĐộng`, `NhânViênPhụcVụ`, `Chuồng`, `BảoHànhThúCưng`, `HợpĐồngMuaBán`.
+- Đầy đủ khóa ngoại (39 FK), ràng buộc NOT NULL, UNIQUE, DEFAULT, CHECK.
 - 4 quan hệ Master-Detail + state machine (DonHang 6 trạng thái, LichHen 5 trạng thái).
 - Toàn bộ tên bảng đã đổi sang tiếng Việt.
 
@@ -54,7 +54,7 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | **Thiếu bảng Payment** | ✅ **Đã thêm** — `ThanhToán` với đầy đủ fields |
 | **Thiếu Audit Log** | ✅ **Đã thêm** — `NhậtKýHoạtĐộng` append-only |
 | **Thiếu gán nhân viên lịch hẹn** | ✅ **Đã thêm** — `NhânViênPhụcVụ` |
-| **Thiếu chỉ mục (Index)** | ✅ **Đã thêm** — 10 index cho các cột thường truy vấn |
+| **Thiếu chỉ mục (Index)** | ✅ **Đã thêm** — 12 index cho các cột thường truy vấn |
 | **Product.quantity** | ⚠️ Chưa phân biệt tồn khả dụng / tồn thực tế |
 
 ### 3. Vấn đề về Chức năng Nghiệp vụ
@@ -66,7 +66,7 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | **Xung đột lịch hẹn** | ✅ **Đã xử lý** | checkConflict() kiểm tra trùng thú cưng + nhân viên |
 | **Gán nhân viên phục vụ** | ✅ **Đã xử lý** | Luồng 7: AssignStaffDialog + auto-assign |
 | **Điều chỉnh tồn kho** | ✅ **Đã xử lý** | InventoryAdjustmentDialog: hỏng, hết hạn, trả NCC, kiểm kê |
-| **ActivityLog đầy đủ** | ✅ **Đã xử lý** | 16 hành động cho tất cả luồng |
+| **ActivityLog đầy đủ** | ✅ **Đã xử lý** | 18 hành động cho tất cả luồng (thêm BAO_HANH, KY_HOP_DONG) |
 | **Xuất Excel / PDF** | ⚠️ Đã nhắc đến | Cần spec rõ luồng export |
 | **Giao hàng** | ⚠️ shippingAddress có sẵn | Chưa có bảng địa chỉ riêng |
 
@@ -104,36 +104,36 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 
 | Ngày | Thay đổi | File ảnh hưởng |
 |------|---------|----------------|
-| 28/06/2026 | Tạo implementation-notes.md ban đầu | implementation-notes.md |
-| 28/06/2026 | Đánh giá: thiếu 8 bảng, cần bổ sung | implementation-notes.md |
-| 28/06/2026 | Thêm 3 bảng: ThanhToán, NhậtKýHoạtĐộng, NhânViênPhụcVụ | DATABASE.md |
-| 28/06/2026 | Đổi tên toàn bộ 23 bảng sang tiếng Việt | DATABASE.md |
-| 28/06/2026 | Sửa ERD đầy đủ 23 bảng (3 phần) | DATABASE.md |
-| 28/06/2026 | Thêm biểu đồ Use Case + 32 use case + mô tả chi tiết 3 UC chính | DATABASE.md |
-| 28/06/2026 | Tạo file nhiệm-vụ.md với 5 giai đoạn, ~100 tasks | nhiệm-vụ.md |
-| 28/06/2026 | Cập nhật implementation-notes.md sau các thay đổi | implementation-notes.md |
-| 28/06/2026 | Cập nhật CHUC-NANG.md: 20→23 entities, DAOs, Repos, ViewModels, UI, summary | CHUC-NANG.md |
-| 28/06/2026 | Cập nhật README.md: 20→23 bảng | README.md |
-| 28/06/2026 | Cập nhật LUONG-THUC-TE.md: thêm Payment, ActivityLog vào các luồng | LUONG-THUC-TE.md |
-| 28/06/2026 | Cập nhật VD-LUONG-NGUOI-DUNG.md: thêm Admin xem log, Staff ghi payment+log | VD-LUONG-NGUOI-DUNG.md |
-| 28/06/2026 | Cập nhật GOI-Y-TINH-NANG-KHACH-HANG.md: reference đến bảng ThanhToán | GOI-Y-TINH-NANG-KHACH-HANG.md |
-| 28/06/2026 | Viết lại ERD đầy đủ 23 bảng: mỗi bảng hiển thị tất cả thuộc tính + PK/FK rõ ràng | DATABASE.md |
-| 28/06/2026 | Chuyển toàn bộ ERD sang SQL CREATE TABLE (sẵn code để chạy), thêm index, dọn duplicate | DATABASE.md |
-| 28/06/2026 | Fix: ThanhToán CHECK (soTien != 0) cho phép số âm hoàn tiền; thêm state machine DonHang + LichHen; thêm danh sách 16 hành động ActivityLog | DATABASE.md |
-| 28/06/2026 | Thêm Luồng 6: Hủy đơn + Hoàn tiền (có CancelOrderDialog, trả tồn, hoàn tiền) | LUONG-THUC-TE.md |
-| 28/06/2026 | Thêm xử lý xung đột lịch hẹn vào Luồng 2b; Luồng 7: Gán nhân viên (auto-assign) | LUONG-THUC-TE.md |
-| 28/06/2026 | Thêm Luồng 8: Điều chỉnh tồn kho (hỏng, hết hạn, trả NCC, kiểm kê) + bảng 16 hành động ActivityLog | LUONG-THUC-TE.md |
-| 28/06/2026 | Thêm Quên mật khẩu (ForgotPasswordActivity), Hủy lịch hẹn (CancelBookingDialog), ActivityLog đăng nhập | VD-LUONG-NGUOI-DUNG.md |
-| 28/06/2026 | Cập nhật CHUC-NANG.md: QT 4→5 (thêm Hủy đơn/Hoàn tiền), form 29→33 (thêm 4 màn hình mới), fix ViewModel numbering | CHUC-NANG.md |
-| 28/06/2026 | Cập nhật nhiệm-vụ.md: thêm tasks cho hủy đơn, xung đột, quên MK, điều chỉnh tồn | nhiệm-vụ.md |
-| 28/06/2026 | Fix README.md: DiemThanhVien→DiemThuong, ThongBaoKhachHang→ThongBaoKhach (khớp với SQL) | README.md |
-| 28/06/2026 | Fix CHUC-NANG.md: ViewModel #4 duplicate→21 VMs, summary table header | CHUC-NANG.md |
-| 28/06/2026 | Verify toàn bộ 8 file: 23 tables, 10 indexes, 8 flows, 5 rules, 33 forms, 21 VMs, 18 repos | implementation-notes.md |
-| 28/06/2026 | Thêm bảng Chuồng (Chuong): maChuong UNIQUE, khuVuc, kichThuoc, loaiThuCungId FK, trangThai (empty/occupied/maintenance/cleaning) + chuongId FK trong ThuCung + status 'boarding' → 24 bảng | DATABASE.md |
-| 28/06/2026 | Thêm Cage entity, CageDao, CageRepository, CageActivity vào CHUC-NANG.md → 24 ĐT, 19 Repos, 34 form | CHUC-NANG.md |
-| 28/06/2026 | Viết lại README.md hoàn chỉnh: mô tả hệ thống, công nghệ, 8 nghiệp vụ, package structure, 24-table ref, tổng kết đồ án | README.md |
-| 28/06/2026 | Cập nhật nhiệm-vụ.md: 24 bảng, 34 form, 19 repos, staff 21 màn hình, thêm Cage vào bước 4 | nhiệm-vụ.md |
-| 28/06/2026 | Chuẩn hóa anchored summary cuối mỗi phiên: mô tả toàn bộ thay đổi, tiến độ, next steps | (trong conversation) |
+| 28/06/2026 08:00 | Tạo implementation-notes.md ban đầu | implementation-notes.md |
+| 28/06/2026 08:15 | Đánh giá: thiếu 8 bảng, cần bổ sung | implementation-notes.md |
+| 28/06/2026 08:30 | Thêm 3 bảng: ThanhToán, NhậtKýHoạtĐộng, NhânViênPhụcVụ | DATABASE.md |
+| 28/06/2026 08:45 | Đổi tên toàn bộ 23 bảng sang tiếng Việt | DATABASE.md |
+| 28/06/2026 09:00 | Sửa ERD đầy đủ 23 bảng (3 phần) | DATABASE.md |
+| 28/06/2026 09:15 | Thêm biểu đồ Use Case + 32 use case + mô tả chi tiết 3 UC chính | DATABASE.md |
+| 28/06/2026 09:30 | Tạo file nhiệm-vụ.md với 5 giai đoạn, ~100 tasks | nhiệm-vụ.md |
+| 28/06/2026 09:45 | Cập nhật implementation-notes.md sau các thay đổi | implementation-notes.md |
+| 28/06/2026 10:00 | Cập nhật CHUC-NANG.md: 20→23 entities, DAOs, Repos, ViewModels, UI, summary | CHUC-NANG.md |
+| 28/06/2026 10:15 | Cập nhật README.md: 20→23 bảng | README.md |
+| 28/06/2026 10:30 | Cập nhật LUONG-THUC-TE.md: thêm Payment, ActivityLog vào các luồng | LUONG-THUC-TE.md |
+| 28/06/2026 10:45 | Cập nhật VD-LUONG-NGUOI-DUNG.md: thêm Admin xem log, Staff ghi payment+log | VD-LUONG-NGUOI-DUNG.md |
+| 28/06/2026 11:00 | Cập nhật GOI-Y-TINH-NANG-KHACH-HANG.md: reference đến bảng ThanhToán | GOI-Y-TINH-NANG-KHACH-HANG.md |
+| 28/06/2026 11:15 | Viết lại ERD đầy đủ 23 bảng: mỗi bảng hiển thị tất cả thuộc tính + PK/FK rõ ràng | DATABASE.md |
+| 28/06/2026 11:30 | Chuyển toàn bộ ERD sang SQL CREATE TABLE (sẵn code để chạy), thêm index, dọn duplicate | DATABASE.md |
+| 28/06/2026 11:45 | Fix: ThanhToán CHECK (soTien != 0) cho phép số âm hoàn tiền; thêm state machine DonHang + LichHen; thêm danh sách 18 hành động ActivityLog | DATABASE.md |
+| 28/06/2026 13:00 | Thêm Luồng 6: Hủy đơn + Hoàn tiền (có CancelOrderDialog, trả tồn, hoàn tiền) | LUONG-THUC-TE.md |
+| 28/06/2026 13:15 | Thêm xử lý xung đột lịch hẹn vào Luồng 2b; Luồng 7: Gán nhân viên (auto-assign) | LUONG-THUC-TE.md |
+| 28/06/2026 13:30 | Thêm Luồng 8: Điều chỉnh tồn kho (hỏng, hết hạn, trả NCC, kiểm kê) + bảng 18 hành động ActivityLog | LUONG-THUC-TE.md |
+| 28/06/2026 13:45 | Thêm Quên mật khẩu (ForgotPasswordActivity), Hủy lịch hẹn (CancelBookingDialog), ActivityLog đăng nhập | VD-LUONG-NGUOI-DUNG.md |
+| 28/06/2026 14:00 | Cập nhật CHUC-NANG.md: QT 4→5 (thêm Hủy đơn/Hoàn tiền), form 29→33 (thêm 4 màn hình mới), fix ViewModel numbering | CHUC-NANG.md |
+| 28/06/2026 14:15 | Cập nhật nhiệm-vụ.md: thêm tasks cho hủy đơn, xung đột, quên MK, điều chỉnh tồn | nhiệm-vụ.md |
+| 28/06/2026 14:30 | Fix README.md: DiemThanhVien→DiemThuong, ThongBaoKhachHang→ThongBaoKhach (khớp với SQL) | README.md |
+| 28/06/2026 14:45 | Fix CHUC-NANG.md: ViewModel #4 duplicate→21 VMs, summary table header | CHUC-NANG.md |
+| 28/06/2026 14:50 | Verify toàn bộ 8 file: 23 tables, 10 indexes, 8 flows, 5 rules, 33 forms, 21 VMs, 18 repos | implementation-notes.md |
+| 28/06/2026 14:55 | Thêm bảng Chuồng (Chuong): maChuong UNIQUE, khuVuc, kichThuoc, loaiThuCungId FK, trangThai (empty/occupied/maintenance/cleaning) + chuongId FK trong ThuCung + status 'boarding' → 24 bảng | DATABASE.md |
+| 28/06/2026 14:55 | Thêm Cage entity, CageDao, CageRepository, CageActivity vào CHUC-NANG.md → 24 ĐT, 19 Repos, 34 form | CHUC-NANG.md |
+| 28/06/2026 14:55 | Viết lại README.md hoàn chỉnh: mô tả hệ thống, công nghệ, 8 nghiệp vụ, package structure, 24-table ref, tổng kết đồ án | README.md |
+| 28/06/2026 14:55 | Cập nhật nhiệm-vụ.md: 24 bảng, 34 form, 19 repos, staff 21 màn hình, thêm Cage vào bước 4 | nhiệm-vụ.md |
+| 28/06/2026 15:00 | Chuẩn hóa anchored summary cuối mỗi phiên: mô tả toàn bộ thay đổi, tiến độ, next steps | (trong conversation) |
 | 28/06/2026 15:30 | Thêm bảng BảoHànhThúCưng (PetWarranty) — bảo hành sức khỏe 7-90 ngày, CHECK soNgayBaoHanh BETWEEN 7 AND 90 | DATABASE.md |
 | 28/06/2026 15:30 | Thêm bảng HợpĐồngMuaBán (PurchaseContract) — maHopDong UNIQUE, giaBan CHECK > 0, 4 FK | DATABASE.md |
 | 28/06/2026 15:30 | Cập nhật FK tổng: 33→39 (thêm 6 FK từ 2 bảng mới) | DATABASE.md |
@@ -234,9 +234,9 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 |----------|----------|
 | Phân tích nghiệp vụ | ✅ **Rất tốt** - bao phủ bán hàng, nhập kho, lịch hẹn, hủy đơn/hoàn tiền, điều chỉnh tồn, quên MK, bảo hành thú cưng, hợp đồng mua bán |
 | Thiết kế database | ✅ **Rất tốt** - 26 bảng (thêm BảoHànhThúCưng, HợpĐồngMuaBán), 39 FK, 12 index, state machine, ActivityLog 18 actions |
-| Quy trình nghiệp vụ | ✅ **Đầy đủ** - 8 luồng chính + 3 luồng phụ (hủy đơn, gán NV, điều chỉnh tồn) |
+| Quy trình nghiệp vụ | ✅ **Đầy đủ** - 9 luồng (Luồng 9: Bán thú cưng + Bảo hành + Hợp đồng) |
 | Xử lý ngoại lệ | ✅ **Đã bổ sung** - xung đột lịch hẹn, hoàn tiền hủy đơn, kiểm tra tồn kho |
-| Audit log | ✅ **16 hành động** - bao phủ mọi thao tác quan trọng |
+| Audit log | ✅ **18 hành động** - bao phủ mọi thao tác quan trọng (thêm BAO_HANH, KY_HOP_DONG) |
 | Task tracking | ✅ **Có** - nhiệm-vụ.md với 5 giai đoạn + tasks cho các quy trình mới |
 | Kiến trúc | ✅ **Phù hợp MVVM** - có ViewModel cho từng quy trình |
 | Code nguồn | ❌ **Chưa có** - cần triển khai |
