@@ -1,6 +1,6 @@
 # Thiết Kế Cơ Sở Dữ Liệu (Bảng Tiếng Việt)
 
-## Danh sách bảng (24 bảng)
+## Danh sách bảng (26 bảng)
 
 ### 20 bảng gốc
 
@@ -27,7 +27,7 @@
 | 19 | Cart | **GiỏHàng** | Giỏ hàng online |
 | 20 | FavoritePet | **ThúCưngYêuThích** | Thú cưng yêu thích |
 
-### 4 bảng bổ sung
+### 4 bảng bổ sung (đợt 1)
 
 | STT | Tên bảng (Tiếng Việt) | Tên gốc | Mô tả |
 |-----|----------------------|---------|-------|
@@ -35,11 +35,18 @@
 | 22 | **NhậtKýHoạtĐộng** | ActivityLog | Ghi log hành động người dùng |
 | 23 | **NhânViênPhụcVụ** | AppointmentStaff | Gán nhân viên phục vụ cho lịch hẹn |
 
+### 2 bảng bổ sung (đợt 2)
+
+| STT | Tên bảng (Tiếng Việt) | Tên gốc | Mô tả |
+|-----|----------------------|---------|-------|
+| 25 | **BảoHànhThúCưng** | PetWarranty | Bảo hành sức khỏe thú cưng sau khi mua (7-30 ngày) |
+| 26 | **HợpĐồngMuaBán** | PurchaseContract | Hợp đồng mua bán thú cưng (giấy tờ pháp lý) |
+
 ---
 
-## Chi tiết 4 bảng bổ sung
+## Chi tiết 6 bảng bổ sung
 
-> **Lưu ý:** Cấu trúc chi tiết của 4 bảng này đã được viết dưới dạng SQL CREATE TABLE ở phần trên.
+> **Lưu ý:** Cấu trúc chi tiết của 6 bảng này đã được viết dưới dạng SQL CREATE TABLE ở phần trên.
 > Phần này chỉ giữ lại mô tả nghiệp vụ và ràng buộc quan trọng.
 
 ### 21. ThanhToán (Payment)
@@ -207,7 +214,151 @@ Ví dụ 3: Hoàn thành
 
 ---
 
-## SQL CREATE TABLE — 24 bảng
+### 24. Chuồng (Cage)
+
+**Mục đích:** Quản lý vị trí nhốt thú cưng trong cửa hàng. Mỗi chuồng được gán mã riêng, phân khu vực, kích thước, phù hợp với từng loại thú cưng.
+
+**Cấu trúc:**
+
+```
+┌──────────────────────────────────────────┐
+│              Chuồng                        │
+├──────────────────────────────────────────┤
+│ chuồngId (PK, int, AUTOINCREMENT)         │
+│ maChuồng (nvarchar(20), NOT NULL, UNIQUE) │
+│   → Mã chuồng: "A-01", "B-12", "C-05"   │
+│ khuVuc (nvarchar(10))                     │
+│   → 'A', 'B', 'C' — khu vực trong shop   │
+│ kichThuoc (nvarchar(10), DEFAULT 'medium')│
+│   → 'small', 'medium', 'large'            │
+│ loaiThuCungId (FK → LoạiThúCưng)          │
+│   → Chuồng phù hợp với loại thú nào       │
+│ trangThai (nvarchar(20), DEFAULT 'empty') │
+│   → 'empty', 'occupied', 'maintenance',   │
+│     'cleaning'                            │
+│ ghiChu (nvarchar(500))                    │
+│ createdAt (datetime, DEFAULT NOW)          │
+└──────────────────────────────────────────┘
+```
+
+**Ràng buộc:**
+- UNIQUE(`maChuong`) — mỗi chuồng có mã riêng
+- Một thú cưng chỉ được ở 1 chuồng (quản lý qua `chuongId` trong bảng ThúCưng)
+
+---
+
+### 25. BảoHànhThúCưng (PetWarranty)
+
+**Mục đích:** Quản lý bảo hành sức khỏe cho thú cưng sau khi mua. Thời gian bảo hành 7-30 ngày tùy loại thú và chính sách cửa hàng.
+
+**Cấu trúc:**
+
+```
+┌──────────────────────────────────────────┐
+│           BảoHànhThúCưng                   │
+├──────────────────────────────────────────┤
+│ baoHanhId (PK, int, AUTOINCREMENT)        │
+│ thuCungId (FK → ThúCưng, NOT NULL)        │
+│   → Thú cưng được bảo hành                │
+│ donHangId (FK → ĐơnHàng, NOT NULL)        │
+│   → Đơn hàng mua thú cưng                 │
+│ ngayBatDau (datetime, NOT NULL)           │
+│   → Ngày bắt đầu bảo hành                 │
+│ ngayKetThuc (datetime, NOT NULL)          │
+│   → Ngày kết thúc bảo hành                │
+│ soNgayBaoHanh (int, NOT NULL,             │
+│               DEFAULT 30, CHECK 7-90)     │
+│ trangThai (nvarchar(20),                  │
+│           DEFAULT 'active')               │
+│   → 'active', 'expired', 'claimed',       │
+│     'cancelled'                           │
+│ ghiChu (nvarchar(500))                    │
+│   → Ghi chú khiếu nại nếu có              │
+│ createdAt (datetime, DEFAULT NOW)          │
+└──────────────────────────────────────────┘
+```
+
+**Ràng buộc:**
+- `soNgayBaoHanh` BETWEEN 7 AND 90
+- `ngayKetThuc` >= `ngayBatDau`
+- Một thú cưng chỉ có 1 bảo hành active tại 1 thời điểm
+
+**Nghiệp vụ thực tế:**
+```
+Ví dụ: Khách mua chó Poodle ngày 01/06
+  → BảoHànhThúCưng(thuCungId=5, donHangId=12,
+       ngayBatDau='2026-06-01', ngayKetThuc='2026-07-01',
+       soNgayBaoHanh=30, trangThai='active')
+
+  Sau 2 tuần, thú bị bệnh → Khách khiếu nại:
+  → Cập nhật trangThai='claimed', ghiChu='Thú bị viêm da'
+  → Staff kiểm tra, lập HồSơSứcKhỏe cho lần khám
+
+  Sau 30 ngày:
+  → Hệ thống (hoặc Staff) cập nhật trangThai='expired'
+```
+
+---
+
+### 26. HợpĐồngMuaBán (PurchaseContract)
+
+**Mục đích:** Lưu trữ hợp đồng mua bán thú cưng — giấy tờ pháp lý quan trọng khi giao dịch thú cưng. Gồm thông tin bên mua, bên bán, thú cưng, giá cả, điều khoản bảo hành.
+
+**Cấu trúc:**
+
+```
+┌──────────────────────────────────────────┐
+│           HợpĐồngMuaBán                    │
+├──────────────────────────────────────────┤
+│ hopDongId (PK, int, AUTOINCREMENT)        │
+│ maHopDong (nvarchar(50), NOT NULL,        │
+│           UNIQUE)                         │
+│   → Mã hợp đồng: "HD-PET-2026-00001"     │
+│ thuCungId (FK → ThúCưng, NOT NULL)        │
+│   → Thú cưng được mua bán                 │
+│ khachHangId (FK → KháchHàng, NOT NULL)    │
+│   → Người mua                              │
+│ nhanVienId (FK → NgườiDùng, NOT NULL)     │
+│   → Nhân viên bán hàng                    │
+│ donHangId (FK → ĐơnHàng)                  │
+│   → Đơn hàng liên quan                    │
+│ giaBan (REAL, NOT NULL, CHECK > 0)        │
+│   → Giá bán thú cưng                      │
+│ ngayLap (datetime, NOT NULL)              │
+│   → Ngày lập hợp đồng                     │
+│ noiDung (nvarchar(2000))                  │
+│   → Mô tả chi tiết giao dịch              │
+│ dieuKhoan (nvarchar(2000))                │
+│   → Điều khoản bảo hành, đổi trả          │
+│ trangThai (nvarchar(20),                  │
+│           DEFAULT 'active')               │
+│   → 'active', 'completed', 'cancelled'    │
+│ fileDinhKem (nvarchar(500))               │
+│   → Đường dẫn file PDF (nếu có)           │
+│ createdAt (datetime, DEFAULT NOW)          │
+└──────────────────────────────────────────┘
+```
+
+**Ràng buộc:**
+- UNIQUE(`maHopDong`)
+- `giaBan` > 0
+- Mỗi thú cưng chỉ có 1 hợp đồng active
+
+**Nghiệp vụ thực tế:**
+```
+Ví dụ: Khách Nguyễn Văn A mua chó Poodle giá 5.000.000₫
+  → HợpĐồngMuaBán(
+       maHopDong='HD-PET-2026-00001',
+       thuCungId=5, khachHangId=1, nhanVienId=2,
+       donHangId=12, giaBan=5000000,
+       ngayLap='2026-06-01',
+       dieuKhoan='Bảo hành sức khỏe 30 ngày. Được đổi trả trong 7 ngày nếu phát hiện bệnh lý có sẵn.',
+       trangThai='active')
+```
+
+---
+
+## SQL CREATE TABLE — 26 bảng
 
 > Dùng **SQLite** (Room).  
 > `INTEGER PRIMARY KEY AUTOINCREMENT` = ID tự tăng.  
@@ -495,7 +646,7 @@ CREATE TABLE ThuCung (
 
 ---
 
-### Nhóm 4: Bổ sung mới (New) — 4 bảng
+### Nhóm 4: Bổ sung mới (New) — 6 bảng
 
 ```sql
 -- 22. ThanhToán (Payment)
@@ -531,7 +682,8 @@ CREATE TABLE NhatKyHoatDong (
 -- Danh sách hành động (hanhDong) đầy đủ:
 --   DANG_NHAP, DANG_XUAT, TAO_DON, HUY_DON, HOAN_TIEN, THANH_TOAN,
 --   NHAP_KHO, DIEU_CHINH_TON, TAO_LICH, HUY_LICH, GAN_NV,
---   THEM_SAN_PHAM, SUA_GIA, XOA_DU_LIEU, DANH_GIA, DOI_MAT_KHAU
+--   THEM_SAN_PHAM, SUA_GIA, XOA_DU_LIEU, DANH_GIA, DOI_MAT_KHAU,
+--   BAO_HANH, KY_HOP_DONG
 
 -- 24. Chuồng (Cage) — quản lý vị trí nhốt thú trong cửa hàng
 CREATE TABLE Chuong (
@@ -545,6 +697,39 @@ CREATE TABLE Chuong (
                            CHECK (trangThai IN ('empty','occupied','maintenance','cleaning')),
     ghiChu           TEXT,
     createdAt        TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 25. BảoHànhThúCưng (Pet Warranty) — bảo hành sức khỏe sau khi mua
+CREATE TABLE BaoHanhThuCung (
+    baoHanhId      INTEGER PRIMARY KEY AUTOINCREMENT,
+    thuCungId      INTEGER NOT NULL REFERENCES ThuCung(thuCungId),
+    donHangId      INTEGER NOT NULL REFERENCES DonHang(donHangId),
+    ngayBatDau     TEXT    NOT NULL,
+    ngayKetThuc    TEXT    NOT NULL,
+    soNgayBaoHanh  INTEGER NOT NULL DEFAULT 30
+                           CHECK (soNgayBaoHanh BETWEEN 7 AND 90),
+    trangThai      TEXT    NOT NULL DEFAULT 'active'
+                           CHECK (trangThai IN ('active','expired','claimed','cancelled')),
+    ghiChu         TEXT,
+    createdAt      TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 26. HợpĐồngMuaBán (Purchase Contract) — hợp đồng mua bán thú cưng
+CREATE TABLE HopDongMuaBan (
+    hopDongId      INTEGER PRIMARY KEY AUTOINCREMENT,
+    maHopDong      TEXT    NOT NULL UNIQUE,
+    thuCungId      INTEGER NOT NULL REFERENCES ThuCung(thuCungId),
+    khachHangId    INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    nhanVienId     INTEGER NOT NULL REFERENCES NguoiDung(nguoiDungId),
+    donHangId      INTEGER REFERENCES DonHang(donHangId),
+    giaBan         REAL    NOT NULL CHECK (giaBan > 0),
+    ngayLap        TEXT    NOT NULL,
+    noiDung        TEXT,
+    dieuKhoan      TEXT,
+    trangThai      TEXT    NOT NULL DEFAULT 'active'
+                           CHECK (trangThai IN ('active','completed','cancelled')),
+    fileDinhKem    TEXT,
+    createdAt      TEXT    DEFAULT (datetime('now','localtime'))
 );
 ```
 
@@ -587,6 +772,12 @@ CREATE TABLE Chuong (
 | 23 | NhatKyHoatDong | nguoiDungId | NguoiDung(nguoiDungId) |
 | 23 | NhatKyHoatDong | khachHangId | KhachHang(khachHangId) |
 | 24 | Chuong | loaiThuCungId | LoaiThuCung(loaiThuCungId) |
+| 25 | BaoHanhThuCung | thuCungId | ThuCung(thuCungId) |
+| 25 | BaoHanhThuCung | donHangId | DonHang(donHangId) |
+| 26 | HopDongMuaBan | thuCungId | ThuCung(thuCungId) |
+| 26 | HopDongMuaBan | khachHangId | KhachHang(khachHangId) |
+| 26 | HopDongMuaBan | nhanVienId | NguoiDung(nguoiDungId) |
+| 26 | HopDongMuaBan | donHangId | DonHang(donHangId) |
 
 ---
 
@@ -615,6 +806,8 @@ CREATE INDEX idx_thucung_khachHangId ON ThuCung(khachHangId);
 CREATE INDEX idx_nhatky_thoiGian ON NhatKyHoatDong(thoiGian);
 CREATE INDEX idx_nhatky_hanhDong ON NhatKyHoatDong(hanhDong);
 CREATE INDEX idx_thanhtoan_donHangId ON ThanhToan(donHangId);
+CREATE INDEX idx_baohanh_thuCungId ON BaoHanhThuCung(thuCungId);
+CREATE INDEX idx_hopdong_maHopDong ON HopDongMuaBan(maHopDong);
 ```
 
 ---

@@ -7,7 +7,8 @@
 
 Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với **2 app riêng** (Staff + Customer) dùng chung database, kiến trúc MVVM, ngôn ngữ Java, Room database.
 
-**Trạng thái hiện tại:** Mới chỉ có tài liệu thiết kế (`.md`), chưa có code nguồn (Java/XML).
+**Trạng thái hiện tại:** Mới chỉ có tài liệu thiết kế (`.md`), chưa có code nguồn (Java/XML).  
+**Lần cập nhật cuối:** 28/06/2026 16:00 — Thêm bảo hành thú cưng + hợp đồng mua bán.
 
 ---
 
@@ -133,6 +134,15 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | 28/06/2026 | Viết lại README.md hoàn chỉnh: mô tả hệ thống, công nghệ, 8 nghiệp vụ, package structure, 24-table ref, tổng kết đồ án | README.md |
 | 28/06/2026 | Cập nhật nhiệm-vụ.md: 24 bảng, 34 form, 19 repos, staff 21 màn hình, thêm Cage vào bước 4 | nhiệm-vụ.md |
 | 28/06/2026 | Chuẩn hóa anchored summary cuối mỗi phiên: mô tả toàn bộ thay đổi, tiến độ, next steps | (trong conversation) |
+| 28/06/2026 15:30 | Thêm bảng BảoHànhThúCưng (PetWarranty) — bảo hành sức khỏe 7-90 ngày, CHECK soNgayBaoHanh BETWEEN 7 AND 90 | DATABASE.md |
+| 28/06/2026 15:30 | Thêm bảng HợpĐồngMuaBán (PurchaseContract) — maHopDong UNIQUE, giaBan CHECK > 0, 4 FK | DATABASE.md |
+| 28/06/2026 15:30 | Cập nhật FK tổng: 33→39 (thêm 6 FK từ 2 bảng mới) | DATABASE.md |
+| 28/06/2026 15:30 | Thêm 2 hành động ActivityLog: BAO_HANH, KY_HOP_DONG (tổng 18 actions) | DATABASE.md |
+| 28/06/2026 15:30 | Thêm 2 index cho bảng mới: idx_baohanh_thuCungId, idx_hopdong_maHopDong | DATABASE.md |
+| 28/06/2026 15:45 | Thêm PetWarranty, PurchaseContract vào CHUC-NANG.md: 26 ĐT, 26 DAO, 21 Repos, 23 VMs, 36 form (23 Staff + 13 Customer) | CHUC-NANG.md |
+| 28/06/2026 15:45 | Thêm Luồng 9: Bán thú cưng + Bảo hành + Hợp đồng (9 bước + khiếu nại bảo hành) | LUONG-THUC-TE.md |
+| 28/06/2026 15:45 | Thêm Rule 6: Staff — Bảo hành & Hợp đồng mua bán (2 luồng con: bán + khiếu nại) | VD-LUONG-NGUOI-DUNG.md |
+| 28/06/2026 16:00 | Cập nhật implementation-notes.md: bảo hành + hợp đồng, 18 actions, 36 form | implementation-notes.md |
 
 ---
 
@@ -141,8 +151,8 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 ### Cửa hàng thú cưng thực tế cần thêm:
 - **Quản lý giống / nhân giống** (breeding management)
 - **Quản lý chuồng / lồng** ✅ **Đã thêm** — bảng Chuồng + chuồngId trong ThuCung
-- **Bảo hành thú cưng** (sức khỏe 7-30 ngày sau khi mua)
-- **Hợp đồng mua bán thú cưng** (giấy tờ pháp lý)
+- **Bảo hành thú cưng** ✅ **Đã thêm** — bảng BảoHànhThúCưng (7-90 ngày, CHECK soNgayBaoHanh)
+- **Hợp đồng mua bán thú cưng** ✅ **Đã thêm** — bảng HợpĐồngMuaBán (maHopDong UNIQUE, dieuKhoan, fileDinhKem)
 - **Dashboard realtime** (số khách trong cửa hàng, công việc đang chờ)
 
 ### Phù hợp với đồ án không?
@@ -222,8 +232,8 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 
 | Tiêu chí | Đánh giá |
 |----------|----------|
-| Phân tích nghiệp vụ | ✅ **Rất tốt** - bao phủ bán hàng, nhập kho, lịch hẹn, hủy đơn/hoàn tiền, điều chỉnh tồn, quên MK |
-| Thiết kế database | ✅ **Rất tốt** - 24 bảng (+ bảng Chuồng), 33 FK, 10 index, state machine, ActivityLog 16 actions |
+| Phân tích nghiệp vụ | ✅ **Rất tốt** - bao phủ bán hàng, nhập kho, lịch hẹn, hủy đơn/hoàn tiền, điều chỉnh tồn, quên MK, bảo hành thú cưng, hợp đồng mua bán |
+| Thiết kế database | ✅ **Rất tốt** - 26 bảng (thêm BảoHànhThúCưng, HợpĐồngMuaBán), 39 FK, 12 index, state machine, ActivityLog 18 actions |
 | Quy trình nghiệp vụ | ✅ **Đầy đủ** - 8 luồng chính + 3 luồng phụ (hủy đơn, gán NV, điều chỉnh tồn) |
 | Xử lý ngoại lệ | ✅ **Đã bổ sung** - xung đột lịch hẹn, hoàn tiền hủy đơn, kiểm tra tồn kho |
 | Audit log | ✅ **16 hành động** - bao phủ mọi thao tác quan trọng |
@@ -233,6 +243,6 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | Bảo mật | ⚠️ **Cơ bản** - cần cải thiện nếu production |
 | UX / UI | ⚠️ **Cần bổ sung** loading/error/empty state |
 | Khả năng mở rộng | ⚠️ **Có thể tốt hơn** - DI, Navigation, testing |
-| Phù hợp đồ án | ✅ **Vượt yêu cầu** - 34 form, 5 QT, 24 ĐT, 4 Master-Detail, 2 Report, audit log, quên MK, điều chỉnh tồn, quản lý chuồng |
+| Phù hợp đồ án | ✅ **Vượt yêu cầu** - 36 form, 5 QT, 26 ĐT, 4 Master-Detail, 2 Report, audit log, quên MK, điều chỉnh tồn, quản lý chuồng, bảo hành thú, hợp đồng mua bán |
 
 > **Tổng thể:** Thiết kế đã hoàn thiện gần như tất cả các quy trình thực tế của cửa hàng thú cưng. Điểm yếu duy nhất là chưa có code nguồn. Cần tập trung code đúng thiết kế, xử lý tốt các state và đảm bảo các luồng: bán hàng→thanh toán→log, nhập kho→cộng tồn, đặt lịch→gán NV, hủy đơn→trả tồn→hoàn tiền chạy trơn tru.

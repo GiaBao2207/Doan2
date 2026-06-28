@@ -1,7 +1,8 @@
 # Mô Tả Luồng Thực Tế Của App
 
 > Hệ thống có **2 app**: App Nhân viên (Staff) và App Khách hàng (Customer).  
-> Mô tả luồng thực tế cho cả hai phía.
+> Mô tả luồng thực tế cho cả hai phía.  
+> **Tổng số: 9 luồng** (Luồng 1–8 cũ + Luồng 9: Bán thú cưng có bảo hành & hợp đồng).
 
 ---
 
@@ -694,12 +695,137 @@ NHÂN VIÊN KHO / ADMIN               HỆ THỐNG
 | **Hồ sơ sức khỏe thú cưng** | Lịch tiêm, tái khám, nhắc hẹn tự động | PetHealthRecord |
 | **Giỏ hàng online** | Thêm/xóa sản phẩm, áp mã giảm giá, thanh toán | Cart + Order |
 | **Thanh toán** | Ghi nhận giao dịch thanh toán, hồn tiền, trace mã GD | Payment |
-| **Nhật ký hoạt động** | Ghi log mọi hành động, phục vụ kiểm tra, truy vết | ActivityLog |
+| **Nhật ký hoạt động** | Ghi log mọi hành động, phục vụ kiểm tra, truy vết (18 actions) | ActivityLog |
+| **Bảo hành thú cưng** | Tạo bảo hành khi bán thú, xử lý khiếu nại bảo hành | PetWarranty |
+| **Hợp đồng mua bán** | Tạo hợp đồng mua bán thú cưng, in hợp đồng pháp lý | PurchaseContract |
 | **Gán nhân viên phục vụ** | Gán nhân viên cho lịch hẹn, theo dõi năng suất | AppointmentStaff |
 
 ---
 
-## Luồng dữ liệu MVVM (Điển hình: Tạo đơn hàng)
+## Luồng 9: Bán thú cưng có bảo hành & hợp đồng (Quy trình mới)
+
+```
+┌──────────────────────────────────────────────────────────────────────────┐
+│               LUỒNG BÁN THÚ CƯNG + BẢO HÀNH + HỢP ĐỒNG                   │
+│                                                                          │
+│  KHÁCH HÀNG          NHÂN VIÊN              HỆ THỐNG                    │
+│     │                    │                       │                       │
+│     │  (1) Chọn thú cưng  │                       │                       │
+│     │──────────────────►  │                       │                       │
+│     │                     │  (2) Kiểm tra thú     │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ ThuCungDao           │
+│     │                     │                       │  (status='available') │
+│     │                     │◄──────────────────────│                       │
+│     │                     │  Thú còn bán được     │                       │
+│     │                     │                       │                       │
+│     │  (3) Thỏa thuận giá │                       │                       │
+│     │◄───────────────────►│                       │                       │
+│     │                     │  (4) Tạo đơn bán       │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ OrderDao.insert()    │
+│     │                     │                       │  (loai='pet_sale')    │
+│     │                     │                       │                       │
+│     │                     │  (5) Tạo hợp đồng      │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ HopDongMuaBan        │
+│     │                     │                       │  (maHopDong tự sinh,  │
+│     │                     │                       │   thuCungId, giaBan,  │
+│     │                     │                       │   dieuKhoan)          │
+│     │                     │                       │─ Ghi ActivityLog      │
+│     │                     │                       │  'KY_HOP_DONG'        │
+│     │                     │                       │                       │
+│     │                     │  (6) Tạo bảo hành      │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ BaoHanhThuCung       │
+│     │                     │                       │  (thuCungId,          │
+│     │                     │                       │   ngayBatDau=NOW,     │
+│     │                     │                       │   soNgayBaoHanh=30,   │
+│     │                     │                       │   trangThai='active') │
+│     │                     │                       │─ Ghi ActivityLog      │
+│     │                     │                       │  'BAO_HANH'           │
+│     │                     │                       │                       │
+│     │                     │  (7) Thanh toán        │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ ThanhToan            │
+│     │                     │                       │  (soTien=giaBan)      │
+│     │                     │                       │                       │
+│     │                     │  (8) Cập nhật thú      │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ ThuCung              │
+│     │                     │                       │  (status='sold',      │
+│     │                     │                       │   khachHangId=...,    │
+│     │                     │                       │   chuongId=NULL)      │
+│     │                     │                       │                       │
+│     │  (9) Nhận thú +      │                       │                       │
+│     │      hợp đồng        │                       │                       │
+│     │◄─────────────────────│                       │                       │
+│     │                     │                       │                       │
+│     │  (10) Khiếu nại bảo  │                       │                       │
+│     │       hành (nếu có)  │                       │                       │
+│     │──────────────────►   │  (11) Kiểm tra bảo    │                       │
+│     │                     │       hành             │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ BaoHanhThuCung       │
+│     │                     │                       │  (trangThai='claimed',│
+│     │                     │                       │   ghiChu=...)         │
+│     │                     │  (12) Lập hồ sơ SK    │                       │
+│     │                     │──────────────────────►│                       │
+│     │                     │                       │─ HoSoSucKhoe.insert() │
+│     │                     │                       │                       │
+│     │  (13) Kết quả xử lý  │                       │                       │
+│     │◄─────────────────────│                       │                       │
+└──────────────────────────────────────────────────────────────────────────┘
+```
+
+### Bước chi tiết (Staff):
+
+1. **Chọn thú cưng**: Staff mở PetListFragment, filter `status='available'`, chọn thú khách muốn mua
+2. **Kiểm tra thú**: Hệ thống kiểm tra thú còn sống, còn trong cửa hàng, không có bệnh (HoSoSucKhoe gần nhất OK)
+3. **Thỏa thuận giá**: Staff nhập giá bán (có thể giảm giá theo chính sách)
+4. **Tạo đơn hàng**: OrderDao.insert() với `loai='pet_sale'`, ghi ActivityLog 'TAO_DON'
+5. **Tạo hợp đồng**: HopDongMuaBan — tự sinh mã `HD-PET-YYYY-NNNNNN`, nhập `giaBan`, `dieuKhoan` (mặc định: bảo hành 30 ngày), ghi ActivityLog 'KY_HOP_DONG'
+6. **Tạo bảo hành**: BaoHanhThuCung — `ngayBatDau=NOW`, `ngayKetThuc=NOW+30`, `soNgayBaoHanh=30`, `trangThai='active'`, ghi ActivityLog 'BAO_HANH'
+7. **Thanh toán**: Ghi nhận giao dịch ThanhToan (soTien=giaBan, phuongThuc=tien_mat|chuyen_khoan), ghi ActivityLog 'THANH_TOAN'
+8. **Cập nhật thú cưng**: ThuCung.status='sold', gán khachHangId, bỏ chuồng (chuongId=NULL)
+9. **Bàn giao**: In hợp đồng (PDF), giao thú + hợp đồng cho khách
+
+### Khiếu nại bảo hành (Staff):
+
+- **Bước 10**: Khách mang thú đến khiếu nại trong thời gian bảo hành
+- **Bước 11**: Staff kiểm tra thông tin bảo hành (còn hạn, chưa claimed)
+- Cập nhật BaoHanhThuCung.trangThai='claimed', ghi chú lý do
+- **Bước 12**: Lập HoSoSucKhoe để theo dõi tình trạng sức khỏe, lịch tái khám
+- **Bước 13**: Trả kết quả cho khách (khám miễn phí, điều trị, ...)
+
+### MVVM Flow:
+
+```
+WarrantyActivity / ContractActivity
+    │
+    ▼
+PetWarrantyViewModel / PurchaseContractViewModel
+    │
+    ▼
+PetWarrantyRepository / PurchaseContractRepository
+    │
+    ▼
+PetWarrantyDao / PurchaseContractDao + PetDao + OrderDao + ActivityLogDao
+    │
+    ▼
+Room Database (BaoHanhThuCung, HopDongMuaBan, ThuCung, DonHang)
+```
+
+### ActivityLog ghi nhận:
+
+| Action | Khi nào | Ghi chú |
+|--------|---------|---------|
+| `TAO_DON` | Bước 4 | Khi tạo đơn bán thú |
+| `KY_HOP_DONG` | Bước 5 | Ký hợp đồng mua bán |
+| `BAO_HANH` | Bước 6 | Tạo bảo hành |
+| `THANH_TOAN` | Bước 7 | Thanh toán |
+
+---
 
 ```
 ┌──────────────────────────────────────────────────────────┐

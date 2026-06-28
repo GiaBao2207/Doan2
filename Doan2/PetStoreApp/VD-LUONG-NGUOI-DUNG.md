@@ -652,7 +652,120 @@ CUSTOMER                          HỆ THỐNG
 
 ---
 
-## Tổng hợp luồng theo Rule
+## 6. RULE: STAFF — Bảo hành thú cưng & Hợp đồng mua bán (Pet Warranty & Purchase Contract)
+
+**Nhân vật:**
+- **Staff**: Nhân viên bán hàng (Nguyễn Văn B)
+- **Customer**: Khách hàng mua thú (Trần Thị C)
+- **Pet**: Chó Poodle tên "Bông" (thuCungId=5, giá 5.000.000₫)
+
+### 6.1 Luồng chính: Bán thú cưng + Tạo bảo hành + Tạo hợp đồng
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│            QUY TRÌNH BÁN THÚ CƯNG CÓ BẢO HÀNH & HỢP ĐỒNG               │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                        │
+│ Bước 1: Staff mở PetListFragment, tìm "Poodle", filter available       │
+│ Bước 2: Staff chọn "Bông" → Xem HồSơSứcKhỏe (OK)                     │
+│ Bước 3: Staff nhập giá 5.000.000₫, giảm 5% = 4.750.000₫              │
+│                                                                        │
+│ ┌─ OrderActivity ──────────────────────────────────────────────────┐   │
+│ │  Mã ĐH: DH-2026-00042                                            │   │
+│ │  Khách: Trần Thị C (KH-001)                                       │   │
+│ │  Sản phẩm: Chó Poodle "Bông" (Pet)           5.000.000₫          │   │
+│ │  Giảm: Khuyến mãi khai trương (5%)           -250.000₫            │   │
+│ │  Tổng:                                       4.750.000₫          │   │
+│ │                                                                   │   │
+│ │  [Tạo hợp đồng]  [Tạo bảo hành]  [Thanh toán]                    │   │
+│ └──────────────────────────────────────────────────────────────────┘   │
+│                                                                        │
+│ Bước 5: Staff bấm [Tạo hợp đồng]                                       │
+│ ┌─ ContractDialog ─────────────────────────────────────────────────┐   │
+│ │  Mã hợp đồng: HD-PET-2026-00001                                   │   │
+│ │  Bên mua: Trần Thị C (SĐT: 0901234567)                            │   │
+│ │  Bên bán: PetStore Shop (NV: Nguyễn Văn B)                        │   │
+│ │  Thú cưng: Chó Poodle "Bông"                                      │   │
+│ │  Giá bán: 4.750.000₫                                              │   │
+│ │  Điều khoản:                                                      │   │
+│ │  ┌──────────────────────────────────────────────────────────┐    │   │
+│ │  │1. Bên B cam kết thú cưng khỏe mạnh, đã tiêm phòng đầy đủ │    │   │
+│ │  │2. Bảo hành sức khỏe 30 ngày kể từ ngày nhận thú          │    │   │
+│ │  │3. Được đổi trả trong 7 ngày nếu phát hiện bệnh lý có sẵn │    │   │
+│ │  │4. Bên A có trách nhiệm chăm sóc, tiêm phòng định kỳ      │    │   │
+│ │  └──────────────────────────────────────────────────────────┘    │   │
+│ │                                                                   │   │
+│ │  [Xác nhận]  [Hủy]                                              │   │
+│ └──────────────────────────────────────────────────────────────────┘   │
+│ → Hệ thống: HopDongMuaBan.insert(), ActivityLog.insert('KY_HOP_DONG')│
+│                                                                        │
+│ Bước 6: Staff bấm [Tạo bảo hành]                                       │
+│ ┌─ WarrantyDialog ─────────────────────────────────────────────────┐   │
+│ │  Thú cưng: Chó Poodle "Bông"                                      │   │
+│ │  Ngày mua: 28/06/2026                                             │   │
+│ │  Ngày hết hạn: 28/07/2026 (30 ngày)                               │   │
+│ │  Thời hạn: 30 ngày                                                │   │
+│ │                                                                   │   │
+│ │  [Xác nhận]  [Tùy chỉnh...]  [Hủy]                              │   │
+│ └──────────────────────────────────────────────────────────────────┘   │
+│ → Hệ thống: BaoHanhThuCung.insert(), ActivityLog.insert('BAO_HANH')   │
+│                                                                        │
+│ Bước 7: Staff bấm [Thanh toán] → PaymentDialog                        │
+│ Bước 8: Cập nhật ThuCung.status='sold', khachHangId=1, chuongId=NULL │
+│ Bước 9: In hợp đồng (PDF) + In hóa đơn → Giao thú + giấy tờ cho khách│
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### 6.2 Luồng phụ: Khiếu nại bảo hành
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│                      KHIẾU NẠI BẢO HÀNH                                 │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                        │
+│ Ngày 15/07/2026 — Khách Trần Thị C mang "Bông" đến khiếu nại          │
+│ (còn trong thời gian bảo hành: hết hạn 28/07/2026)                    │
+│                                                                        │
+│ Bước 1: Staff mở WarrantyActivity, tìm SĐT khách → thấy bảo hành      │
+│ ┌─ WarrantyDetail ──────────────────────────────────────────────────┐  │
+│ │  Mã BH: BH-2026-00001   Trạng thái: ACTIVE                        │  │
+│ │  Thú: Chó Poodle "Bông"  Khách: Trần Thị C                       │  │
+│ │  Ngày mua: 28/06/2026   Hết hạn: 28/07/2026 (còn 13 ngày)        │  │
+│ │                                                                   │  │
+│ │  Triệu chứng: Thú bị viêm da, rụng lông                          │  │
+│ │                                                                   │  │
+│ │  [Tiếp nhận khiếu nại]  [Từ chối]                                │  │
+│ └──────────────────────────────────────────────────────────────────┘  │
+│                                                                        │
+│ Bước 2: Staff bấm [Tiếp nhận khiếu nại]                                │
+│ → BaoHanhThuCung.trangThai='claimed', ghiChu='Viêm da, rụng lông'    │
+│ → ActivityLog.insert('BAO_HANH', 'Xử lý khiếu nại bảo hành')         │
+│                                                                        │
+│ Bước 3: Staff lập HồSơSứcKhỏe (HoSoSucKhoe.insert)                   │
+│ ┌─ HealthRecordForm ───────────────────────────────────────────────┐  │
+│ │  Thú cưng: Chó Poodle "Bông"                                     │  │
+│ │  Ngày khám: 15/07/2026                                           │  │
+│ │  Loại: Khám bảo hành                                             │  │
+│ │  Chẩn đoán: Viêm da do dị ứng thức ăn                            │  │
+│ │  Điều trị: Thuốc bôi + đổi thức ăn                               │  │
+│ │  Tái khám: 22/07/2026                                            │  │
+│ │                                                                  │  │
+│ │  [Lưu]  [Hủy]                                                   │  │
+│ └──────────────────────────────────────────────────────────────────┘  │
+│                                                                        │
+│ Bước 4: Trả kết quả cho khách (khám + thuốc miễn phí trong BH)        │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### ActivityLog ghi nhận (bổ sung cho Rule 2):
+
+| Action | Mô tả | Ghi trong |
+|--------|-------|-----------|
+| `KY_HOP_DONG` | Ký hợp đồng mua bán thú cưng | WarrantyActivity / ContractActivity |
+| `BAO_HANH` | Tạo bảo hành mới | WarrantyActivity |
+| `BAO_HANH` | Xử lý khiếu nại bảo hành | WarrantyActivity (chiTiet ghi rõ) |
+
+---
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
@@ -688,7 +801,7 @@ CUSTOMER                          HỆ THỐNG
 │        └──────────────┼───────────────┘                            │
 │                       ▼                                             │
 │           ┌──────────────────────┐                                 │
-│           │  DATABASE (23 bảng)  │                                 │
+│           │  DATABASE (26 bảng)  │                                 │
 │           │  Room / SQLite        │                                 │
 │           └──────────────────────┘                                 │
 └────────────────────────────────────────────────────────────────────┘

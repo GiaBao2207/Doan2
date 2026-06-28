@@ -8,7 +8,7 @@
 
 ## Việc cần làm ngay (Priority — thứ tự ưu tiên)
 
-> ✅ **Thiết kế đã hoàn tất: 7/7 tài liệu, 24 bảng SQL, 8 luồng, 5 quy trình, 34 form.**
+> ✅ **Thiết kế đã hoàn tất: 7/7 tài liệu, 26 bảng SQL, 9 luồng, 5 quy trình, 36 form.**
 > Bắt đầu code theo thứ tự dưới đây:
 
 ### Bước 1: Tạo project Android + Gradle
@@ -16,9 +16,9 @@
 - Cài dependencies: Room, LiveData, RecyclerView, Material
 - Tạo package structure (model, data, ui, viewmodel)
 
-### Bước 2: Entity + DAO + Database (24 bảng)
-- Viết 24 Entity class Java (`@Entity(tableName = "...")`)
-- Viết 24 DAO interface (`@Dao` + `@Insert`/`@Update`/`@Delete`/`@Query`)
+### Bước 2: Entity + DAO + Database (26 bảng)
+- Viết 26 Entity class Java (`@Entity(tableName = "...")`)
+- Viết 26 DAO interface (`@Dao` + `@Insert`/`@Update`/`@Delete`/`@Query`)
 - Viết AppDatabase (`@Database(entities = {...}, version = 1)`)
 - Kiểm tra biên dịch không lỗi
 
@@ -27,11 +27,12 @@
 - PreferenceManager (session login)
 - PasswordUtils (SHA-256 + Salt)
 
-### Bước 4: Staff App (21 màn hình) — theo thứ tự
+### Bước 4: Staff App (23 màn hình) — theo thứ tự
 1. Login → 2. Dashboard → 3. PetCategory/ProductCategory/Service/Supplier (CRUD)
 4. Pet → 5. Customer → 6. Product → 7. Cage → 8. Order → 9. Appointment
 10. Inventory → 11. Promotion → 12. Statistic → 13. Payment
 14. CancelOrder → 15. InventoryAdjustment → 16. AssignStaff → 17. ActivityLog
+18. Warranty → 19. Contract
 
 ### Bước 5: Customer App (13 màn hình)
 - Login → ForgotPassword → Home → Booking → CancelBooking
@@ -57,12 +58,12 @@
 
 ### 1.2 Database Room
 
-- [x] Liệt kê đủ 24 bảng (20 gốc + 4 bổ sung: ThanhToán, NhậtKýHoạtĐộng, NhânViênPhụcVụ, Chuồng)
-- [x] Tạo SQL CREATE TABLE cho 24 bảng (trong DATABASE.md)
-- [x] Thêm 10 index cho các cột truy vấn thường xuyên
+- [x] Liệt kê đủ 26 bảng (20 gốc + 4 bổ sung đợt 1: ThanhToán, NhậtKýHoạtĐộng, NhânViênPhụcVụ, Chuồng + 2 bổ sung đợt 2: BảoHànhThúCưng, HợpĐồngMuaBán)
+- [x] Tạo SQL CREATE TABLE cho 26 bảng (trong DATABASE.md)
+- [x] Thêm 12 index cho các cột truy vấn thường xuyên
 - [x] Thêm state machine cho DonHang (6 trạng thái) + LichHen (5 trạng thái)
 - [x] ThanhToán CHECK (soTien != 0) hỗ trợ số âm hoàn tiền
-- [x] ActivityLog: 16 hành động đầy đủ
+- [x] ActivityLog: 18 hành động đầy đủ (thêm BAO_HANH, KY_HOP_DONG)
 - [!] **Định nghĩa các Entity class (Java)** — cần code
 - [!] **Định nghĩa các DAO interface (Java)** — cần code
 - [!] **Định nghĩa AppDatabase (RoomDatabase)** — cần code
@@ -331,13 +332,13 @@
 | Khu vực | SL | Đã làm | Còn lại |
 |---------|----|--------|---------|
 | Tài liệu thiết kế (.md) | 7 | **7** | **0** ✅ |
-| SQL CREATE TABLE | 24 | **24** | **0** ✅ |
-| Entity class (Java) | 24 | 0 | **24** |
-| DAO interface | 24 | 0 | **24** |
+| SQL CREATE TABLE | 26 | **26** | **0** ✅ |
+| Entity class (Java) | 26 | 0 | **26** |
+| DAO interface | 26 | 0 | **26** |
 | Database class | 1 | 0 | **1** |
-| Repository | 19 | 0 | **19** |
-| ViewModel | 21 | 0 | **21** |
-| Staff UI screens | 21 | 0 | **21** |
+| Repository | 21 | 0 | **21** |
+| ViewModel | 23 | 0 | **23** |
+| Staff UI screens | 23 | 0 | **23** |
 | Customer UI screens | 13 | 0 | **13** |
 
-> **Tổng tiến độ:** Thiết kế 7/7 ✅ | SQL 24/24 ✅ | Code nguồn: chưa bắt đầu ❌ | **Việc tiếp theo: Code Entity → DAO → Database → Repository → ViewModel → UI**
+> **Tổng tiến độ:** Thiết kế 7/7 ✅ | SQL 26/26 ✅ | Code nguồn: chưa bắt đầu ❌ | **Việc tiếp theo: Code Entity → DAO → Database → Repository → ViewModel → UI**

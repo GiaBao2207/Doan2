@@ -102,6 +102,8 @@ Room Database (SQLite)
 - Thú cưng mua bán (thuộc cửa hàng, status = 'available')
 - Thú cưng của khách (thuộc khách hàng, dùng cho lịch hẹn)
 - **Quản lý chuồng**: theo dõi thú đang ở chuồng nào, tình trạng chuồng (trống/bận/vệ sinh)
+- **Bảo hành thú cưng**: tự động tạo bảo hành 7-30 ngày khi bán thú, xử lý khiếu nại
+- **Hợp đồng mua bán**: tạo hợp đồng pháp lý khi giao dịch, lưu điều khoản, in PDF
 - Hồ sơ sức khỏe: lịch tiêm, tái khám, điều trị
 - Theo dõi thú cưng yêu thích
 
@@ -139,7 +141,7 @@ com.petstore.app/
 │   ├── repository/           # 19 Repository
 │   └── preference/           # SharedPreferences (session login)
 ├── ui/                       # Giao diện
-│   ├── staff/                # === STAFF APP (21 màn hình) ===
+│   ├── staff/                # === STAFF APP (23 màn hình) ===
 │   │   ├── login/            # Đăng nhập
 │   │   ├── dashboard/        # Tổng quan
 │   │   ├── pet/              # Quản lý thú cưng
@@ -154,6 +156,8 @@ com.petstore.app/
 │   │   ├── service/          # Dịch vụ
 │   │   ├── supplier/         # Nhà cung cấp
 │   │   ├── statistic/        # Báo cáo thống kê
+│   │   ├── warranty/         # Bảo hành thú cưng
+│   │   ├── contract/         # Hợp đồng mua bán
 │   │   ├── activitylog/      # Nhật ký hoạt động
 │   │   └── admin/            # Quản lý nhân viên
 │   └── customer/             # === CUSTOMER APP (13 màn hình) ===
@@ -167,19 +171,19 @@ com.petstore.app/
 │       ├── pet/              # Thú cưng của tôi
 │       ├── profile/          # Hồ sơ cá nhân
 │       └── notification/     # Thông báo
-└── viewmodel/                # 21 ViewModel
+└── viewmodel/                # 23 ViewModel
 ```
 
 ---
 
-## Cơ Sở Dữ Liệu (24 bảng)
+## Cơ Sở Dữ Liệu (26 bảng)
 
 | # | Entity | Table SQL | Ghi chú |
 |---|--------|-----------|---------|
 | 1 | `User` | NguoiDung | Admin + Nhân viên |
 | 2 | `PetCategory` | LoaiThuCung | Chó, mèo, hamster... |
 | 3 | `Pet` | ThuCung | Thú cưng (bán + của khách) |
-| 4 | `Cage` | **Chuong** | **Quản lý chuồng nhốt** |
+| 4 | `Cage` | Chuong | **Quản lý chuồng nhốt** |
 | 5 | `Customer` | KhachHang | Có đăng nhập riêng |
 | 6 | `ProductCategory` | LoaiSanPham | Danh mục sản phẩm |
 | 7 | `Product` | SanPham | Thức ăn, phụ kiện, thuốc |
@@ -200,6 +204,8 @@ com.petstore.app/
 | 22 | `Payment` | ThanhToan | **Master-Detail** với Order |
 | 23 | `ActivityLog` | NhatKyHoatDong | Audit log (append-only) |
 | 24 | `AppointmentStaff` | NhanVienPhucVu | **Master-Detail** với LichHen |
+| 25 | `PetWarranty` | BaoHanhThuCung | **Bảo hành sức khỏe thú cưng sau khi mua** |
+| 26 | `PurchaseContract` | HopDongMuaBan | **Hợp đồng mua bán thú cưng (giấy tờ pháp lý)** |
 
 > SQL CREATE TABLE đầy đủ (PK, FK, CHECK, DEFAULT, INDEX) xem tại [`DATABASE.md`](DATABASE.md)
 
@@ -233,14 +239,16 @@ com.petstore.app/
 
 | Thành phần | Số lượng |
 |-----------|---------|
-| Entity class | 24 |
-| DAO interface | 24 |
-| Repository | 19 |
-| ViewModel | 21 |
-| Staff UI screens | 21 |
+| Entity class | 26 |
+| DAO interface | 26 |
+| Repository | 21 |
+| ViewModel | 23 |
+| Staff UI screens | 23 |
 | Customer UI screens | 13 |
-| **Tổng form** | **34** |
+| **Tổng form** | **36** |
 | Quy trình (QT) | 5 |
 | Master-Detail | 4 |
 | Report / Thống kê | 2 |
-| ActivityLog actions | 16 |
+| Bảo hành thú cưng | ✅ |
+| Hợp đồng mua bán | ✅ |
+| ActivityLog actions | 18 |
