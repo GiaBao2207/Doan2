@@ -318,6 +318,15 @@ CREATE TABLE DonHang (
     deliveryStatus  TEXT
 );
 
+-- State machine: DonHang.status
+--   [draft] ──(xác nhận)──► [pending] ──(thanh toán)──► [paid]
+--                                                          │
+--                     ┌────────────────────────────────────┤
+--                     ▼                                    ▼
+--               [shipping] ──(giao xong)──► [completed]   [refunded] ◄──(hoàn tiền)
+--                     │                                      ▲
+--                     └──(hủy)──► [cancelled] ──(hoàn tiền)──┘
+
 -- 9. ChiTiếtĐơnHàng (OrderDetail)
 CREATE TABLE ChiTietDonHang (
     chiTietDonHangId INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -361,6 +370,11 @@ CREATE TABLE LichHen (
     notes        TEXT,
     createdAt    TEXT    DEFAULT (datetime('now','localtime'))
 );
+
+-- State machine: LichHen.status
+--   [pending] ──(xác nhận)──► [confirmed] ──(check-in)──► [checked_in] ──(hoàn tất)──► [done]
+--       │                                                      │
+--       └──(hủy)──► [cancelled]   ◄────────────────────────────┘
 
 -- 13. NhânViênPhụcVụ (AppointmentStaff)
 CREATE TABLE NhanVienPhucVu (
@@ -484,10 +498,11 @@ CREATE TABLE ThuCung (
 
 ```sql
 -- 22. ThanhToán (Payment)
+-- soTien > 0: ghi nhận thanh toán; soTien < 0: ghi nhận hoàn tiền (refund)
 CREATE TABLE ThanhToan (
     thanhToanId   INTEGER PRIMARY KEY AUTOINCREMENT,
     donHangId     INTEGER NOT NULL REFERENCES DonHang(donHangId),
-    soTien        REAL    NOT NULL CHECK (soTien > 0),
+    soTien        REAL    NOT NULL CHECK (soTien != 0),
     phuongThuc    TEXT    NOT NULL
                           CHECK (phuongThuc IN ('tien_mat','chuyen_khoan','momo','vnpay','the_tin_dung')),
     maGiaoDich    TEXT,
@@ -511,6 +526,11 @@ CREATE TABLE NhatKyHoatDong (
     thietBi      TEXT,
     thoiGian     TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
 );
+
+-- Danh sách hành động (hanhDong) đầy đủ:
+--   DANG_NHAP, DANG_XUAT, TAO_DON, HUY_DON, HOAN_TIEN, THANH_TOAN,
+--   NHAP_KHO, DIEU_CHINH_TON, TAO_LICH, HUY_LICH, GAN_NV,
+--   THEM_SAN_PHAM, SUA_GIA, XOA_DU_LIEU, DANH_GIA, DOI_MAT_KHAU
 ```
 
 ---

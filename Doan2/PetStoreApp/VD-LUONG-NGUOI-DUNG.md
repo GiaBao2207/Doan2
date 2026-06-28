@@ -24,6 +24,7 @@
 │  (2) Hệ thống xác thực:                                             │
 │      ├─ UserDao.login("admin", "admin123")                          │
 │      ├─ Kiểm tra role == "Admin" → true                             │
+│      ├─ ActivityLogDao.insert('DANG_NHAP', 'Admin', adminId)        │
 │      └─ Chuyển đến DashboardActivity (Admin view)                   │
 │                                                                      │
 │  (3) Dashboard Admin hiển thị:                                      │
@@ -115,6 +116,8 @@
 │      │  Password: [●●●●●●●●         ]  │                            │
 │      │  [        ĐĂNG NHẬP         ]    │                            │
 │      └─────────────────────────────────┘                            │
+│      → UserDao.login(username, pass)                                │
+│      → ActivityLogDao.insert('DANG_NHAP', 'Staff', userId)         │
 │                                                                      │
 │  (2) Dashboard Staff:                                               │
 │      ┌─────────────────────────────────────┐                        │
@@ -304,6 +307,7 @@
 │  (4) Nhập SĐT + MK → Bấm [ĐĂNG NHẬP]                               │
 │      → CustomerLoginViewModel.login(phone, pass)                    │
 │      → CustomerDao.login(phone, pass)                               │
+│      → ActivityLogDao.insert('DANG_NHAP', 'Customer', customerId)  │
 │      → ✅ Chuyển đến CustomerHomeActivity                           │
 │                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
@@ -377,7 +381,13 @@
 │      │  [  ✅ XÁC NHẬN ĐẶT LỊCH  ]       │                        │
 │      └─────────────────────────────────────┘                        │
 │                                                                      │
-│  (4) Bấm [XÁC NHẬN] → AppointmentDao.insert()                      │
+│  (4) Hệ thống kiểm tra xung đột:                                    │
+│      ├── AppointmentDao.checkConflict(thuCungId, date, timeSlot)    │
+│      ├── Nếu trùng → "Thú cưng đã có lịch khung giờ này!"          │
+│      └── Nếu không trùng → tiếp tục ↓                               │
+│                                                                      │
+│  (5) Bấm [XÁC NHẬN] → AppointmentDao.insert()                      │
+│      → ActivityLogDao.insert('TAO_LICH', ...)                       │
 │      → ✅ "Đặt lịch thành công!"                                    │
 │      → Trở về trang chủ, thấy lịch mới trong "Lịch hẹn sắp tới"   │
 │      → Nhận thông báo nhắc lịch trước 1 ngày                        │
@@ -543,6 +553,105 @@
 
 ---
 
+## 4. RULE: CROSS-CUTTING — Quên mật khẩu (Forgot Password)
+
+### Luồng: Khách hàng quên mật khẩu
+
+```
+CUSTOMER                          HỆ THỐNG
+     │                                   │
+     │ (1) Bấm [Quên mật khẩu]           │
+     │──────────────────────────────────►│
+     │◄──────────────────────────────────│
+     │  Màn hình nhập SĐT:               │
+     │  ┌──────────────────────────┐     │
+     │  │ Số điện thoại:           │     │
+     │  │ [0912345678       ]     │     │
+     │  │                         │     │
+     │  │ [  GỬI MÃ XÁC THỰC  ]  │     │
+     │  └──────────────────────────┘     │
+     │                                   │
+     │ (2) Nhập SĐT → Bấm [Gửi]         │
+     │──────────────────────────────────►│── CustomerDao.findByPhone(phone)
+     │                                  │   Nếu không tìm thấy → "SĐT chưa đăng ký"
+     │◄──────────────────────────────────│
+     │  ✅ Mã OTP đã gửi đến SĐT của bạn│
+     │                                   │
+     │ (3) Nhập mã OTP:                  │
+     │  ┌──────────────────────────┐     │
+     │  │ Mã xác thực:             │     │
+     │  │ [ _ _ _ _ _ _ ]          │     │
+     │  │                         │     │
+     │  │ [  XÁC NHẬN  ]          │     │
+     │  └──────────────────────────┘     │
+     │                                   │
+     │ (4) Nhập mật khẩu mới:            │
+     │  ┌──────────────────────────┐     │
+     │  │ Mật khẩu mới:            │     │
+     │  │ [●●●●●●●●       ]      │     │
+     │  │ Nhập lại:                │     │
+     │  │ [●●●●●●●●       ]      │     │
+     │  │                         │     │
+     │  │ [  ĐẶT LẠI MẬT KHẨU  ]│     │
+     │  └──────────────────────────┘     │
+     │                                   │
+     │ (5) Bấm [Đặt lại]                 │
+     │──────────────────────────────────►│── CustomerDao.updatePassword(phone, newPass)
+     │                                   ├── PasswordUtils.hash(newPass)  // SHA-256 + Salt
+     │                                   ├── ActivityLogDao.insert('DOI_MAT_KHAU', ...)
+     │◄──────────────────────────────────│
+     │  ✅ Đặt lại mật khẩu thành công!  │
+     │  Mời bạn đăng nhập lại            │
+```
+
+---
+
+## 5. RULE: CUSTOMER — Hủy lịch hẹn (Cancel Appointment)
+
+```
+CUSTOMER                          HỆ THỐNG
+     │                                   │
+     │ (1) Vào "Lịch sử" → Tab Lịch hẹn│
+     │──────────────────────────────────►│── AppointmentDao.getByCustomer()
+     │◄──────────────────────────────────│
+     │                                   │
+     │ (2) Chọn lịch hẹn sắp tới         │
+     │  ┌──────────────────────────┐     │
+     │  │ 📅 28/05 14:00 - Tắm    │     │ (sắp tới)
+     │  │   Cún Miu               │     │
+     │  │   [Hủy lịch] [Dời lịch]│     │
+     │  └──────────────────────────┘     │
+     │                                   │
+     │ (3) Bấm [Hủy lịch]                │
+     │──────────────────────────────────►│
+     │  Màn hình xác nhận:              │
+     │  ┌──────────────────────────┐     │
+     │  │ Xác nhận hủy lịch hẹn?  │     │
+     │  │ Dịch vụ: Tắm cho Cún Miu│     │
+     │  │ Thời gian: 28/05 14:00  │     │
+     │  │                         │     │
+     │  │ ○ Hủy trước 2h → Miễn   │     │
+     │  │ ○ Hủy sau 2h → Mất phí  │     │
+     │  │                         │     │
+     │  │ Lý do hủy:              │     │
+     │  │ [Bận đột xuất     ]    │     │
+     │  │                         │     │
+     │  │ [  XÁC NHẬN HỦY  ]     │     │
+     │  └──────────────────────────┘     │
+     │                                   │
+     │ (4) Bấm [Xác nhận hủy]            │
+     │──────────────────────────────────►│
+     │                                   ├── AppointmentDao.updateStatus(id, 'cancelled')
+     │                                   ├── Nếu đã gán nhân viên:
+     │                                   │   └── AppointmentStaffDao.updateStatus(id, 'huy')
+     │                                   ├── ActivityLogDao.insert('HUY_LICH', ...)
+     │◄──────────────────────────────────│
+     │  ✅ Đã hủy lịch hẹn               │
+     │  Lịch hẹn đã chuyển sang "Đã hủy"│
+```
+
+---
+
 ## Tổng hợp luồng theo Rule
 
 ```
@@ -579,7 +688,7 @@
 │        └──────────────┼───────────────┘                            │
 │                       ▼                                             │
 │           ┌──────────────────────┐                                 │
-│           │  DATABASE (20 bảng)  │                                 │
+│           │  DATABASE (23 bảng)  │                                 │
 │           │  Room / SQLite        │                                 │
 │           └──────────────────────┘                                 │
 └────────────────────────────────────────────────────────────────────┘

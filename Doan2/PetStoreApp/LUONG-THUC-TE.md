@@ -454,6 +454,202 @@ Gồm các tab:
 
 ---
 
+## Luồng 6: Hủy đơn hàng & Hoàn tiền (Quy trình xử lý)
+
+> Khi khách hàng muốn hủy đơn hoặc trả hàng, hệ thống thực hiện hoàn tiền và cập nhật tồn kho.
+
+```
+KHÁCH HÀNG           NHÂN VIÊN / ADMIN            HỆ THỐNG
+     │                       │                         │
+     │ (1) Yêu cầu hủy đơn   │                         │
+     │──────────────────────►│                         │
+     │                       │ (2) Mở OrderDetail      │
+     │                       │   Kiểm tra: đã thanh    │
+     │                       │   toán? còn hạn hủy?   │
+     │                       │────────────────────────►│── OrderDao.getById()
+     │                       │◄────────────────────────│── status = 'paid'
+     │                       │                         │
+     │                       │ (3) Chọn lý do hủy:     │
+     │                       │   ○ Khách đổi ý         │
+     │                       │   ○ Hàng lỗi            │
+     │                       │   ○ Giao chậm           │
+     │                       │   ○ Khác...             │
+     │                       │                         │
+     │                       │ (4) Xác nhận hủy        │
+     │                       │────────────────────────►│
+     │                       │                         ├── OrderDao.updateStatus(id, 'cancelled')
+     │                       │                         ├── for each product in order:
+     │                       │                         │   └── ProductDao.updateQuantity(prodId, +qty)  // trả tồn
+     │                       │                         │
+     │                       │ (5) Nếu đã thanh toán → │
+     │                       │   Hoàn tiền:            │
+     │                       │────────────────────────►│
+     │                       │                         ├── PaymentDao.insert({
+     │                       │                         │     donHangId, soTien: -totalAmount,
+     │                       │                         │     phuongThuc, trangThai: 'hoan_tien',
+     │                       │                         │     ghiChu: 'Hoàn tiền hủy đơn #ORD125'})
+     │                       │                         │
+     │                       │                         ├── OrderDao.updateStatus(id, 'refunded')
+     │                       │                         │
+     │                       │                         ├── ActivityLogDao.insert('HUY_DON', ...)
+     │                       │                         ├── ActivityLogDao.insert('HOAN_TIEN', ...)
+     │                       │                         │
+     │                       │◄────────────────────────│
+     │                       │  ✅ Đã hủy đơn #ORD125  │
+     │◄──────────────────────│  💰 Đã hoàn 801,000đ    │
+     │                       │                         │
+```
+
+### Màn hình xác nhận hủy đơn (CancelOrderDialog)
+
+```
+┌─ Xác nhận hủy đơn #ORD125 ─────────────────┐
+│                                              │
+│  Khách: Nguyễn Văn A                        │
+│  Tổng tiền: 801,000đ                        │
+│  Đã thanh toán: ✅ (Tiền mặt)               │
+│                                              │
+│  Lý do hủy:                                 │
+│  ○ Khách đổi ý                              │
+│  ○ Hàng lỗi / không đúng mô tả              │
+│  ○ Giao hàng chậm                           │
+│  ○ Khác: [________________]                 │
+│                                              │
+│  ☑ Hoàn tiền lại cho khách (801,000đ)       │
+│  ☑ Trả lại tồn kho                          │
+│                                              │
+│  [     HỦY ĐƠN     ]  [Không hủy]          │
+└──────────────────────────────────────────────┘
+```
+
+### Cập nhật: Luồng 2b — Lịch hẹn (xử lý xung đột)
+
+Khi Staff hoặc Customer tạo lịch hẹn, ViewModel kiểm tra trùng trước khi lưu:
+
+```
+AppointmentViewModel.createAppointment(data)
+  │
+  ├── appointmentDao.checkConflict(thuCungId, date, timeSlot)
+  │   ├── Nếu trùng → trả về lỗi: "Thú cưng đã có lịch hẹn khung giờ này"
+  │   └── Nếu không trùng → tiếp tục
+  │
+  ├── [Kiểm tra nhân viên] nếu có chọn trước
+  │   ├── appointmentStaffDao.checkStaffBusy(nhanVienId, date, timeSlot)
+  │   │   ├── Nếu bận → gợi ý nhân viên khác
+  │   │   └── Nếu rảnh → tiếp tục
+  │
+  ├── appointmentDao.insert(appointment)   // lưu lịch hẹn
+  ├── activityLogDao.insert('TAO_LICH', ...)
+  └── return appointmentId
+```
+
+---
+
+## Luồng 7: Gán nhân viên phục vụ (Staff Assignment)
+
+> Sau khi lịch hẹn được tạo, quản lý hoặc nhân viên trưởng ca gán người phụ trách.
+
+```
+QUẢN LÝ / TRƯỞNG CA                HỆ THỐNG
+     │                                   │
+     │ (1) Mở chi tiết lịch hẹn          │
+     │──────────────────────────────────►│── AppointmentDao.getById()
+     │◄──────────────────────────────────│
+     │                                   │
+     │ (2) Bấm [Gán nhân viên]           │
+     │──────────────────────────────────►│── NguoiDungDao.getByRole('Staff')
+     │◄──────────────────────────────────│── Danh sách nhân viên rảnh
+     │                                   │
+     │ (3) Chọn nhân viên + vai trò:     │
+     │   ○ Nguyễn Văn A — [Tắm ▼]       │
+     │   ○ Trần Thị B — [Cắt tỉa ▼]     │
+     │   ○ Lê Văn C — [Phụ tá ▼]        │
+     │──────────────────────────────────►│
+     │                                   ├── NhanVienPhucVuDao.checkStaffBusy()
+     │                                   │   (kiểm tra trùng giờ)
+     │                                   ├── Nếu rảnh → insert NhanVienPhucVu
+     │                                   ├── Nếu bận → báo "NV đã có lịch"
+     │                                   ├── ActivityLogDao.insert('GAN_NV', ...)
+     │◄──────────────────────────────────│
+     │  ✅ Đã gán 3 nhân viên             │
+     │                                   │
+```
+
+### Gán tự động (Auto-assign)
+
+Nếu không gán thủ công, hệ thống có thể gán tự động dựa trên:
+- Nhân viên có kỹ năng phù hợp (vai trò)
+- Nhân viên ít lịch nhất trong ca
+- Nhân viên có rating cao nhất
+
+---
+
+## Luồng 8: Điều chỉnh tồn kho (Inventory Adjustment)
+
+> Xử lý hàng hỏng, hết hạn, thất lạc hoặc trả lại nhà cung cấp mà không qua bán hàng.
+
+```
+NHÂN VIÊN KHO / ADMIN               HỆ THỐNG
+     │                                    │
+     │ (1) Mở form Điều chỉnh tồn         │
+     │───────────────────────────────────►│── ProductDao.getAll()
+     │◄───────────────────────────────────│
+     │                                    │
+     │ (2) Chọn sản phẩm + loại ĐC:       │
+     │   Sản phẩm: [Hạt Royal Canin ▼]    │
+     │   Tồn hiện tại: 20                  │
+     │   Loại điều chỉnh:                 │
+     │   ○ Hàng hỏng / hết hạn            │
+     │   ○ Trả NCC                        │
+     │   ○ Kiểm kê chênh lệch             │
+     │   ○ Hàng khuyến mãi / cho tặng     │
+     │   Số lượng: [5]                    │
+     │   Ghi chú: [Hết hạn T06/2026]     │
+     │                                    │
+     │ (3) Xác nhận                        │
+     │───────────────────────────────────►│
+     │                                    ├── ProductDao.updateQuantity(prodId, newQty)
+     │                                    ├── ActivityLogDao.insert('DIEU_CHINH_TON',
+     │                                    │     productId, type, qty, note)
+     │                                    │
+     │◄───────────────────────────────────│
+     │  ✅ Đã điều chỉnh: -5               │
+     │  Tồn mới: 15                       │
+     │                                    │
+```
+
+### Các loại điều chỉnh
+
+| Loại | Số lượng | Ghi chú |
+|------|---------|---------|
+| Hàng hỏng / hết hạn | Giảm | Ghi rõ lý do + ngày hết hạn |
+| Trả NCC | Giảm | Kèm mã phiếu trả (có thể bổ sung sau) |
+| Kiểm kê | Tăng/Giảm | Chênh lệch thực tế so với hệ thống |
+| Cho tặng / KM | Giảm | Phục vụ marketing |
+
+### Cập nhật: Bổ sung ActivityLog cho các luồng còn thiếu
+
+| Hành động (hanhDong) | Khi nào ghi | Ghi bởi |
+|---|---|---|
+| `DANG_NHAP` | User/Staff đăng nhập thành công | LoginViewModel |
+| `DANG_XUAT` | User/Staff đăng xuất | LoginViewModel |
+| `TAO_DON` | Tạo đơn hàng mới | OrderViewModel |
+| `HUY_DON` | Hủy đơn hàng | OrderViewModel |
+| `HOAN_TIEN` | Hoàn tiền cho đơn hủy | OrderViewModel |
+| `THANH_TOAN` | Ghi nhận thanh toán | PaymentViewModel |
+| `NHAP_KHO` | Nhập kho mới | InventoryViewModel |
+| `DIEU_CHINH_TON` | Điều chỉnh tồn kho (hỏng, trả, KM) | InventoryViewModel |
+| `TAO_LICH` | Tạo lịch hẹn mới | AppointmentViewModel |
+| `HUY_LICH` | Hủy lịch hẹn | AppointmentViewModel |
+| `GAN_NV` | Gán nhân viên phục vụ | AppointmentStaffViewModel |
+| `THEM_SAN_PHAM` | Thêm sản phẩm mới | ProductViewModel |
+| `SUA_GIA` | Thay đổi giá sản phẩm | ProductViewModel |
+| `XOA_DU_LIEU` | Xóa bất kỳ bản ghi nào (Admin) | AdminViewModel |
+| `DANH_GIA` | Khách hàng đánh giá dịch vụ | ReviewViewModel |
+| `DOI_MAT_KHAU` | Đổi mật khẩu | ProfileViewModel |
+
+---
+
 ## Kiến trúc App: Staff & Customer chung DB
 
 ```

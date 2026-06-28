@@ -10,7 +10,7 @@
 | # | Tính năng | Mô tả ngắn | Liên quan |
 |---|---|---|---|
 | 1 | **Đăng ký tài khoản** | Đăng ký bằng SĐT, nhận mã OTP xác thực | Customer |
-| 2 | **Quên mật khẩu** | Gửi mã OTP qua SMS/email để đặt lại pass | Customer |
+| 2 | **Quên mật khẩu** | Gửi mã OTP qua SMS/email để đặt lại pass | Customer — đã có flow chi tiết tại VD-LUONG-NGUOI-DUNG.md |
 | 3 | **Quản lý nhiều thú cưng** | Thêm/sửa/xóa thú cưng của mình (tên, giống, tuổi, ảnh) | Pet |
 | 4 | **Xem chi tiết dịch vụ** | Mô tả, giá, thời gian thực hiện, hình ảnh minh họa | Service |
 | 5 | **Xem chi tiết đơn hàng** | Danh sách sản phẩm, thành tiền, trạng thái, ngày mua | OrderDetail |

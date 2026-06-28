@@ -99,8 +99,8 @@
 |---|---|---|
 | 1 | `LoginViewModel.java` | Xác thực đăng nhập **Staff/Admin** |
 | 2 | **`CustomerLoginViewModel.java`** | **Xác thực đăng nhập + đăng ký Khách hàng** |
-| 2 | `DashboardViewModel.java` | Thống kê tổng quan (doanh thu, số lượng, lịch hẹn hôm nay) |
-| 3 | `PetViewModel.java` | Tìm kiếm, lọc, CRUD thú cưng |
+| 3 | `DashboardViewModel.java` | Thống kê tổng quan (doanh thu, số lượng, lịch hẹn hôm nay) |
+| 4 | `PetViewModel.java` | Tìm kiếm, lọc, CRUD thú cưng |
 | 4 | `CustomerViewModel.java` | Tìm kiếm, CRUD khách hàng |
 | 5 | `ProductViewModel.java` | CRUD sản phẩm, lọc theo danh mục |
 | 6 | **`OrderViewModel.java`** | **Tạo đơn hàng (QT) + Lịch sử giao dịch** |
@@ -141,33 +141,37 @@
 | 14 | **Thống kê / Báo cáo** | **`StatisticActivity.java`** | **Biểu đồ doanh thu, báo cáo (Report)** |
 | 15 | Quản lý tài khoản | `UserManagementActivity.java` | CRUD người dùng (Admin) |
 | 16 | **Thanh toán** | **`PaymentDialog.java`** | **Tạo giao dịch thanh toán, chọn phương thức, hoàn tiền** |
-| 17 | **Nhật ký hoạt động** | **`ActivityLogActivity.java`** | **Xem log, lọc theo ngày/nhân viên/hành động (Admin)** |
-| 18 | **Gán nhân viên phục vụ** | **`AssignStaffDialog.java`** | **Gán nhân viên cho lịch hẹn, chọn vai trò** |
+| 17 | **Hủy đơn / Hoàn tiền** | **`CancelOrderDialog.java`** | **Hủy đơn, trả tồn kho, ghi nhận hoàn tiền** |
+| 18 | **Nhật ký hoạt động** | **`ActivityLogActivity.java`** | **Xem log, lọc theo ngày/nhân viên/hành động (Admin)** |
+| 19 | **Gán nhân viên phục vụ** | **`AssignStaffDialog.java`** | **Gán nhân viên cho lịch hẹn, chọn vai trò** |
+| 20 | **Điều chỉnh tồn kho** | **`InventoryAdjustmentDialog.java`** | **Điều chỉnh tồn (hỏng, hết hạn, trả NCC, kiểm kê)** |
 | | **=== CUSTOMER APP (App khách hàng) ===** | | |
 | 16 | **Đăng nhập / Đăng ký KH** | **`CustomerLoginActivity.java`** | **Đăng nhập bằng SĐT/mật khẩu, đăng ký tài khoản** |
-| 17 | **Trang chủ khách hàng** | **`CustomerHomeActivity.java`** | **DS dịch vụ, sản phẩm, khuyến mãi, thông báo** |
-| 18 | **Đặt lịch hẹn** | **`BookingActivity.java`** | **Chọn dịch vụ → chọn thú cưng → chọn ngày/giờ → xác nhận** |
-| 19 | **Lịch sử giao dịch** | **`OrderHistoryActivity.java`** | **DS đơn hàng, hóa đơn đã mua, chi tiết** |
-| 20 | **Lịch sử đặt lịch** | **`BookingHistoryActivity.java`** | **DS lịch hẹn (sắp tới, đã hoàn thành, đã hủy)** |
-| 21 | **Thống kê cá nhân** | **`MyStatisticActivity.java`** | **Biểu đồ: chi tiêu theo tháng, dịch vụ đã dùng, số lần mua** |
-| 22 | **Đánh giá dịch vụ** | **`ReviewActivity.java`** | **Đánh giá sao + nhận xét cho dịch vụ đã sử dụng** |
-| 23 | **Giỏ hàng** | **`CartActivity.java`** | **Giỏ hàng online, áp mã giảm giá, thanh toán** |
-| 24 | **Thú cưng của tôi** | **`MyPetActivity.java`** | **DS thú cưng, hồ sơ sức khỏe, lịch tiêm** |
-| 25 | **Hồ sơ cá nhân** | **`ProfileActivity.java`** | **Thông tin tài khoản, đổi mật khẩu, hạng thành viên** |
-| 26 | **Thông báo** | **`NotificationActivity.java`** | **Danh sách thông báo (nhắc lịch, khuyến mãi, …)** |
+| 17 | **Quên mật khẩu** | **`ForgotPasswordActivity.java`** | **Gửi OTP qua SMS, đặt lại mật khẩu** |
+| 18 | **Trang chủ khách hàng** | **`CustomerHomeActivity.java`** | **DS dịch vụ, sản phẩm, khuyến mãi, thông báo** |
+| 19 | **Đặt lịch hẹn** | **`BookingActivity.java`** | **Chọn dịch vụ → chọn thú cưng → chọn ngày/giờ → xác nhận (có kiểm tra trùng)** |
+| 20 | **Hủy lịch hẹn** | **`CancelBookingDialog.java`** | **Hủy lịch (hủy trước 2h miễn phí), chọn lý do** |
+| 21 | **Lịch sử giao dịch** | **`OrderHistoryActivity.java`** | **DS đơn hàng, hóa đơn đã mua, chi tiết** |
+| 22 | **Lịch sử đặt lịch** | **`BookingHistoryActivity.java`** | **DS lịch hẹn (sắp tới, đã hoàn thành, đã hủy)** |
+| 23 | **Thống kê cá nhân** | **`MyStatisticActivity.java`** | **Biểu đồ: chi tiêu theo tháng, dịch vụ đã dùng, số lần mua** |
+| 24 | **Đánh giá dịch vụ** | **`ReviewActivity.java`** | **Đánh giá sao + nhận xét cho dịch vụ đã sử dụng** |
+| 25 | **Giỏ hàng** | **`CartActivity.java`** | **Giỏ hàng online, áp mã giảm giá, thanh toán** |
+| 26 | **Thú cưng của tôi** | **`MyPetActivity.java`** | **DS thú cưng, hồ sơ sức khỏe, lịch tiêm** |
+| 27 | **Hồ sơ cá nhân** | **`ProfileActivity.java`** | **Thông tin tài khoản, đổi mật khẩu, hạng thành viên** |
+| 28 | **Thông báo** | **`NotificationActivity.java`** | **Danh sách thông báo (nhắc lịch, khuyến mãi, …)** |
 
 ---
 
 ## Tổng kết
 
 | Loại | Số lượng | Yêu cầu | Đạt |
-|---|---|---|---|
+|---|---|---|---|---|
 | Chức năng đối tượng (ĐT) | 23 | ≥ 10 | ✅ |
-| Chức năng quy trình (QT) | 4 (Tạo đơn hàng, Nhập kho, **Đặt lịch hẹn, Thanh toán**) | ≥ 2 | ✅ |
+| Chức năng quy trình (QT) | 5 (Tạo đơn hàng, Nhập kho, **Đặt lịch hẹn, Thanh toán, Hủy đơn/Hoàn tiền**) | ≥ 2 | ✅ |
 | Form Master-Detail | 4 (Order, Inventory, **Payment, AppointmentStaff**) | Có | ✅ |
-| Tổng số form | 29 | ≥ 10 | ✅ |
+| Tổng số form | 33 (20 Staff + 13 Customer) | ≥ 10 | ✅ |
 | Report / Thống kê | 2 (Staff Statistic, **Customer Statistic**) | Có | ✅ |
-| Audit log | 1 (ActivityLogActivity) | Cộng điểm | ✅ |
-| Chức năng hỗ trợ | Phân quyền, tìm kiếm, lọc, **đánh giá, tích điểm, thông báo, audit log** | Cộng điểm | ✅ |
+| Audit log | 1 (ActivityLogActivity + 16 hành động tự ghi) | Cộng điểm | ✅ |
+| Chức năng hỗ trợ | Phân quyền, tìm kiếm, lọc, **đánh giá, tích điểm, thông báo, audit log, quên MK, điều chỉnh tồn** | Cộng điểm | ✅ |
 
-> Dựa theo thang điểm mục 2.1 và 2.2 (APP): đủ ≥10 chức năng đối tượng, ≥2 chức năng quy trình, ≥10 form, có form master-detail, có report.
+> Dựa theo thang điểm mục 2.1 và 2.2 (APP): đủ ≥10 chức năng đối tượng (23), ≥2 chức năng quy trình (5), ≥10 form (33), có form master-detail (4), có report (2), có audit log (16 hành động), có quản lý tồn kho (nhập + điều chỉnh), có quên mật khẩu, có hủy đơn/hoàn tiền.

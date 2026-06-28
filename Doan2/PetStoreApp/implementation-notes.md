@@ -58,13 +58,16 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 
 ### 3. Vấn đề về Chức năng Nghiệp vụ
 
-| Vấn đề | Mô tả | Đề xuất |
-|--------|-------|---------|
-| **Quên mật khẩu** | Được đề cập trong gợi ý nhưng chưa có thiết kế chi tiết | Cần có luồng "Quên mật khẩu" với OTP |
-| **Xuất Excel / PDF** | Chỉ nhắc đến ở Admin report | Cần spec rõ luồng export |
-| **Hủy đơn hàng** | Chưa có state machine cho Order.status | Cần quy trình hủy + hoàn tiền |
-| **Xung đột lịch hẹn** | Đã có NhânViênPhụcVụ nhưng chưa có cơ chế kiểm tra trùng | Cần validate ở code |
-| **Giao hàng** | Đã thêm shippingAddress, deliveryStatus vào ĐơnHàng | ⚠️ Chưa có bảng riêng cho địa chỉ |
+| Vấn đề | Trạng thái | Ghi chú |
+|--------|-----------|---------|
+| **Quên mật khẩu** | ✅ **Đã xử lý** | ForgotPasswordActivity + OTP flow tại VD-LUONG-NGUOI-DUNG.md |
+| **Hủy đơn hàng + Hoàn tiền** | ✅ **Đã xử lý** | CancelOrderDialog, state machine 6 trạng thái, hoàn tiền qua Payment.soTien âm |
+| **Xung đột lịch hẹn** | ✅ **Đã xử lý** | checkConflict() kiểm tra trùng thú cưng + nhân viên |
+| **Gán nhân viên phục vụ** | ✅ **Đã xử lý** | Luồng 7: AssignStaffDialog + auto-assign |
+| **Điều chỉnh tồn kho** | ✅ **Đã xử lý** | InventoryAdjustmentDialog: hỏng, hết hạn, trả NCC, kiểm kê |
+| **ActivityLog đầy đủ** | ✅ **Đã xử lý** | 16 hành động cho tất cả luồng |
+| **Xuất Excel / PDF** | ⚠️ Đã nhắc đến | Cần spec rõ luồng export |
+| **Giao hàng** | ⚠️ shippingAddress có sẵn | Chưa có bảng địa chỉ riêng |
 
 ### 4. Vấn đề về Kỹ thuật / Kiến trúc
 
@@ -115,6 +118,13 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | 28/06/2026 | Cập nhật GOI-Y-TINH-NANG-KHACH-HANG.md: reference đến bảng ThanhToán | GOI-Y-TINH-NANG-KHACH-HANG.md |
 | 28/06/2026 | Viết lại ERD đầy đủ 23 bảng: mỗi bảng hiển thị tất cả thuộc tính + PK/FK rõ ràng | DATABASE.md |
 | 28/06/2026 | Chuyển toàn bộ ERD sang SQL CREATE TABLE (sẵn code để chạy), thêm index, dọn duplicate | DATABASE.md |
+| 28/06/2026 | Fix: ThanhToán CHECK (soTien != 0) cho phép số âm hoàn tiền; thêm state machine DonHang + LichHen; thêm danh sách 16 hành động ActivityLog | DATABASE.md |
+| 28/06/2026 | Thêm Luồng 6: Hủy đơn + Hoàn tiền (có CancelOrderDialog, trả tồn, hoàn tiền) | LUONG-THUC-TE.md |
+| 28/06/2026 | Thêm xử lý xung đột lịch hẹn vào Luồng 2b; Luồng 7: Gán nhân viên (auto-assign) | LUONG-THUC-TE.md |
+| 28/06/2026 | Thêm Luồng 8: Điều chỉnh tồn kho (hỏng, hết hạn, trả NCC, kiểm kê) + bảng 16 hành động ActivityLog | LUONG-THUC-TE.md |
+| 28/06/2026 | Thêm Quên mật khẩu (ForgotPasswordActivity), Hủy lịch hẹn (CancelBookingDialog), ActivityLog đăng nhập | VD-LUONG-NGUOI-DUNG.md |
+| 28/06/2026 | Cập nhật CHUC-NANG.md: QT 4→5 (thêm Hủy đơn/Hoàn tiền), form 29→33 (thêm 4 màn hình mới), fix ViewModel numbering | CHUC-NANG.md |
+| 28/06/2026 | Cập nhật nhiệm-vụ.md: thêm tasks cho hủy đơn, xung đột, quên MK, điều chỉnh tồn | nhiệm-vụ.md |
 
 ---
 
@@ -166,16 +176,17 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 
 | Tiêu chí | Đánh giá |
 |----------|----------|
-| Phân tích nghiệp vụ | ✅ **Tốt** - bao phủ rộng, chi tiết |
-| Thiết kế database | ✅ **Rất tốt** - 23 bảng, đã bổ sung 3 bảng còn thiếu |
-| Use Case | ✅ **Đầy đủ** - 32 use case, ma trận role, mô tả chi tiết |
-| Biểu đồ / ERD | ✅ **Đã cập nhật** - ERD 23 bảng + Use Case diagram |
-| Task tracking | ✅ **Có** - nhiệm-vụ.md với 5 giai đoạn |
-| Kiến trúc | ✅ **Phù hợp MVVM** - nhưng thiếu UseCase layer |
+| Phân tích nghiệp vụ | ✅ **Rất tốt** - bao phủ bán hàng, nhập kho, lịch hẹn, hủy đơn/hoàn tiền, điều chỉnh tồn, quên MK |
+| Thiết kế database | ✅ **Rất tốt** - 23 bảng, state machine 6 trạng thái đơn hàng, 5 trạng thái lịch hẹn |
+| Quy trình nghiệp vụ | ✅ **Đầy đủ** - 8 luồng chính + 3 luồng phụ (hủy đơn, gán NV, điều chỉnh tồn) |
+| Xử lý ngoại lệ | ✅ **Đã bổ sung** - xung đột lịch hẹn, hoàn tiền hủy đơn, kiểm tra tồn kho |
+| Audit log | ✅ **16 hành động** - bao phủ mọi thao tác quan trọng |
+| Task tracking | ✅ **Có** - nhiệm-vụ.md với 5 giai đoạn + tasks cho các quy trình mới |
+| Kiến trúc | ✅ **Phù hợp MVVM** - có ViewModel cho từng quy trình |
 | Code nguồn | ❌ **Chưa có** - cần triển khai |
 | Bảo mật | ⚠️ **Cơ bản** - cần cải thiện nếu production |
 | UX / UI | ⚠️ **Cần bổ sung** loading/error/empty state |
 | Khả năng mở rộng | ⚠️ **Có thể tốt hơn** - DI, Navigation, testing |
-| Phù hợp đồ án | ✅ **Vượt yêu cầu** - đủ điểm tối đa nếu code tốt |
+| Phù hợp đồ án | ✅ **Vượt yêu cầu** - 33 form, 5 QT, 23 ĐT, 4 Master-Detail, 2 Report, audit log, quên MK, điều chỉnh tồn |
 
-> **Tổng thể:** Thiết kế đã được cải thiện đáng kể — từ 20 → 23 bảng, thêm Use Case, ERD, task list. Điểm yếu duy nhất là chưa có code nguồn. Cần tập trung code đúng thiết kế, xử lý tốt các state (loading/success/error) và đảm bảo CRUD + quy trình bán hàng + nhập kho chạy trơn tru.
+> **Tổng thể:** Thiết kế đã hoàn thiện gần như tất cả các quy trình thực tế của cửa hàng thú cưng. Điểm yếu duy nhất là chưa có code nguồn. Cần tập trung code đúng thiết kế, xử lý tốt các state và đảm bảo các luồng: bán hàng→thanh toán→log, nhập kho→cộng tồn, đặt lịch→gán NV, hủy đơn→trả tồn→hoàn tiền chạy trơn tru.

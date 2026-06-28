@@ -96,32 +96,47 @@
 
 - [ ] OrderActivity — Form Master: chọn khách, hiển thị tổng tiền
 - [ ] Dialog chọn sản phẩm — Form Detail: thêm sản phẩm, số lượng
-- [ ] OrderRepository.placeOrder() — xử lý transaction
+- [ ] OrderRepository.placeOrder() — xử lý transaction (Order + OrderDetail + Payment + trừ tồn + log)
 - [ ] OrderViewModel
 - [ ] Kiểm tra tồn kho trước khi lưu
 - [ ] Áp dụng mã khuyến mãi
 - [ ] Chọn phương thức thanh toán
-- [ ] Lưu đơn → tự động trừ tồn kho
+- [ ] Lưu đơn → tự động trừ tồn kho + ghi ActivityLog
 - [ ] Danh sách đơn hàng (OrderListFragment)
 - [ ] Chi tiết đơn hàng (OrderDetailActivity)
 - [ ] In hóa đơn (PDF / Bluetooth)
+
+### 2.8b Hủy đơn & Hoàn tiền (Quy trình mới)
+
+- [ ] CancelOrderDialog — chọn lý do hủy, xác nhận hủy
+- [ ] Xử lý: cập nhật status = 'cancelled'/'refunded'
+- [ ] Trả lại tồn kho (ProductDao.updateQuantity + qty)
+- [ ] Ghi giao dịch hoàn tiền (PaymentDao.insert soTien âm, trangThai='hoan_tien')
+- [ ] Ghi ActivityLog ('HUY_DON', 'HOAN_TIEN')
 
 ### 2.9 Quản lý Lịch hẹn
 
 - [ ] AppointmentFragment (danh sách, lọc theo ngày/tuần)
 - [ ] AppointmentFormActivity (thêm/sửa lịch hẹn)
 - [ ] Check-in / Check-out lịch hẹn
-- [ ] Hủy / Dời lịch
-- [ ] Gán nhân viên phục vụ (NhânViênPhụcVụ)
+- [ ] Hủy / Dời lịch (ghi ActivityLog 'HUY_LICH')
+- [ ] Kiểm tra xung đột lịch hẹn (checkConflict: trùng thú cưng / trùng nhân viên)
+- [ ] Gán nhân viên phục vụ (NhânViênPhụcVụ — AssignStaffDialog)
 - [ ] AppointmentDao + AppointmentRepository + AppointmentViewModel
 
 ### 2.10 Nhập kho (Quy trình phụ — Master-Detail)
 
 - [ ] InventoryActivity — Form Master: chọn nhà cung cấp
 - [ ] Dialog chọn sản phẩm — Form Detail: nhập số lượng, giá
-- [ ] InventoryRepository — xử lý transaction
+- [ ] InventoryRepository — xử lý transaction (Inventory + InventoryDetail + cộng tồn + log)
 - [ ] InventoryDao + InventoryDetailDao
-- [ ] Lưu phiếu → tự động cộng tồn kho
+- [ ] Lưu phiếu → tự động cộng tồn kho + ghi ActivityLog
+
+### 2.10b Điều chỉnh tồn kho (Inventory Adjustment)
+
+- [ ] InventoryAdjustmentDialog — chọn sản phẩm, loại ĐC (hỏng, hết hạn, trả NCC, kiểm kê)
+- [ ] Xử lý cập nhật số lượng tồn
+- [ ] Ghi ActivityLog ('DIEU_CHINH_TON')
 
 ### 2.11 Khuyến mãi
 
@@ -157,7 +172,9 @@
 
 - [ ] CustomerLoginActivity (đăng nhập bằng SĐT + mật khẩu)
 - [ ] CustomerRegisterActivity (đăng ký tài khoản mới)
-- [ ] Quên mật khẩu (OTP qua SMS/Email)
+- [ ] ForgotPasswordActivity: nhập SĐT → OTP → đặt lại MK
+- [ ] Xử lý gửi OTP (có thể giả lập trong đồ án)
+- [ ] Ghi ActivityLog khi đăng nhập ('DANG_NHAP'), đổi MK ('DOI_MAT_KHAU')
 
 ### 3.2 Trang chủ khách hàng
 
@@ -170,8 +187,10 @@
 ### 3.3 Đặt lịch hẹn (Quy trình)
 
 - [ ] BookingActivity — 3 bước: chọn dịch vụ → chọn thú cưng → chọn ngày/giờ
-- [ ] Kiểm tra trùng lịch
-- [ ] Xác nhận và lưu
+- [ ] Kiểm tra xung đột (checkConflict: trùng thú cưng + giờ)
+- [ ] Gợi ý khung giờ trống nếu bị trùng
+- [ ] Xác nhận và lưu + ghi ActivityLog ('TAO_LICH')
+- [ ] Hủy lịch hẹn (CancelBookingDialog: hủy trước 2h miễn phí)
 
 ### 3.4 Lịch sử giao dịch
 
@@ -276,9 +295,9 @@
 |---------|----|--------|---------|
 | Entity class (23 bảng) | 23 | 0 | **23** |
 | DAO interface | 23 | 0 | **23** |
-| Repository | 15 | 0 | **15** |
-| ViewModel | 17 | 0 | **17** |
-| Staff UI screens | 16 | 0 | **16** |
-| Customer UI screens | 11 | 0 | **11** |
+| Repository | 18 | 0 | **18** |
+| ViewModel | 20 | 0 | **20** |
+| Staff UI screens | 20 | 0 | **20** |
+| Customer UI screens | 13 | 0 | **13** |
 
-> **Tổng tiến độ:** 7/7 tài liệu thiết kế ✅ | Code nguồn: chưa bắt đầu
+> **Tổng tiến độ:** 7/7 tài liệu thiết kế ✅ | Bổ sung: luồng hủy đơn+hoàn tiền, xung đột lịch, gán NV, điều chỉnh tồn, quên MK | Code nguồn: chưa bắt đầu
