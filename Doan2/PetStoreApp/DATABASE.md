@@ -204,72 +204,547 @@ Ví dụ 3: Hoàn thành
 
 ---
 
-## Sơ đồ quan hệ tổng thể (ERD)
+## Sơ đồ quan hệ tổng thể (ERD) — 23 bảng
+
+### Phần 1: Danh mục & Đối tượng chính
 
 ```
-┌───────────────┐       ┌──────────────────┐      ┌───────────────────┐
-│   NgườiDùng   │       │   LoạiSảnPhẩm   │      │   LoạiThúCưng    │
-├───────────────┤       ├──────────────────┤      ├───────────────────┤
-│ nguoiDungId   │◄────┐ │ loaiSanPhamId   │      │ loaiThuCungId    │
-│ username      │     │ │ name             │      │ name              │
-│ password      │     │ │ description      │      │ description       │
-│ fullName      │     │ └──────────────────┘      └────────┬──────────┘
-│ role          │     │                                    │
-│ phone         │     │                                    │
-│ createdAt     │     │                                    │
-└───────┬───────┘     │   ┌──────────────┐                │
-        │             │   │ NhàCungCấp  │                │
-        │             │   ├──────────────┤                │
-        │             │   │ nhaCungCapId │                │
-        │             │   │ name         │                │
-        │◄─────┐      │   │ phone        │                │
-        │      │      │   │ email        │                │
-  NhânViênPhụcVụ    │   │ address      │                │
-  ├──────────────    │   │ createdAt    │                │
-  │ lichHenId (FK)   │   └──────┬───────┘                │
-  │ nhanVienId (FK)──┘          │                        │
-  │ vaiTro                      │                        │
-  │ trangThai          ┌────────┴────────────────┐       │
-  └──────────────      │        SảnPhẩm          │       │
-                       ├────────────────────────-┤       │
-        ┌──────────────┤ sanPhamId               │       │
-        │              │ name                     │       │
-  NhậtKýHoạtĐộng      │ loaiSanPhamId (FK) ──────┤       │
-  ├──────────────      │ nhaCungCapId (FK) ───────┤       │
-  │ nguoiDungId (FK)───┤ price, costPrice        │       │
-  │ khachHangId (FK)   │ quantity, unit           │       │
-  │ hanhDong           │ minStockLevel            │       │
-  │ doiTuong           │ expiryDate, batchNumber  │       │
-  │ doiTuongId         │ createdAt                │       │
-  └──────────────      └──────────────────────────┘       │
-                                                          │
-        ┌─────────────────────────────────────────────────┘
-        │
-        ▼
-┌──────────────────┐
-│     ThúCưng      │
-├──────────────────┤
-│ thuCungId        │
-│ name             │
-│ breed            │
-│ age, weight      │
-│ color, price     │
-│ status           │
-│ microchipId      │
-│ loaiThuCungId(FK)│
-│ khachHangId (FK) │
-│ createdAt        │
-└──────────────────┘
+┌──────────────────┐      ┌───────────────────┐      ┌──────────────────┐
+│   LoạiThúCưng   │      │   LoạiSảnPhẩm    │      │   DịchVụ        │
+├──────────────────┤      ├───────────────────┤      ├──────────────────┤
+│ loaiThuCungId PK │      │ loaiSanPhamId PK │      │ dichVuId PK     │
+│ name             │      │ name              │      │ name             │
+│ description      │      │ description       │      │ description      │
+└────────┬─────────┘      └────────┬──────────┘      │ price            │
+         │                         │                  │ duration         │
+         │                         │                  │ createdAt        │
+         │                         │                  └──────────────────┘
+         │                         │
+         ▼                         ▼
+┌─────────────────────────────────────────────────────┐
+│                    ThúCưng                          │
+├─────────────────────────────────────────────────────┤
+│ thuCungId PK      │  SảnPhẩm                       │
+│ name              ├─────────────────────────────────┤
+│ breed             │ sanPhamId PK                    │
+│ age               │ name                            │
+│ weight            │ loaiSanPhamId FK ───────────────┘
+│ color             │ nhaCungCapId FK ───────────────┐
+│ price             │ price, costPrice                │
+│ status            │ quantity, unit, minStockLevel   │
+│ microchipId       │ expiryDate, batchNumber         │
+│ loaiThuCungId FK──│ createdAt                       │
+│ khachHangId FK ───┼──────────────┐                  │
+│ createdAt         │              │                  │
+└───────────────────┘              │                  │
+                                   │                  │
+                      ┌────────────┴──────────┐       │
+                      │     NhàCungCấp        │       │
+                      ├───────────────────────┤       │
+                      │ nhaCungCapId PK       │       │
+                      │ name, phone, email    │       │
+                      │ address, createdAt    │◄──────┘
+                      └───────────────────────┘
 
-Các quan hệ còn lại (ĐơnHàng, ChiTiếtĐơnHàng, LịchHẹn, DịchVụ, ...)
-giữ nguyên như thiết kế gốc, thêm:
-  - LịchHẹn có thêm FK → NhânViênPhụcVụ
-  - ĐơnHàng có thêm FK → ThanhToán
+┌───────────────────┐      ┌───────────────────────┐
+│    NgườiDùng      │      │     KháchHàng         │
+├───────────────────┤      ├───────────────────────┤
+│ nguoiDungId PK    │      │ khachHangId PK        │
+│ username (UNIQUE) │      │ fullName              │
+│ password (hashed) │      │ phone (UNIQUE)        │
+│ fullName          │      │ email                 │
+│ role (Admin/Staff)│      │ password (hashed)     │
+│ phone             │      │ membershipTier        │
+│ createdAt         │      │ loyaltyPoints         │
+└───────────────────┘      │ emailVerified         │
+                            │ avatar                │
+                            │ createdAt             │
+                            └───────────────────────┘
+```
+
+### Phần 2: Giao dịch Master-Detail
+
+```
+┌───────────────────────┐      ┌──────────────────────────┐
+│      ĐơnHàng          │      │    PhiếuNhậpKho         │
+├───────────────────────┤      ├──────────────────────────┤
+│ donHangId PK          │      │ phieuNhapId PK           │
+│ khachHangId FK ───────┼──┐   │ nhaCungCapId FK ────────┤
+│ nguoiDungId FK ───────┼──┤   │ nguoiDungId FK ─────────┤
+│ orderDate             │  │   │ entryDate                │
+│ totalAmount           │  │   │ totalCost                │
+│ discount              │  │   │ note                     │
+│ status                │  │   └────────────┬─────────────┘
+│ notes                 │  │                │
+│ shippingAddress       │  │                │ 1:N
+│ deliveryStatus        │  │                │
+└───────────┬───────────┘  │                ▼
+            │ 1:N          │   ┌──────────────────────────┐
+            ▼               │   │  ChiTiếtPhiếuNhập      │
+┌───────────────────────┐   │   ├──────────────────────────┤
+│   ChiTiếtĐơnHàng      │   │   │ chiTietPhieuNhapId PK   │
+├───────────────────────┤   │   │ phieuNhapId FK ──────────┤
+│ chiTietDonHangId PK   │   │   │ sanPhamId FK ───────────┤
+│ donHangId FK ─────────┘   │   │ quantity                 │
+│ sanPhamId FK ─────────┐   │   │ unitCost                 │
+│ quantity               │   │   │ subtotal                 │
+│ unitPrice              │   │   └──────────────────────────┘
+│ subtotal               │   │
+│                        │   │
+│ (Master: ĐơnHàng)      │   │  (Master: PhiếuNhậpKho)
+└────────────────────────┘   └──────────────────────────────
+
+┌───────────────────────┐      ┌──────────────────────────┐
+│      LịchHẹn          │      │       KhuyếnMãi          │
+├───────────────────────┤      ├──────────────────────────┤
+│ lichHenId PK          │      │ khuyenMaiId PK           │
+│ thuCungId FK ─────────┤      │ code (UNIQUE)            │
+│ khachHangId FK ───────┤      │ description              │
+│ dichVuId FK ──────────┤      │ discountPercent          │
+│ date, timeSlot        │      │ startDate, endDate       │
+│ status                │      │ minOrderValue            │
+│ notes                 │      │ status                   │
+│ createdAt             │      │ createdAt                │
+└───────────┬───────────┘      └──────────────────────────┘
+            │ 1:N
+            ▼
+┌──────────────────────────┐
+│    NhânViênPhụcVụ        │
+├──────────────────────────┤
+│ id PK                    │
+│ lichHenId FK ────────────┘
+│ nhanVienId FK ───────────┐
+│ vaiTro                   │
+│ trangThai                │
+│ thoiGianBatDau           │
+│ thoiGianKetThuc          │
+│ createdAt                │
+└──────────────────────────┘
+```
+
+### Phần 3: Hỗ trợ & Bổ sung mới
+
+```
+┌───────────────────────┐      ┌──────────────────────────┐
+│      GiỏHàng          │      │    ThúCưngYêuThích       │
+├───────────────────────┤      ├──────────────────────────┤
+│ gioHangId PK          │      │ yeuThichId PK            │
+│ khachHangId FK ───────┤      │ khachHangId FK ──────────┤
+│ sanPhamId FK ─────────┤      │ thuCungId FK ────────────┤
+│ quantity              │      │ createdAt                │
+│ addedAt               │      └──────────────────────────┘
+└───────────────────────┘
+
+┌───────────────────────┐      ┌──────────────────────────┐
+│    HồSơSứcKhỏe        │      │     ĐiểmThưởng           │
+├───────────────────────┤      ├──────────────────────────┤
+│ recordId PK           │      │ diemId PK                │
+│ thuCungId FK ─────────┤      │ khachHangId FK ──────────┤
+│ recordDate            │      │ diem (int)               │
+│ recordType            │      │ loai (earn/burn)         │
+│ description           │      │ referenceType            │
+│ vetName               │      │ referenceId              │
+│ nextDueDate           │      │ description              │
+│ createdAt             │      │ createdAt                │
+└───────────────────────┘      └──────────────────────────┘
+
+┌───────────────────────┐      ┌──────────────────────────┐
+│     ĐánhGiá           │      │   ThôngBáoKhách          │
+├───────────────────────┤      ├──────────────────────────┤
+│ danhGiaId PK          │      │ thongBaoId PK            │
+│ khachHangId FK ───────┤      │ khachHangId FK ──────────┤
+│ dichVuId FK ──────────┤      │ tieuDe                   │
+│ donHangId FK ─────────┤      │ noiDung                  │
+│ rating (1-5)          │      │ loai                     │
+│ comment               │      │ daDoc (bool)             │
+│ createdAt             │      │ createdAt                │
+│ status                │      └──────────────────────────┘
+└───────────────────────┘
+
+┌──────────────────────────┐      ┌──────────────────────────┐
+│       ThanhToán          │      │    NhậtKýHoạtĐộng       │
+├──────────────────────────┤      ├──────────────────────────┤
+│ thanhToanId PK           │      │ logId PK                 │
+│ donHangId FK ────────────┤      │ nguoiDungId FK ──────────┤
+│ soTien                   │      │ khachHangId FK ──────────┤
+│ phuongThuc               │      │ hanhDong                 │
+│ maGiaoDich               │      │ doiTuong                 │
+│ trangThai                │      │ doiTuongId               │
+│ ghiChu                   │      │ chiTiet (JSON)           │
+│ nguoiTaoId FK ───────────┘      │ thietBi                  │
+│ thanhToanLuc              │      │ thoiGian                 │
+│ createdAt                 │      │ createdAt                │
+└───────────────────────────┘      └──────────────────────────┘
+```
+
+### Tổng hợp quan hệ khóa ngoại
+
+```
+                          KháchHàng
+                         ┌──────────┐
+                         │          │
+     ┌───────────────────┤  KH      ├───────────────────────┐
+     │                   │   PK     │                       │
+     │                   └────┬─────┘                      │
+     │                        │                            │
+     ▼                        ▼                            ▼
+ ┌───────┐  ┌───────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+ │ThúCưng│  │ĐơnHàng│  │LịchHẹn   │  │ĐánhGiá   │  │GiỏHàng   │
+ │KH=FK  │  │KH=FK  │  │KH=FK     │  │KH=FK     │  │KH=FK     │
+ └───────┘  └───────┘  └──────────┘  └──────────┘  └──────────┘
+ ┌───────┐  ┌───────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+ │YêuThic│  │Điểm   │  │ThôngBáo  │  │NhậtKý   │  │          │
+ │KH=FK  │  │KH=FK  │  │KH=FK     │  │KH=FK     │  │          │
+ └───────┘  └───────┘  └──────────┘  └──────────┘  └──────────┘
+
+                          NgườiDùng
+                         ┌──────────┐
+                         │          │
+     ┌───────────────────┤   ND     ├───────────────────────┐
+     │                   │   PK     │                       │
+     │                   └────┬─────┘                      │
+     │                        │                            │
+     ▼                        ▼                            ▼
+ ┌───────┐  ┌───────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+ │ĐơnHàng│  │Thanh  │  │PhiếuNhap│  │NhậtKý   │  │NhânViên │
+ │ND=FK  │  │Toán   │  │ND=FK    │  │ND=FK    │  │PhụcVụ   │
+ └───────┘  │ND=FK  │  └──────────┘  └──────────┘  │ND=FK    │
+            └───────┘                              └──────────┘
 ```
 
 ---
 
-## Ràng buộc toàn vẹn (cập nhật)
+---
+
+## Biểu đồ Use Case tổng thể
+
+### Actors (Tác nhân)
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        HỆ THỐNG PETSTORE                         │
+│                                                                   │
+│   ┌─────────────┐    ┌──────────────┐    ┌──────────────────┐   │
+│   │   ADMIN     │    │    STAFF     │    │   CUSTOMER       │   │
+│   │ (Quản trị)  │    │  (Nhân viên) │    │   (Khách hàng)   │   │
+│   └──────┬──────┘    └──────┬───────┘    └────────┬─────────┘   │
+│          │                  │                      │              │
+│          └──────────────────┼──────────────────────┘              │
+│                             ▼                                     │
+│               ┌─────────────────────────┐                        │
+│               │      HỆ THỐNG           │                        │
+│               │  (Room Database + App)  │                        │
+│               └─────────────────────────┘                        │
+│                                                                   │
+│   Tác nhân phụ:                                                  │
+│   ┌──────────────┐  ┌──────────────┐  ┌──────────────────┐      │
+│   │  NhàCungCấp  │  │    FCM       │  │ VNPay / Momo     │      │
+│   │  (Supplier)  │  │ (Push Notif) │  │ (Online Payment) │      │
+│   └──────────────┘  └──────────────┘  └──────────────────┘      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 1. Use Case — ADMIN
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     ADMIN (Quản trị viên)                         │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │                      HỆ THỐNG                           │     │
+│  │                                                         │     │
+│  │  ┌──────────────────────────────────────────────────┐   │     │
+│  │  │              QUẢN LÝ NHÂN SỰ                     │   │     │
+│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │   │     │
+│  │  │  │Thêm NV   │  │Sửa NV    │  │Khóa/Mở khóa  │   │   │     │
+│  │  │  └──────────┘  └──────────┘  └──────────────┘   │   │     │
+│  │  └──────────────────────────────────────────────────┘   │     │
+│  │                                                         │     │
+│  │  ┌──────────────────────────────────────────────────┐   │     │
+│  │  │              BÁO CÁO & THỐNG KÊ                  │   │     │
+│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │   │     │
+│  │  │  │DT ngày   │  │DT tháng  │  │Top sản phẩm  │   │   │     │
+│  │  │  ├──────────┤  ├──────────┤  ├──────────────┤   │   │     │
+│  │  │  │Top NV    │  │Tồn kho   │  │Xuất Excel    │   │   │     │
+│  │  │  └──────────┘  └──────────┘  └──────────────┘   │   │     │
+│  │  └──────────────────────────────────────────────────┘   │     │
+│  │                                                         │     │
+│  │  ┌──────────────────────────────────────────────────┐   │     │
+│  │  │              QUẢN LÝ DANH MỤC                    │   │     │
+│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │   │     │
+│  │  │  │Loại thú  │  │Loại SP   │  │Dịch vụ       │   │   │     │
+│  │  │  ├──────────┤  ├──────────┤  ├──────────────┤   │   │     │
+│  │  │  │NCC       │  │KM        │  │Xóa dữ liệu   │   │   │     │
+│  │  │  └──────────┘  └──────────┘  └──────────────┘   │   │     │
+│  │  └──────────────────────────────────────────────────┘   │     │
+│  │                                                         │     │
+│  │  ┌──────────────────────────────────────────────────┐   │     │
+│  │  │              XEM NHẬT KÝ HOẠT ĐỘNG               │   │     │
+│  │  │  ┌──────────┐  ┌──────────┐  ┌──────────────┐   │   │     │
+│  │  │  │Xem log   │  │Lọc theo  │  │Xem chi tiết  │   │   │     │
+│  │  │  │          │  │ngày/NV   │  │              │   │   │     │
+│  │  │  └──────────┘  └──────────┘  └──────────────┘   │   │     │
+│  │  └──────────────────────────────────────────────────┘   │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  Mô tả: Admin có toàn quyền: quản lý nhân viên, xem mọi báo      │
+│  cáo, quản lý danh mục, xem log hoạt động. Không bán hàng.      │
+│                                                                   │
+│  Luồng chính: Đăng nhập → Dashboard → (Quản lý NV / Báo cáo /   │
+│               Danh mục / Nhật ký)                                 │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 2. Use Case — STAFF
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                   STAFF (Nhân viên bán hàng)                      │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │                BÁN HÀNG TẠI QUẦY (Quy trình chính)      │     │
+│  │                                                         │     │
+│  │  ┌──────────┐    ┌──────────┐    ┌──────────────┐      │     │
+│  │  │Tìm/chọn  │───►│Thêm SP   │───►│Áp mã KM      │      │     │
+│  │  │khách     │    │vào đơn   │    │(nếu có)      │      │     │
+│  │  └──────────┘    └──────────┘    └──────┬───────┘      │     │
+│  │                                          │               │     │
+│  │  ┌───────────────────────────────────────┘               │     │
+│  │  ▼                                                        │     │
+│  │  ┌──────────┐    ┌──────────┐    ┌──────────────┐      │     │
+│  │  │Thanh toán│───►│Lưu đơn   │───►│In hóa đơn    │      │     │
+│  │  │          │    │          │    │(PDF/Bluetooth)│      │     │
+│  │  └──────────┘    └──────────┘    └──────────────┘      │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              QUẢN LÝ ĐỐI TƯỢNG                          │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Thú cưng  │  │Khách     │  │Sản phẩm  │  │Đơn     │ │     │
+│  │  │CRUD      │  │hàng CRUD │  │CRUD + xem│  │hàng    │ │     │
+│  │  │          │  │          │  │tồn kho   │  │xem+in  │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              LỊCH HẸN & DỊCH VỤ                         │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Xem lịch  │  │Check-in  │  │Gán NV    │  │Hủy/dời│ │     │
+│  │  │hẹn       │  │          │  │phục vụ   │  │lịch   │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              NHẬP KHO (Quy trình phụ)                    │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Chọn NCC  │  │Chọn SP   │  │Nhập SL + │  │Lưu     │ │     │
+│  │  │          │  │          │  │giá vốn   │  │phiếu   │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  Mô tả: Staff là role chính, vận hành mọi hoạt động bán hàng     │
+│  tại quầy. Không được quản lý nhân viên khác, không xóa dữ liệu.│
+│                                                                   │
+│  Luồng chính: Đăng nhập → Dashboard → (Bán hàng / Quản lý /     │
+│               Lịch hẹn / Nhập kho)                                │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 3. Use Case — CUSTOMER
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                   CUSTOMER (Khách hàng online)                    │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              TÀI KHOẢN                                  │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Đăng ký   │  │Đăng nhập │  │Quên MK   │  │Đổi MK  │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              ĐẶT LỊCH HẸN (Quy trình)                   │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Chọn      │  │Chọn thú  │  │Chọn      │  │Xác     │ │     │
+│  │  │dịch vụ   │  │cưng      │  │ngày/giờ  │  │nhận    │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              MUA SẮM ONLINE                             │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Xem SP    │  │Thêm vào  │  │Áp mã KM  │  |Đặt     │ │     │
+│  │  │dịch vụ   │  │giỏ hàng  │  │          │  |hàng    │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              XEM LỊCH SỬ                                │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Đơn hàng  │  │Lịch hẹn  │  │Chi tiêu  │  │Đánh    │ │     │
+│  │  │đã mua    │  │đã đặt    │  │cá nhân   │  │giá DV  │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  ┌─────────────────────────────────────────────────────────┐     │
+│  │              QUẢN LÝ CÁ NHÂN                            │     │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐ │     │
+│  │  │Thú cưng  │  │Hồ sơ     │  │Điểm      │  |Thông   │ │     │
+│  │  │của tôi   │  │sức khỏe  │  │thưởng    │  |báo     │ │     │
+│  │  └──────────┘  └──────────┘  └──────────┘  └────────┘ │     │
+│  └─────────────────────────────────────────────────────────┘     │
+│                                                                   │
+│  Mô tả: Khách hàng sử dụng Customer App để đặt lịch, mua hàng   │
+│  online, xem lịch sử, quản lý thú cưng và tài khoản cá nhân.    │
+│                                                                   │
+│  Luồng chính: Đăng nhập → Trang chủ → (Đặt lịch / Mua hàng /    │
+│               Lịch sử / Cá nhân)                                  │
+│                                                                   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### 4. Ma trận Use Case — Bảng
+
+| # | Use Case | Admin | Staff | Customer | Ghi chú |
+|---|----------|-------|-------|----------|---------|
+| UC01 | Đăng nhập | ✅ | ✅ | ✅ | Riêng Customer dùng SĐT |
+| UC02 | Đăng ký tài khoản | ❌ | ❌ | ✅ | Customer tự đăng ký |
+| UC03 | Quản lý nhân viên (CRUD) | ✅ | ❌ | ❌ | Admin-only |
+| UC04 | Xem Dashboard | ✅ | ✅ | ❌ | Customer có trang chủ riêng |
+| UC05 | Quản lý thú cưng (CRUD) | ✅ | ✅ | ✅ | Customer chỉ xem/sửa của mình |
+| UC06 | Quản lý khách hàng (CRUD) | ✅ | ✅ | ❌ | |
+| UC07 | Quản lý sản phẩm (CRUD) | ✅ | ✅ | ❌ | Customer chỉ xem |
+| UC08 | Quản lý dịch vụ (CRUD) | ✅ | ✅ | ❌ | Customer chỉ xem |
+| UC09 | Quản lý danh mục | ✅ | ❌ | ❌ | Admin-only |
+| UC10 | Quản lý nhà cung cấp (CRUD) | ✅ | ✅ | ❌ | |
+| UC11 | Quản lý khuyến mãi (CRUD) | ✅ | ✅ | ❌ | Customer chỉ nhập mã |
+| UC12 | **Tạo đơn hàng (QT)** | ❌ | ✅ | ❌ | Bán tại quầy |
+| UC13 | Xem danh sách đơn hàng | ✅ | ✅ | ✅ | Riêng Customer xem của mình |
+| UC14 | Hủy đơn hàng | ✅ | ✅ | ❌ | |
+| UC15 | **Nhập kho (QT)** | ❌ | ✅ | ❌ | |
+| UC16 | **Đặt lịch hẹn (QT)** | ❌ | ❌ | ✅ | Customer App |
+| UC17 | Xem lịch hẹn | ✅ | ✅ | ✅ | |
+| UC18 | Check-in / Xử lý lịch hẹn | ❌ | ✅ | ❌ | |
+| UC19 | Gán nhân viên phục vụ | ❌ | ✅ | ❌ | |
+| UC20 | Hủy lịch hẹn | ✅ | ✅ | ✅ | Customer: trước 2h |
+| UC21 | Thanh toán đơn hàng | ❌ | ✅ | ❌ | Staff thu tiền |
+| UC22 | Xem báo cáo thống kê | ✅ | ✅ | ❌ | Admin: tổng quan / Staff: giới hạn |
+| UC23 | Xem thống kê cá nhân | ❌ | ❌ | ✅ | Customer xem chi tiêu, DV đã dùng |
+| UC24 | Đánh giá dịch vụ | ❌ | ❌ | ✅ | |
+| UC25 | Quản lý giỏ hàng | ❌ | ❌ | ✅ | Customer App |
+| UC26 | Mua hàng online (Cart→Order) | ❌ | ❌ | ✅ | Customer App |
+| UC27 | Quản lý hồ sơ sức khỏe thú cưng | ❌ | ✅ | ✅ | Customer xem, Staff thêm |
+| UC28 | Quản lý điểm thưởng / Hạng | ✅ | ✅ | ✅ | Customer xem, hệ thống tự tính |
+| UC29 | Xem thông báo | ✅ | ❌ | ✅ | Staff không cần |
+| UC30 | In hóa đơn | ❌ | ✅ | ❌ | Qua Bluetooth / PDF |
+| UC31 | Xuất báo cáo Excel | ✅ | ❌ | ❌ | Admin-only |
+| UC32 | Xem nhật ký hoạt động | ✅ | ❌ | ❌ | Admin-only |
+
+---
+
+### 5. Mô tả chi tiết 3 Use Case quan trọng nhất
+
+#### UC12: Tạo đơn hàng (Quy trình chính)
+
+```
+Tên:          Tạo đơn hàng bán tại quầy
+Actor:        Staff
+Mô tả:        Nhân viên tạo đơn hàng cho khách tại cửa hàng
+Tiền điều kiện: Staff đã đăng nhập, có khách hàng
+Hậu điều kiện:  Đơn hàng được lưu, tồn kho trừ, log ghi lại
+
+Luồng chính:
+  1. Staff bấm [Tạo đơn hàng] → OrderActivity
+  2. Tìm/chọn khách hàng (tìm theo SĐT hoặc tên)
+  3. Nếu khách mới → thêm khách hàng (CustomerFormActivity)
+  4. Thêm sản phẩm vào đơn (dialog chọn SP + nhập số lượng)
+     - Kiểm tra tồn kho đủ
+     - Tính thành tiền
+  5. Nhập mã khuyến mãi (nếu có) → kiểm tra hợp lệ
+  6. Chọn phương thức thanh toán
+  7. Bấm [Lưu đơn hàng]
+     → OrderViewModel.placeOrder()
+     → OrderDao.insert() + OrderDetailDao.insertList()
+     → ProductDao.updateQuantity() (trừ tồn)
+     → ThanhToánDao.insert() (ghi nhận thanh toán)
+     → NhậtKýHoạtĐộng (ghi log 'TAO_DON')
+  8. Hiển thị: "Đã lưu đơn hàng #ORDxxx"
+  9. [In hóa đơn] nếu cần
+
+Luồng rẽ nhánh:
+  - 2a. Không tìm thấy khách → chuyển UC06 (thêm khách)
+  - 4a. Tồn kho không đủ → thông báo lỗi, yêu cầu nhập lại SL
+  - 5a. Mã KM hết hạn/sai → thông báo "Mã không hợp lệ"
+  - 7a. Lỗi database → rollback, hiển thị lỗi
+```
+
+#### UC16: Đặt lịch hẹn (Quy trình Customer)
+
+```
+Tên:          Đặt lịch hẹn dịch vụ
+Actor:        Customer
+Mô tả:        Khách hàng đặt lịch hẹn cho thú cưng qua app
+Tiền điều kiện: Customer đã đăng nhập, có thú cưng trong danh sách
+Hậu điều kiện:  Lịch hẹn mới với status='pending', gửi thông báo
+
+Luồng chính:
+  1. Customer bấm [Đặt lịch ngay] → BookingActivity
+  2. Bước 1: Chọn dịch vụ (danh sách từ ServiceDao)
+  3. Bước 2: Chọn thú cưng (danh sách pet của khách)
+  4. Bước 3: Chọn ngày + giờ (DatePickerDialog + TimePickerDialog)
+     - Kiểm tra không trùng lịch giờ đó
+  5. Xác nhận → hiển thị tóm tắt: DV + thú cưng + ngày giờ + giá
+  6. Bấm [Xác nhận đặt lịch]
+     → AppointmentDao.insert(status='pending')
+     → NhậtKýHoạtĐộng (ghi log 'TAO_LICH')
+  7. Hiển thị: "✅ Đặt lịch thành công!"
+  8. Hệ thống gửi thông báo nhắc lịch (FCM) trước 1 ngày
+
+Luồng rẽ nhánh:
+  - 4a. Giờ đã có lịch → thông báo "Khung giờ này đã có lịch"
+  - 6a. Lỗi → rollback, hiển thị lỗi
+```
+
+#### UC15: Nhập kho (Quy trình phụ)
+
+```
+Tên:          Nhập kho sản phẩm
+Actor:        Staff
+Mô tả:        Nhân viên kho nhập hàng từ nhà cung cấp
+Tiền điều kiện: Staff đã đăng nhập
+Hậu điều kiện:  Phiếu nhập được lưu, tồn kho tăng, log ghi lại
+
+Luồng chính:
+  1. Staff bấm [Nhập kho] → InventoryActivity
+  2. Chọn nhà cung cấp (dropdown từ SupplierDao)
+  3. Thêm sản phẩm vào phiếu (dialog chọn SP + nhập SL + giá vốn)
+  4. Xem danh sách sản phẩm đã thêm + tổng tiền
+  5. Nhập ghi chú (nếu có)
+  6. Bấm [Lưu phiếu nhập]
+     → InventoryDao.insert() + InventoryDetailDao.insertList()
+     → ProductDao.updateQuantity() (cộng tồn)
+     → NhậtKýHoạtĐộng (ghi log 'NHAP_KHO')
+  7. Hiển thị: "✅ Nhập kho thành công. Phiếu #INVxxx"
+
+Luồng rẽ nhánh:
+  - 6a. Lỗi database → rollback
+```
+
+---
 
 ### Khóa ngoại bổ sung cho 3 bảng mới
 
