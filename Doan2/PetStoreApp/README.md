@@ -32,9 +32,11 @@ com.petstore.app/
 │   │   ├── customer/     # Quản lý khách hàng
 │   │   ├── product/      # Quản lý sản phẩm
 │   │   ├── order/        # Tạo đơn / Quản lý đơn hàng
+│   │   ├── payment/      # Thanh toán (ghi giao dịch, hoàn tiền)
 │   │   ├── appointment/  # Quản lý lịch hẹn
 │   │   ├── inventory/    # Nhập kho
 │   │   ├── statistic/    # Báo cáo thống kê
+│   │   ├── activitylog/  # Nhật ký hoạt động (Admin)
 │   │   └── admin/        # Quản lý nhân viên (Admin)
 │   └── customer/         # === CUSTOMER APP ===
 │       ├── login/        # Đăng nhập / Đăng ký khách hàng
@@ -62,6 +64,36 @@ com.petstore.app/
 | Admin | `admin` | `admin123` |
 | Nhân viên | `staff` | `staff123` |
 | Khách hàng | `0901234567` | `customer123` |
+
+## Danh sách bảng dữ liệu (23 bảng)
+
+| # | Entity class | Table SQL | PK | Ghi chú |
+|---|---|---|---|---|
+| 1 | `User` | NguoiDung | nguoiDungId | Admin + Nhân viên |
+| 2 | `Pet` | ThuCung | thuCungId | Thú cưng khách hàng |
+| 3 | `PetCategory` | LoaiThuCung | loaiThuCungId | Chó, mèo, ... |
+| 4 | `Customer` | KhachHang | khachHangId | Có đăng nhập riêng |
+| 5 | `Product` | SanPham | sanPhamId | Thức ăn, phụ kiện |
+| 6 | `ProductCategory` | LoaiSanPham | loaiSanPhamId | Danh mục sản phẩm |
+| 7 | `Supplier` | NhaCungCap | nhaCungCapId | Nhà cung cấp |
+| 8 | `Order` | DonHang | donHangId | Master-Detail với OrderDetail |
+| 9 | `OrderDetail` | ChiTietDonHang | chiTietDonHangId | Detail của đơn hàng |
+| 10 | `Appointment` | LichHen | lichHenId | Lịch hẹn dịch vụ |
+| 11 | `Inventory` | PhieuNhapKho | phieuNhapKhoId | Master-Detail với InventoryDetail |
+| 12 | `InventoryDetail` | ChiTietPhieuNhap | chiTietPhieuNhapId | Detail của phiếu nhập |
+| 13 | `Service` | DichVu | dichVuId | Tắm, cắt tỉa, khám |
+| 14 | `Promotion` | KhuyenMai | khuyenMaiId | Mã giảm giá |
+| 15 | `Review` | DanhGia | danhGiaId | Đánh giá sao + nhận xét |
+| 16 | `LoyaltyPoint` | DiemThanhVien | diemThanhVienId | Tích điểm, hạng thành viên |
+| 17 | `Cart` | GioHang | gioHangId | Giỏ hàng online |
+| 18 | `FavoritePet` | ThuCungYeuThich | thuCungYeuThichId | Thú cưng yêu thích |
+| 19 | `CustomerNotification` | ThongBaoKhachHang | thongBaoId | Thông báo cho khách |
+| 20 | `PetHealthRecord` | HoSoSucKhoe | hoSoSucKhoeId | Hồ sơ sức khỏe, tiêm chủng |
+| 21 | `Payment` | ThanhToan | thanhToanId | Giao dịch thanh toán (Master-Detail với Order) |
+| 22 | `ActivityLog` | NhatKyHoatDong | nhatKyHoatDongId | Audit log append-only |
+| 23 | `AppointmentStaff` | NhanVienPhucVu | nhanVienPhucVuId | Nhân viên phục vụ lịch hẹn (Master-Detail) |
+
+> SQL CREATE TABLE đầy đủ (PK, FK, CHECK, DEFAULT, INDEX) xem tại [`DATABASE.md`](DATABASE.md)
 
 ## Yêu cầu hệ thống
 - Android Studio Hedgehog (2023.1.1) trở lên
