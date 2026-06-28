@@ -113,6 +113,8 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | 28/06/2026 | Cập nhật LUONG-THUC-TE.md: thêm Payment, ActivityLog vào các luồng | LUONG-THUC-TE.md |
 | 28/06/2026 | Cập nhật VD-LUONG-NGUOI-DUNG.md: thêm Admin xem log, Staff ghi payment+log | VD-LUONG-NGUOI-DUNG.md |
 | 28/06/2026 | Cập nhật GOI-Y-TINH-NANG-KHACH-HANG.md: reference đến bảng ThanhToán | GOI-Y-TINH-NANG-KHACH-HANG.md |
+| 28/06/2026 | Viết lại ERD đầy đủ 23 bảng: mỗi bảng hiển thị tất cả thuộc tính + PK/FK rõ ràng | DATABASE.md |
+| 28/06/2026 | Chuyển toàn bộ ERD sang SQL CREATE TABLE (sẵn code để chạy), thêm index, dọn duplicate | DATABASE.md |
 
 ---
 

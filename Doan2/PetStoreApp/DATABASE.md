@@ -39,6 +39,9 @@
 
 ## Chi tiết 3 bảng bổ sung
 
+> **Lưu ý:** Cấu trúc chi tiết của 3 bảng này đã được viết dưới dạng SQL CREATE TABLE ở phần trên.
+> Phần này chỉ giữ lại mô tả nghiệp vụ và ràng buộc quan trọng.
+
 ### 21. ThanhToán (Payment)
 
 **Mục đích:** Quản lý giao dịch thanh toán cho đơn hàng. Một đơn hàng có thể có nhiều giao dịch thanh toán (thanh toán nhiều lần, nhiều phương thức, hoàn tiền một phần).
@@ -204,212 +207,377 @@ Ví dụ 3: Hoàn thành
 
 ---
 
-## Sơ đồ quan hệ tổng thể (ERD) — 23 bảng
+## SQL CREATE TABLE — 23 bảng
 
-### Phần 1: Danh mục & Đối tượng chính
+> Dùng **SQLite** (Room).  
+> `INTEGER PRIMARY KEY AUTOINCREMENT` = ID tự tăng.  
+> `TEXT` thay cho NVARCHAR.  
+> `REAL` thay cho DECIMAL.  
+> `CHECK`, `DEFAULT`, `UNIQUE` viết sẵn trong câu lệnh.
 
-```
-┌──────────────────┐      ┌───────────────────┐      ┌──────────────────┐
-│   LoạiThúCưng   │      │   LoạiSảnPhẩm    │      │   DịchVụ        │
-├──────────────────┤      ├───────────────────┤      ├──────────────────┤
-│ loaiThuCungId PK │      │ loaiSanPhamId PK │      │ dichVuId PK     │
-│ name             │      │ name              │      │ name             │
-│ description      │      │ description       │      │ description      │
-└────────┬─────────┘      └────────┬──────────┘      │ price            │
-         │                         │                  │ duration         │
-         │                         │                  │ createdAt        │
-         │                         │                  └──────────────────┘
-         │                         │
-         ▼                         ▼
-┌─────────────────────────────────────────────────────┐
-│                    ThúCưng                          │
-├─────────────────────────────────────────────────────┤
-│ thuCungId PK      │  SảnPhẩm                       │
-│ name              ├─────────────────────────────────┤
-│ breed             │ sanPhamId PK                    │
-│ age               │ name                            │
-│ weight            │ loaiSanPhamId FK ───────────────┘
-│ color             │ nhaCungCapId FK ───────────────┐
-│ price             │ price, costPrice                │
-│ status            │ quantity, unit, minStockLevel   │
-│ microchipId       │ expiryDate, batchNumber         │
-│ loaiThuCungId FK──│ createdAt                       │
-│ khachHangId FK ───┼──────────────┐                  │
-│ createdAt         │              │                  │
-└───────────────────┘              │                  │
-                                   │                  │
-                      ┌────────────┴──────────┐       │
-                      │     NhàCungCấp        │       │
-                      ├───────────────────────┤       │
-                      │ nhaCungCapId PK       │       │
-                      │ name, phone, email    │       │
-                      │ address, createdAt    │◄──────┘
-                      └───────────────────────┘
+---
 
-┌───────────────────┐      ┌───────────────────────┐
-│    NgườiDùng      │      │     KháchHàng         │
-├───────────────────┤      ├───────────────────────┤
-│ nguoiDungId PK    │      │ khachHangId PK        │
-│ username (UNIQUE) │      │ fullName              │
-│ password (hashed) │      │ phone (UNIQUE)        │
-│ fullName          │      │ email                 │
-│ role (Admin/Staff)│      │ password (hashed)     │
-│ phone             │      │ membershipTier        │
-│ createdAt         │      │ loyaltyPoints         │
-└───────────────────┘      │ emailVerified         │
-                            │ avatar                │
-                            │ createdAt             │
-                            └───────────────────────┘
-```
+### Nhóm 1: Danh mục (Catalog)
 
-### Phần 2: Giao dịch Master-Detail
+```sql
+-- 1. LoạiThúCưng (PetCategory)
+CREATE TABLE LoaiThuCung (
+    loaiThuCungId  INTEGER PRIMARY KEY AUTOINCREMENT,
+    name           TEXT    NOT NULL,
+    description    TEXT
+);
 
-```
-┌───────────────────────┐      ┌──────────────────────────┐
-│      ĐơnHàng          │      │    PhiếuNhậpKho         │
-├───────────────────────┤      ├──────────────────────────┤
-│ donHangId PK          │      │ phieuNhapId PK           │
-│ khachHangId FK ───────┼──┐   │ nhaCungCapId FK ────────┤
-│ nguoiDungId FK ───────┼──┤   │ nguoiDungId FK ─────────┤
-│ orderDate             │  │   │ entryDate                │
-│ totalAmount           │  │   │ totalCost                │
-│ discount              │  │   │ note                     │
-│ status                │  │   └────────────┬─────────────┘
-│ notes                 │  │                │
-│ shippingAddress       │  │                │ 1:N
-│ deliveryStatus        │  │                │
-└───────────┬───────────┘  │                ▼
-            │ 1:N          │   ┌──────────────────────────┐
-            ▼               │   │  ChiTiếtPhiếuNhập      │
-┌───────────────────────┐   │   ├──────────────────────────┤
-│   ChiTiếtĐơnHàng      │   │   │ chiTietPhieuNhapId PK   │
-├───────────────────────┤   │   │ phieuNhapId FK ──────────┤
-│ chiTietDonHangId PK   │   │   │ sanPhamId FK ───────────┤
-│ donHangId FK ─────────┘   │   │ quantity                 │
-│ sanPhamId FK ─────────┐   │   │ unitCost                 │
-│ quantity               │   │   │ subtotal                 │
-│ unitPrice              │   │   └──────────────────────────┘
-│ subtotal               │   │
-│                        │   │
-│ (Master: ĐơnHàng)      │   │  (Master: PhiếuNhậpKho)
-└────────────────────────┘   └──────────────────────────────
+-- 2. LoạiSảnPhẩm (ProductCategory)
+CREATE TABLE LoaiSanPham (
+    loaiSanPhamId  INTEGER PRIMARY KEY AUTOINCREMENT,
+    name           TEXT    NOT NULL,
+    description    TEXT
+);
 
-┌───────────────────────┐      ┌──────────────────────────┐
-│      LịchHẹn          │      │       KhuyếnMãi          │
-├───────────────────────┤      ├──────────────────────────┤
-│ lichHenId PK          │      │ khuyenMaiId PK           │
-│ thuCungId FK ─────────┤      │ code (UNIQUE)            │
-│ khachHangId FK ───────┤      │ description              │
-│ dichVuId FK ──────────┤      │ discountPercent          │
-│ date, timeSlot        │      │ startDate, endDate       │
-│ status                │      │ minOrderValue            │
-│ notes                 │      │ status                   │
-│ createdAt             │      │ createdAt                │
-└───────────┬───────────┘      └──────────────────────────┘
-            │ 1:N
-            ▼
-┌──────────────────────────┐
-│    NhânViênPhụcVụ        │
-├──────────────────────────┤
-│ id PK                    │
-│ lichHenId FK ────────────┘
-│ nhanVienId FK ───────────┐
-│ vaiTro                   │
-│ trangThai                │
-│ thoiGianBatDau           │
-│ thoiGianKetThuc          │
-│ createdAt                │
-└──────────────────────────┘
+-- 3. DịchVụ (Service)
+CREATE TABLE DichVu (
+    dichVuId     INTEGER PRIMARY KEY AUTOINCREMENT,
+    name         TEXT    NOT NULL,
+    description  TEXT,
+    price        REAL    NOT NULL,
+    duration     INTEGER,          -- phút
+    createdAt    TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 4. NhàCungCấp (Supplier)
+CREATE TABLE NhaCungCap (
+    nhaCungCapId INTEGER PRIMARY KEY AUTOINCREMENT,
+    name         TEXT    NOT NULL,
+    phone        TEXT,
+    email        TEXT,
+    address      TEXT,
+    createdAt    TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 5. SảnPhẩm (Product)
+CREATE TABLE SanPham (
+    sanPhamId         INTEGER PRIMARY KEY AUTOINCREMENT,
+    name              TEXT    NOT NULL,
+    loaiSanPhamId     INTEGER REFERENCES LoaiSanPham(loaiSanPhamId),
+    nhaCungCapId      INTEGER REFERENCES NhaCungCap(nhaCungCapId),
+    price             REAL    NOT NULL,
+    costPrice         REAL,
+    quantity          INTEGER NOT NULL DEFAULT 0,
+    unit              TEXT,
+    minStockLevel     INTEGER DEFAULT 0,
+    expiryDate        TEXT,
+    batchNumber       TEXT,
+    description       TEXT,
+    createdAt         TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 6. NgườiDùng (User)
+CREATE TABLE NguoiDung (
+    nguoiDungId INTEGER PRIMARY KEY AUTOINCREMENT,
+    username    TEXT    NOT NULL UNIQUE,
+    password    TEXT    NOT NULL,
+    fullName    TEXT    NOT NULL,
+    role        TEXT    NOT NULL CHECK (role IN ('Admin','Staff')),
+    phone       TEXT,
+    createdAt   TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 7. KháchHàng (Customer)
+CREATE TABLE KhachHang (
+    khachHangId     INTEGER PRIMARY KEY AUTOINCREMENT,
+    phone           TEXT    NOT NULL UNIQUE,
+    email           TEXT,
+    fullName        TEXT    NOT NULL,
+    password        TEXT    NOT NULL,
+    membershipTier  TEXT    DEFAULT 'Bronze'
+                             CHECK (membershipTier IN ('Bronze','Silver','Gold','Diamond')),
+    loyaltyPoints   INTEGER DEFAULT 0,
+    emailVerified   INTEGER DEFAULT 0,   -- 0=false, 1=true
+    avatar          TEXT,
+    createdAt       TEXT    DEFAULT (datetime('now','localtime'))
+);
 ```
 
-### Phần 3: Hỗ trợ & Bổ sung mới
+---
 
+### Nhóm 2: Giao dịch (Transaction)
+
+```sql
+-- 8. ĐơnHàng (Order)
+CREATE TABLE DonHang (
+    donHangId       INTEGER PRIMARY KEY AUTOINCREMENT,
+    khachHangId     INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    nguoiDungId     INTEGER NOT NULL REFERENCES NguoiDung(nguoiDungId),
+    orderDate       TEXT    NOT NULL DEFAULT (datetime('now','localtime')),
+    totalAmount     REAL    NOT NULL,
+    discount        REAL    DEFAULT 0,
+    status          TEXT    DEFAULT 'pending'
+                              CHECK (status IN ('pending','paid','shipping','completed','cancelled','refunded')),
+    notes           TEXT,
+    shippingAddress TEXT,
+    deliveryStatus  TEXT
+);
+
+-- 9. ChiTiếtĐơnHàng (OrderDetail)
+CREATE TABLE ChiTietDonHang (
+    chiTietDonHangId INTEGER PRIMARY KEY AUTOINCREMENT,
+    donHangId        INTEGER NOT NULL REFERENCES DonHang(donHangId),
+    sanPhamId        INTEGER NOT NULL REFERENCES SanPham(sanPhamId),
+    quantity         INTEGER NOT NULL CHECK (quantity > 0),
+    unitPrice        REAL    NOT NULL,
+    subtotal         REAL    NOT NULL
+);
+
+-- 10. PhiếuNhậpKho (Inventory)
+CREATE TABLE PhieuNhapKho (
+    phieuNhapId    INTEGER PRIMARY KEY AUTOINCREMENT,
+    nhaCungCapId   INTEGER NOT NULL REFERENCES NhaCungCap(nhaCungCapId),
+    nguoiDungId    INTEGER NOT NULL REFERENCES NguoiDung(nguoiDungId),
+    entryDate      TEXT    NOT NULL DEFAULT (datetime('now','localtime')),
+    totalCost      REAL    NOT NULL,
+    note           TEXT
+);
+
+-- 11. ChiTiếtPhiếuNhập (InventoryDetail)
+CREATE TABLE ChiTietPhieuNhap (
+    chiTietPhieuNhapId INTEGER PRIMARY KEY AUTOINCREMENT,
+    phieuNhapId        INTEGER NOT NULL REFERENCES PhieuNhapKho(phieuNhapId),
+    sanPhamId          INTEGER NOT NULL REFERENCES SanPham(sanPhamId),
+    quantity           INTEGER NOT NULL CHECK (quantity > 0),
+    unitCost           REAL    NOT NULL,
+    subtotal           REAL    NOT NULL
+);
+
+-- 12. LịchHẹn (Appointment)
+CREATE TABLE LichHen (
+    lichHenId    INTEGER PRIMARY KEY AUTOINCREMENT,
+    thuCungId    INTEGER NOT NULL REFERENCES ThuCung(thuCungId),
+    khachHangId  INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    dichVuId     INTEGER NOT NULL REFERENCES DichVu(dichVuId),
+    date         TEXT    NOT NULL,
+    timeSlot     TEXT    NOT NULL,
+    status       TEXT    DEFAULT 'pending'
+                         CHECK (status IN ('pending','confirmed','checked_in','done','cancelled')),
+    notes        TEXT,
+    createdAt    TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 13. NhânViênPhụcVụ (AppointmentStaff)
+CREATE TABLE NhanVienPhucVu (
+    id               INTEGER PRIMARY KEY AUTOINCREMENT,
+    lichHenId        INTEGER NOT NULL REFERENCES LichHen(lichHenId),
+    nhanVienId       INTEGER NOT NULL REFERENCES NguoiDung(nguoiDungId),
+    vaiTro           TEXT    NOT NULL,
+    ghiChu           TEXT,
+    trangThai        TEXT    NOT NULL DEFAULT 'du_kien'
+                              CHECK (trangThai IN ('du_kien','co_mat','dang_lam_viec','hoan_thanh','huy')),
+    thoiGianBatDau   TEXT,
+    thoiGianKetThuc  TEXT,
+    createdAt        TEXT    DEFAULT (datetime('now','localtime')),
+    UNIQUE(lichHenId, nhanVienId)
+);
+
+-- 14. KhuyếnMãi (Promotion)
+CREATE TABLE KhuyenMai (
+    khuyenMaiId     INTEGER PRIMARY KEY AUTOINCREMENT,
+    code            TEXT    NOT NULL UNIQUE,
+    description     TEXT,
+    discountPercent REAL    NOT NULL CHECK (discountPercent > 0 AND discountPercent <= 100),
+    startDate       TEXT    NOT NULL,
+    endDate         TEXT    NOT NULL,
+    minOrderValue   REAL,
+    status          TEXT    DEFAULT 'active' CHECK (status IN ('active','expired','disabled')),
+    createdAt       TEXT    DEFAULT (datetime('now','localtime'))
+);
 ```
-┌───────────────────────┐      ┌──────────────────────────┐
-│      GiỏHàng          │      │    ThúCưngYêuThích       │
-├───────────────────────┤      ├──────────────────────────┤
-│ gioHangId PK          │      │ yeuThichId PK            │
-│ khachHangId FK ───────┤      │ khachHangId FK ──────────┤
-│ sanPhamId FK ─────────┤      │ thuCungId FK ────────────┤
-│ quantity              │      │ createdAt                │
-│ addedAt               │      └──────────────────────────┘
-└───────────────────────┘
 
-┌───────────────────────┐      ┌──────────────────────────┐
-│    HồSơSứcKhỏe        │      │     ĐiểmThưởng           │
-├───────────────────────┤      ├──────────────────────────┤
-│ recordId PK           │      │ diemId PK                │
-│ thuCungId FK ─────────┤      │ khachHangId FK ──────────┤
-│ recordDate            │      │ diem (int)               │
-│ recordType            │      │ loai (earn/burn)         │
-│ description           │      │ referenceType            │
-│ vetName               │      │ referenceId              │
-│ nextDueDate           │      │ description              │
-│ createdAt             │      │ createdAt                │
-└───────────────────────┘      └──────────────────────────┘
+---
 
-┌───────────────────────┐      ┌──────────────────────────┐
-│     ĐánhGiá           │      │   ThôngBáoKhách          │
-├───────────────────────┤      ├──────────────────────────┤
-│ danhGiaId PK          │      │ thongBaoId PK            │
-│ khachHangId FK ───────┤      │ khachHangId FK ──────────┤
-│ dichVuId FK ──────────┤      │ tieuDe                   │
-│ donHangId FK ─────────┤      │ noiDung                  │
-│ rating (1-5)          │      │ loai                     │
-│ comment               │      │ daDoc (bool)             │
-│ createdAt             │      │ createdAt                │
-│ status                │      └──────────────────────────┘
-└───────────────────────┘
+### Nhóm 3: Khách hàng & Hỗ trợ (Customer & Support)
 
-┌──────────────────────────┐      ┌──────────────────────────┐
-│       ThanhToán          │      │    NhậtKýHoạtĐộng       │
-├──────────────────────────┤      ├──────────────────────────┤
-│ thanhToanId PK           │      │ logId PK                 │
-│ donHangId FK ────────────┤      │ nguoiDungId FK ──────────┤
-│ soTien                   │      │ khachHangId FK ──────────┤
-│ phuongThuc               │      │ hanhDong                 │
-│ maGiaoDich               │      │ doiTuong                 │
-│ trangThai                │      │ doiTuongId               │
-│ ghiChu                   │      │ chiTiet (JSON)           │
-│ nguoiTaoId FK ───────────┘      │ thietBi                  │
-│ thanhToanLuc              │      │ thoiGian                 │
-│ createdAt                 │      │ createdAt                │
-└───────────────────────────┘      └──────────────────────────┘
+```sql
+-- 15. GiỏHàng (Cart)
+CREATE TABLE GioHang (
+    gioHangId    INTEGER PRIMARY KEY AUTOINCREMENT,
+    khachHangId  INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    sanPhamId    INTEGER NOT NULL REFERENCES SanPham(sanPhamId),
+    quantity     INTEGER NOT NULL CHECK (quantity > 0),
+    addedAt      TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 16. ThúCưngYêuThích (FavoritePet)
+CREATE TABLE ThuCungYeuThich (
+    yeuThichId   INTEGER PRIMARY KEY AUTOINCREMENT,
+    khachHangId  INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    thuCungId    INTEGER NOT NULL REFERENCES ThuCung(thuCungId),
+    createdAt    TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 17. HồSơSứcKhỏe (PetHealthRecord)
+CREATE TABLE HoSoSucKhoe (
+    recordId     INTEGER PRIMARY KEY AUTOINCREMENT,
+    thuCungId    INTEGER NOT NULL REFERENCES ThuCung(thuCungId),
+    recordDate   TEXT    NOT NULL,
+    recordType   TEXT    NOT NULL CHECK (recordType IN ('vaccine','checkup','treatment')),
+    description  TEXT,
+    vetName      TEXT,
+    nextDueDate  TEXT,
+    createdAt    TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 18. ĐiểmThưởng (LoyaltyPoint)
+CREATE TABLE DiemThuong (
+    diemId         INTEGER PRIMARY KEY AUTOINCREMENT,
+    khachHangId    INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    diem           INTEGER NOT NULL,
+    loai           TEXT    NOT NULL CHECK (loai IN ('earn','burn')),
+    referenceType  TEXT,
+    referenceId    INTEGER,
+    description    TEXT,
+    createdAt      TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 19. ĐánhGiá (Review)
+CREATE TABLE DanhGia (
+    danhGiaId    INTEGER PRIMARY KEY AUTOINCREMENT,
+    khachHangId  INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    dichVuId     INTEGER NOT NULL REFERENCES DichVu(dichVuId),
+    donHangId    INTEGER REFERENCES DonHang(donHangId),
+    rating       INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment      TEXT    NOT NULL,
+    status       TEXT    DEFAULT 'shown' CHECK (status IN ('shown','hidden')),
+    createdAt    TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 20. ThôngBáoKhách (CustomerNotification)
+CREATE TABLE ThongBaoKhach (
+    thongBaoId   INTEGER PRIMARY KEY AUTOINCREMENT,
+    khachHangId  INTEGER NOT NULL REFERENCES KhachHang(khachHangId),
+    tieuDe       TEXT    NOT NULL,
+    noiDung      TEXT    NOT NULL,
+    loai         TEXT,
+    daDoc        INTEGER DEFAULT 0,    -- 0=false, 1=true
+    createdAt    TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 21. ThúCưng (Pet)
+CREATE TABLE ThuCung (
+    thuCungId      INTEGER PRIMARY KEY AUTOINCREMENT,
+    name           TEXT    NOT NULL,
+    breed          TEXT,
+    age            INTEGER,
+    weight         REAL,
+    color          TEXT,
+    price          REAL,
+    status         TEXT    DEFAULT 'available'
+                           CHECK (status IN ('available','sold','grooming','treatment')),
+    microchipId    TEXT,
+    loaiThuCungId  INTEGER REFERENCES LoaiThuCung(loaiThuCungId),
+    khachHangId    INTEGER REFERENCES KhachHang(khachHangId),
+    createdAt      TEXT    DEFAULT (datetime('now','localtime'))
+);
 ```
 
-### Tổng hợp quan hệ khóa ngoại
+---
 
+### Nhóm 4: Bổ sung mới (New)
+
+```sql
+-- 22. ThanhToán (Payment)
+CREATE TABLE ThanhToan (
+    thanhToanId   INTEGER PRIMARY KEY AUTOINCREMENT,
+    donHangId     INTEGER NOT NULL REFERENCES DonHang(donHangId),
+    soTien        REAL    NOT NULL CHECK (soTien > 0),
+    phuongThuc    TEXT    NOT NULL
+                          CHECK (phuongThuc IN ('tien_mat','chuyen_khoan','momo','vnpay','the_tin_dung')),
+    maGiaoDich    TEXT,
+    trangThai     TEXT    NOT NULL DEFAULT 'thanh_cong'
+                          CHECK (trangThai IN ('cho_xu_ly','thanh_cong','that_bai','hoan_tien','hoan_tien_mot_phan')),
+    ghiChu        TEXT,
+    nguoiTaoId    INTEGER REFERENCES NguoiDung(nguoiDungId),
+    thanhToanLuc  TEXT    NOT NULL DEFAULT (datetime('now','localtime')),
+    createdAt     TEXT    DEFAULT (datetime('now','localtime'))
+);
+
+-- 23. NhậtKýHoạtĐộng (ActivityLog)
+CREATE TABLE NhatKyHoatDong (
+    logId        INTEGER PRIMARY KEY AUTOINCREMENT,
+    nguoiDungId  INTEGER REFERENCES NguoiDung(nguoiDungId),
+    khachHangId  INTEGER REFERENCES KhachHang(khachHangId),
+    hanhDong     TEXT    NOT NULL,
+    doiTuong     TEXT    NOT NULL,
+    doiTuongId   INTEGER NOT NULL,
+    chiTiet      TEXT,               -- JSON
+    thietBi      TEXT,
+    thoiGian     TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+);
 ```
-                          KháchHàng
-                         ┌──────────┐
-                         │          │
-     ┌───────────────────┤  KH      ├───────────────────────┐
-     │                   │   PK     │                       │
-     │                   └────┬─────┘                      │
-     │                        │                            │
-     ▼                        ▼                            ▼
- ┌───────┐  ┌───────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
- │ThúCưng│  │ĐơnHàng│  │LịchHẹn   │  │ĐánhGiá   │  │GiỏHàng   │
- │KH=FK  │  │KH=FK  │  │KH=FK     │  │KH=FK     │  │KH=FK     │
- └───────┘  └───────┘  └──────────┘  └──────────┘  └──────────┘
- ┌───────┐  ┌───────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
- │YêuThic│  │Điểm   │  │ThôngBáo  │  │NhậtKý   │  │          │
- │KH=FK  │  │KH=FK  │  │KH=FK     │  │KH=FK     │  │          │
- └───────┘  └───────┘  └──────────┘  └──────────┘  └──────────┘
 
-                          NgườiDùng
-                         ┌──────────┐
-                         │          │
-     ┌───────────────────┤   ND     ├───────────────────────┐
-     │                   │   PK     │                       │
-     │                   └────┬─────┘                      │
-     │                        │                            │
-     ▼                        ▼                            ▼
- ┌───────┐  ┌───────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
- │ĐơnHàng│  │Thanh  │  │PhiếuNhap│  │NhậtKý   │  │NhânViên │
- │ND=FK  │  │Toán   │  │ND=FK    │  │ND=FK    │  │PhụcVụ   │
- └───────┘  │ND=FK  │  └──────────┘  └──────────┘  │ND=FK    │
-            └───────┘                              └──────────┘
+---
+
+## Tổng hợp khóa ngoại
+
+| # | Bảng | FK | Tham chiếu |
+|---|------|----|-----------|
+| 5 | SanPham | loaiSanPhamId | LoaiSanPham(loaiSanPhamId) |
+| 5 | SanPham | nhaCungCapId | NhaCungCap(nhaCungCapId) |
+| 8 | DonHang | khachHangId | KhachHang(khachHangId) |
+| 8 | DonHang | nguoiDungId | NguoiDung(nguoiDungId) |
+| 9 | ChiTietDonHang | donHangId | DonHang(donHangId) |
+| 9 | ChiTietDonHang | sanPhamId | SanPham(sanPhamId) |
+| 10 | PhieuNhapKho | nhaCungCapId | NhaCungCap(nhaCungCapId) |
+| 10 | PhieuNhapKho | nguoiDungId | NguoiDung(nguoiDungId) |
+| 11 | ChiTietPhieuNhap | phieuNhapId | PhieuNhapKho(phieuNhapId) |
+| 11 | ChiTietPhieuNhap | sanPhamId | SanPham(sanPhamId) |
+| 12 | LichHen | thuCungId | ThuCung(thuCungId) |
+| 12 | LichHen | khachHangId | KhachHang(khachHangId) |
+| 12 | LichHen | dichVuId | DichVu(dichVuId) |
+| 13 | NhanVienPhucVu | lichHenId | LichHen(lichHenId) |
+| 13 | NhanVienPhucVu | nhanVienId | NguoiDung(nguoiDungId) |
+| 15 | GioHang | khachHangId | KhachHang(khachHangId) |
+| 15 | GioHang | sanPhamId | SanPham(sanPhamId) |
+| 16 | ThuCungYeuThich | khachHangId | KhachHang(khachHangId) |
+| 16 | ThuCungYeuThich | thuCungId | ThuCung(thuCungId) |
+| 17 | HoSoSucKhoe | thuCungId | ThuCung(thuCungId) |
+| 18 | DiemThuong | khachHangId | KhachHang(khachHangId) |
+| 19 | DanhGia | khachHangId | KhachHang(khachHangId) |
+| 19 | DanhGia | dichVuId | DichVu(dichVuId) |
+| 19 | DanhGia | donHangId | DonHang(donHangId) |
+| 20 | ThongBaoKhach | khachHangId | KhachHang(khachHangId) |
+| 21 | ThuCung | loaiThuCungId | LoaiThuCung(loaiThuCungId) |
+| 21 | ThuCung | khachHangId | KhachHang(khachHangId) |
+| 22 | ThanhToan | donHangId | DonHang(donHangId) |
+| 22 | ThanhToan | nguoiTaoId | NguoiDung(nguoiDungId) |
+| 23 | NhatKyHoatDong | nguoiDungId | NguoiDung(nguoiDungId) |
+| 23 | NhatKyHoatDong | khachHangId | KhachHang(khachHangId) |
+
+---
+
+## Quan hệ Master-Detail
+
+| Master | Detail | Liên kết |
+|--------|--------|----------|
+| DonHang (1) | ChiTietDonHang (N) | donHangId |
+| PhieuNhapKho (1) | ChiTietPhieuNhap (N) | phieuNhapId |
+| LichHen (1) | NhanVienPhucVu (N) | lichHenId |
+| DonHang (1) | ThanhToan (N) | donHangId |
+
+---
+
+## Chỉ mục (Index) đề xuất
+
+```sql
+-- Tìm kiếm nhanh
+CREATE INDEX idx_sanpham_name ON SanPham(name);
+CREATE INDEX idx_khachhang_phone ON KhachHang(phone);
+CREATE INDEX idx_donhang_orderDate ON DonHang(orderDate);
+CREATE INDEX idx_donhang_khachHangId ON DonHang(khachHangId);
+CREATE INDEX idx_lichhen_date ON LichHen(date);
+CREATE INDEX idx_lichhen_khachHangId ON LichHen(khachHangId);
+CREATE INDEX idx_thucung_khachHangId ON ThuCung(khachHangId);
+CREATE INDEX idx_nhatky_thoiGian ON NhatKyHoatDong(thoiGian);
+CREATE INDEX idx_nhatky_hanhDong ON NhatKyHoatDong(hanhDong);
+CREATE INDEX idx_thanhtoan_donHangId ON ThanhToan(donHangId);
 ```
 
 ---
@@ -745,66 +913,3 @@ Luồng rẽ nhánh:
 ```
 
 ---
-
-### Khóa ngoại bổ sung cho 3 bảng mới
-
-| Bảng (VN) | FK | Tham chiếu |
-|---|---|---|
-| **ThanhToán** | donHangId | ĐơnHàng(donHangId) |
-| **ThanhToán** | nguoiTaoId | NgườiDùng(nguoiDungId) |
-| **NhậtKýHoạtĐộng** | nguoiDungId | NgườiDùng(nguoiDungId) |
-| **NhậtKýHoạtĐộng** | khachHangId | KháchHàng(khachHangId) |
-| **NhânViênPhụcVụ** | lichHenId | LịchHẹn(lichHenId) |
-| **NhânViênPhụcVụ** | nhanVienId | NgườiDùng(nguoiDungId) |
-
-### Ràng buộc NOT NULL bổ sung
-
-- **ThanhToán:** soTien, phuongThuc, trangThai, thanhToanLuc
-- **NhậtKýHoạtĐộng:** hanhDong, doiTuong, doiTuongId, thoiGian
-- **NhânViênPhụcVụ:** lichHenId, nhanVienId, vaiTro, trangThai
-
-### Ràng buộc DEFAULT & CHECK bổ sung
-
-- ThanhToán.trangThai DEFAULT 'thanh_cong'
-- ThanhToán.soTien CHECK (> 0) — cho phép âm khi hoàn tiền
-- ThanhToán.phuongThuc IN ('tien_mat', 'chuyen_khoan', 'momo', 'vnpay', 'the_tin_dung')
-- NhânViênPhụcVụ.trangThai IN ('du_kien', 'co_mat', 'dang_lam_viec', 'hoan_thanh', 'huy')
-
----
-
-## Mối quan hệ Master-Detail (cập nhật)
-
-### 3. ThanhToán (Detail) ← ĐơnHàng (Master)
-
-```
-ĐơnHàng (Master)                 ThanhToán (Detail)
-┌────────────────────┐           ┌─────────────────────────────┐
-│ donHangId (PK)     │◄──────────│ donHangId (FK)              │
-│ totalAmount: 1.5tr │   1 : N   │ soTien: 1tr + 0.5tr          │
-│ status: paid       │           │ phuongThuc: tien_mat + ck   │
-└────────────────────┘           │ trangThai: thanh_cong       │
-                                  └─────────────────────────────┘
-```
-
-### 4. NhânViênPhụcVụ (Detail) ← LịchHẹn (Master)
-
-```
-LịchHẹn (Master)                 NhânViênPhụcVụ (Detail)
-┌────────────────────┐           ┌─────────────────────────────┐
-│ lichHenId (PK)     │◄──────────│ lichHenId (FK)              │
-│ dịch vụ: Tắm+Cắt  │   1 : N   │ NV1: vaiTro='Tắm'          │
-│ giờ: 09:00         │           │ NV2: vaiTro='Cắt tỉa'      │
-└────────────────────┘           └─────────────────────────────┘
-```
-
----
-
-## Tổng kết sau khi bổ sung
-
-| Tiêu chí | Trước | Sau |
-|---|---|---|
-| Tổng số bảng | 20 | **23** |
-| Master-Detail | 2 (Order, Inventory) | **4** (thêm ThanhToán, NhânViênPhụcVụ) |
-| Bảng thanh toán | ❌ Không có | ✅ Có: trace được từng giao dịch, hoàn tiền |
-| Audit log | ❌ Không có | ✅ Có: biết ai làm gì, lúc nào |
-| Gán nhân viên lịch hẹn | ❌ Không có | ✅ Có: biết ai phục vụ, tính năng suất |
