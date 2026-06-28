@@ -30,8 +30,11 @@
 | 18 | **`FavoritePet.java`** | **Thú cưng yêu thích / Theo dõi** | ĐT |
 | 19 | **`CustomerNotification.java`** | **Thông báo cho khách hàng** | ĐT |
 | 20 | **`PetHealthRecord.java`** | **Hồ sơ sức khỏe / Lịch tiêm chủng** | ĐT |
+| 21 | **`Payment.java`** | **Giao dịch thanh toán cho đơn hàng** | ĐT |
+| 22 | **`ActivityLog.java`** | **Nhật ký hoạt động người dùng** | ĐT |
+| 23 | **`AppointmentStaff.java`** | **Nhân viên phục vụ lịch hẹn** | ĐT |
 
-**Tổng: 20 chức năng đối tượng** ✅ *(yêu cầu ≥10 ĐT)*
+**Tổng: 23 chức năng đối tượng** ✅ *(yêu cầu ≥10 ĐT)*
 
 ---
 
@@ -61,6 +64,9 @@
 | 18 | **`FavoritePetDao.java`** | CRUD thú cưng yêu thích |
 | 19 | **`CustomerNotificationDao.java`** | CRUD thông báo, đánh dấu đã đọc |
 | 20 | **`PetHealthRecordDao.java`** | CRUD hồ sơ sức khỏe, lọc theo thú cưng |
+| 21 | **`PaymentDao.java`** | CRUD giao dịch thanh toán, truy vấn theo đơn hàng |
+| 22 | **`ActivityLogDao.java`** | INSERT log (append-only), truy vấn lọc theo ngày/người dùng |
+| 23 | **`AppointmentStaffDao.java`** | CRUD nhân viên phục vụ, lọc theo lịch hẹn/nhân viên |
 
 ### 2.2 Repository
 
@@ -70,8 +76,8 @@
 | 2 | `PetRepository.java` | PetDao, PetCategoryDao |
 | 3 | `CustomerRepository.java` | CustomerDao |
 | 4 | `ProductRepository.java` | ProductDao, ProductCategoryDao |
-| 5 | `OrderRepository.java` | OrderDao, OrderDetailDao (QT) |
-| 6 | `AppointmentRepository.java` | AppointmentDao |
+| 5 | `OrderRepository.java` | OrderDao, OrderDetailDao, PaymentDao (QT) |
+| 6 | `AppointmentRepository.java` | AppointmentDao, AppointmentStaffDao (QT) |
 | 7 | `InventoryRepository.java` | InventoryDao, InventoryDetailDao (QT) |
 | 8 | `ServiceRepository.java` | ServiceDao |
 | 9 | `PromotionRepository.java` | PromotionDao |
@@ -81,6 +87,9 @@
 | 13 | **`FavoritePetRepository.java`** | FavoritePetDao |
 | 14 | **`CustomerNotificationRepository.java`** | CustomerNotificationDao |
 | 15 | **`PetHealthRecordRepository.java`** | PetHealthRecordDao |
+| 16 | **`PaymentRepository.java`** | PaymentDao |
+| 17 | **`ActivityLogRepository.java`** | ActivityLogDao |
+| 18 | **`AppointmentStaffRepository.java`** | AppointmentStaffDao |
 
 ---
 
@@ -106,6 +115,9 @@
 | 15 | **`FavoritePetViewModel.java`** | Thêm/xóa thú cưng yêu thích |
 | 16 | **`CustomerNotificationViewModel.java`** | Xem thông báo, đánh dấu đã đọc |
 | 17 | **`PetHealthViewModel.java`** | Xem hồ sơ sức khỏe, lịch tiêm |
+| 18 | **`PaymentViewModel.java`** | **Xử lý thanh toán, ghi giao dịch, hoàn tiền** |
+| 19 | **`ActivityLogViewModel.java`** | **Xem nhật ký hoạt động (Admin)** |
+| 20 | **`AppointmentStaffViewModel.java`** | **Gán nhân viên phục vụ, cập nhật trạng thái** |
 
 ---
 
@@ -128,7 +140,9 @@
 | 13 | Quản lý nhà cung cấp | `SupplierFragment.java` + `SupplierFormActivity.java` | CRUD nhà cung cấp |
 | 14 | **Thống kê / Báo cáo** | **`StatisticActivity.java`** | **Biểu đồ doanh thu, báo cáo (Report)** |
 | 15 | Quản lý tài khoản | `UserManagementActivity.java` | CRUD người dùng (Admin) |
-|---|---|---|---|---|
+| 16 | **Thanh toán** | **`PaymentDialog.java`** | **Tạo giao dịch thanh toán, chọn phương thức, hoàn tiền** |
+| 17 | **Nhật ký hoạt động** | **`ActivityLogActivity.java`** | **Xem log, lọc theo ngày/nhân viên/hành động (Admin)** |
+| 18 | **Gán nhân viên phục vụ** | **`AssignStaffDialog.java`** | **Gán nhân viên cho lịch hẹn, chọn vai trò** |
 | | **=== CUSTOMER APP (App khách hàng) ===** | | |
 | 16 | **Đăng nhập / Đăng ký KH** | **`CustomerLoginActivity.java`** | **Đăng nhập bằng SĐT/mật khẩu, đăng ký tài khoản** |
 | 17 | **Trang chủ khách hàng** | **`CustomerHomeActivity.java`** | **DS dịch vụ, sản phẩm, khuyến mãi, thông báo** |
@@ -148,11 +162,12 @@
 
 | Loại | Số lượng | Yêu cầu | Đạt |
 |---|---|---|---|
-| Chức năng đối tượng (ĐT) | 20 | ≥ 10 | ✅ |
-| Chức năng quy trình (QT) | 3 (Tạo đơn hàng, Nhập kho, **Đặt lịch hẹn**) | ≥ 2 | ✅ |
-| Form Master-Detail | 2 (Order, Inventory) | Có | ✅ |
-| Tổng số form | 26 | ≥ 10 | ✅ |
+| Chức năng đối tượng (ĐT) | 23 | ≥ 10 | ✅ |
+| Chức năng quy trình (QT) | 4 (Tạo đơn hàng, Nhập kho, **Đặt lịch hẹn, Thanh toán**) | ≥ 2 | ✅ |
+| Form Master-Detail | 4 (Order, Inventory, **Payment, AppointmentStaff**) | Có | ✅ |
+| Tổng số form | 29 | ≥ 10 | ✅ |
 | Report / Thống kê | 2 (Staff Statistic, **Customer Statistic**) | Có | ✅ |
-| Chức năng hỗ trợ | Phân quyền, tìm kiếm, lọc, **đánh giá, tích điểm, thông báo** | Cộng điểm | ✅ |
+| Audit log | 1 (ActivityLogActivity) | Cộng điểm | ✅ |
+| Chức năng hỗ trợ | Phân quyền, tìm kiếm, lọc, **đánh giá, tích điểm, thông báo, audit log** | Cộng điểm | ✅ |
 
 > Dựa theo thang điểm mục 2.1 và 2.2 (APP): đủ ≥10 chức năng đối tượng, ≥2 chức năng quy trình, ≥10 form, có form master-detail, có report.

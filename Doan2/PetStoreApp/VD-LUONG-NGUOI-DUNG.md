@@ -73,6 +73,25 @@
 │                                                                      │
 │  (7) [Xuất Excel] → Export report ra file .xlsx                      │
 │                                                                      │
+│  (8) Vào [Nhật ký hoạt động] → ActivityLogActivity                  │
+│      ┌─────────────────────────────────────┐                        │
+│      │  ← Nhật ký hoạt động      [Lọc ▼]   │                        │
+│      ├─────────────────────────────────────┤                        │
+│      │  🔍 [Tìm kiếm...              ]    │                        │
+│      │─────────────────────────────────────│                        │
+│      │  📋 28/05 09:15 - Staff A          │                        │
+│      │      TẠO_ĐƠN - ĐơnHàng #ORD125     │                        │
+│      │      Chi tiết: KH Nguyễn Văn C     │                        │
+│      ├─────────────────────────────────────┤                        │
+│      │  📋 28/05 09:20 - Staff A          │                        │
+│      │      THANH_TOÁN - ĐơnHàng #ORD125  │                        │
+│      │      Tiền mặt: 801,000đ            │                        │
+│      ├─────────────────────────────────────┤                        │
+│      │  📋 27/05 14:00 - Admin            │                        │
+│      │      THÊM_NV - NgườiDùng #5        │                        │
+│      │      "Thêm nhân viên Trần Văn B"   │                        │
+│      └─────────────────────────────────────┘                        │
+│                                                                      │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -141,7 +160,12 @@
 │      ├─ OrderRepository.placeOrder()                                │
 │      │  ├─ OrderDao.insert(order) → orderId = 125                  │
 │      │  ├─ OrderDetailDao.insertList(details)                      │
-│      │  └─ ProductDao.updateQuantity(prodId, newQty)               │
+│      │  ├─ ProductDao.updateQuantity(prodId, newQty)               │
+│      │  ├─ PaymentDao.insert(payment)                               │
+│      │  │  (ghi giao dịch thanh toán)                              │
+│      │  ├─ OrderDao.updateStatus(orderId, 'paid')                   │
+│      │  └─ ActivityLogDao.insert('TAO_DON', ...)                    │
+│      │     ActivityLogDao.insert('THANH_TOAN', ...)                 │
 │      └─ Hiển thị: ✅ "Đã lưu đơn hàng #ORD125"                      │
 │         [In hóa đơn] [Xem chi tiết] [Tiếp tục bán]                 │
 │                                                                      │
@@ -544,7 +568,12 @@
 │  │• Cài đặt │  │• Nhập kho │  │• Đánh giá    │                  │
 │  │• Xóa dữ  │  │• In hóa   │  │• Giỏ hàng    │                  │
 │  │  liệu    │  │  đơn      │  │• Hồ sơ sức   │                  │
-│  │          │  │            │  │  khỏe thú    │                  │
+│  │• Xem     │  │• Thanh    │  │  khỏe thú    │                  │
+│  │  nhật ký │  │  toán     │  │  cưng        │                  │
+│  │  hoạt    │  │• Gán NV   │  │• Đánh giá    │                  │
+│  │  động    │  │  phục vụ  │  │  dịch vụ     │                  │
+│  │          │  │• Nhập kho │  │• Thanh toán  │                  │
+│  │          │  │  + log    │  │• Thông báo   │                  │
 │  └──────────┘  └────────────┘  └──────────────┘                  │
 │        │              │               │                            │
 │        └──────────────┼───────────────┘                            │

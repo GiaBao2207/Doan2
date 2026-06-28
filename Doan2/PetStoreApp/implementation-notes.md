@@ -1,6 +1,7 @@
 # Implementation Notes & Review
 
-> Phân tích và nhận xét về thiết kế PetStoreApp dựa trên các tài liệu hiện có.
+> Phân tích và nhận xét về thiết kế PetStoreApp.  
+> **Lưu ý:** File này được cập nhật sau mỗi lần thay đổi thiết kế.
 
 ## Tổng Quan
 
@@ -21,11 +22,17 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 - Phân tách rõ View → ViewModel → Repository → DAO → Database.
 - Sử dụng LiveData để cập nhật UI tự động.
 
-### 3. Thiết kế database khá toàn diện
-- 20 bảng, đầy đủ khóa ngoại, ràng buộc NOT NULL, UNIQUE, DEFAULT, CHECK.
-- Quan hệ Master-Detail cho Order và Inventory.
+### 3. Thiết kế database toàn diện (đã cải thiện)
+- Từ **20 bảng** nâng lên **23 bảng** — thêm `ThanhToán`, `NhậtKýHoạtĐộng`, `NhânViênPhụcVụ`.
+- Đầy đủ khóa ngoại, ràng buộc NOT NULL, UNIQUE, DEFAULT, CHECK.
+- 4 quan hệ Master-Detail (Order, Inventory, ThanhToán, NhânViênPhụcVụ).
+- Toàn bộ tên bảng đã đổi sang tiếng Việt.
 
-### 4. Quy trình nghiệp vụ được mô tả chi tiết
+### 4. Biểu đồ Use Case đầy đủ
+- Đã bổ sung **32 use case** có ma trận phân theo 3 role.
+- Mô tả chi tiết 3 use case quan trọng nhất: Tạo đơn hàng, Đặt lịch hẹn, Nhập kho.
+
+### 5. Quy trình nghiệp vụ được mô tả chi tiết
 - Các file `LUONG-THUC-TE.md` và `VD-LUONG-NGUOI-DUNG.md` mô tả từng bước người dùng thao tác, rất tốt cho việc code sau này.
 
 ---
@@ -36,55 +43,76 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 - Toàn bộ dự án mới dừng ở thiết kế, chưa có file Java, XML layout, Gradle build.
 - **Cần triển khai code để đánh giá đúng chất lượng.**
 
-### 2. Vấn đề về Database
+### 2. Vấn đề về Database (đã xử lý một phần)
 
-| Vấn đề | Mô tả | Đề xuất |
-|--------|-------|---------|
-| **Thiếu bảng Employee** | `User` dùng chung cho Admin & Staff nhưng không có trường lương, ca làm, ngày vào làm | Nên tách `Employee` riêng hoặc thêm field: `salary`, `shift`, `hireDate` |
-| **Không có bảng lịch sử giá** | Khi Product thay đổi giá, mất trace | Thêm `ProductPriceHistory` |
-| **Pet gắn cứng customerId** | Pet chỉ thuộc 1 chủ, không hỗ trợ đồng sở hữu | Thêm bảng `PetOwner` (petId, customerId, isPrimary) |
-| **Thiếu bảng Payment** | PaymentMethod là string trong Order, không trace được giao dịch | Nên tách `Payment` riêng: paymentId, orderId, method, amount, status, transactionId, paidAt |
-| **Thiếu chỉ mục (Index)** | Không có index cho các cột hay truy vấn (phone, email, orderDate, status) | Thêm index cho performance |
-| **Product.quantity mặc định 0** | Không phân biệt tồn kho thực tế và tồn kho khả dụng | Có thể thêm `availableQuantity`, `reservedQuantity` |
+| Vấn đề | Trạng thái |
+|--------|-----------|
+| **Thiếu bảng Employee** | ⚠️ Vẫn thiếu — `User` chưa có salary, shift, hireDate |
+| **Không có bảng lịch sử giá** | ❌ Vẫn thiếu — chưa thêm `ProductPriceHistory` |
+| **Pet gắn cứng customerId** | ❌ Vẫn chưa hỗ trợ đồng sở hữu |
+| **Thiếu bảng Payment** | ✅ **Đã thêm** — `ThanhToán` với đầy đủ fields |
+| **Thiếu Audit Log** | ✅ **Đã thêm** — `NhậtKýHoạtĐộng` append-only |
+| **Thiếu gán nhân viên lịch hẹn** | ✅ **Đã thêm** — `NhânViênPhụcVụ` |
+| **Thiếu chỉ mục (Index)** | ❌ Vẫn chưa có index |
+| **Product.quantity** | ⚠️ Chưa phân biệt tồn khả dụng / tồn thực tế |
 
 ### 3. Vấn đề về Chức năng Nghiệp vụ
 
 | Vấn đề | Mô tả | Đề xuất |
 |--------|-------|---------|
-| **Quên mật khẩu** | Được đề cập trong gợi ý nhưng không có trong thiết kế chính | Cần có luồng "Quên mật khẩu" với OTP |
-| **Không có log hoạt động (Audit Trail)** | Không ghi lại ai đã làm gì, lúc nào | Thêm bảng `ActivityLog` để trace (VD: ai tạo đơn, ai sửa giá, ai xóa pet) |
-| **Xuất Excel / PDF** | Chỉ nhắc đến ở Admin report nhưng chưa có thiết kế chi tiết | Cần spec rõ luồng export |
-| **Hủy đơn hàng** | Chưa có quy trình hủy đơn (hoàn tiền, cập nhật tồn kho) | Cần state machine rõ cho Order.status |
-| **Xung đột lịch hẹn** | 2 khách có thể đặt cùng giờ, cùng nhân viên | Cần kiểm tra trùng lịch, gán nhân viên phục vụ |
-| **Giao hàng** | Nếu là Pet Store thực tế, có thể cần giao hàng tận nơi | Thêm `ShippingAddress`, `DeliveryStatus` |
+| **Quên mật khẩu** | Được đề cập trong gợi ý nhưng chưa có thiết kế chi tiết | Cần có luồng "Quên mật khẩu" với OTP |
+| **Xuất Excel / PDF** | Chỉ nhắc đến ở Admin report | Cần spec rõ luồng export |
+| **Hủy đơn hàng** | Chưa có state machine cho Order.status | Cần quy trình hủy + hoàn tiền |
+| **Xung đột lịch hẹn** | Đã có NhânViênPhụcVụ nhưng chưa có cơ chế kiểm tra trùng | Cần validate ở code |
+| **Giao hàng** | Đã thêm shippingAddress, deliveryStatus vào ĐơnHàng | ⚠️ Chưa có bảng riêng cho địa chỉ |
 
 ### 4. Vấn đề về Kỹ thuật / Kiến trúc
 
 | Vấn đề | Mô tả | Đề xuất |
 |--------|-------|---------|
-| **Staff & Customer chung DB trên cùng máy?** | Tài liệu nói "cả 2 app cùng truy cập 1 DB" → trên Android mỗi app có sandbox riêng, không thể share DB trực tiếp | Cần backend server (REST API) hoặc dùng ContentProvider. Với đồ án thì có thể coi như 2 module trong 1 project APK |
-| **Không có lớp Service / UseCase** | ViewModel gọi thẳng Repository, thiếu tầng xử lý nghiệp vụ phức tạp | Nên thêm `UseCase` / `Interactor` giữa ViewModel và Repository |
-| **Threading** | Room yêu cầu không chạy trên main thread, cần xử lý bất đồng bộ | Cần dùng AsyncTask/Coroutines/RxJava + LiveData |
-| **Không đề cập Dependency Injection** | Không dùng Hilt/Dagger/Koin → code khó maintain | Nên dùng Hilt (Android khuyến nghị) |
-| **Không đề cập Navigation** | Không có Component/Graph cho luồng màn hình | Nên dùng Android Navigation Component |
-| **Không có Unit Test / UI Test** | Không có đề cập đến testing | Nên có ít nhất Unit Test cho ViewModel + Repository |
+| **Staff & Customer chung DB trên cùng máy?** | Tài liệu nói "cả 2 app cùng truy cập 1 DB" → trên Android mỗi app có sandbox riêng | Cần backend REST API hoặc 2 module trong 1 APK |
+| **Không có lớp Service / UseCase** | ViewModel gọi thẳng Repository | Nên thêm `UseCase` giữa ViewModel và Repository |
+| **Threading** | Room yêu cầu không chạy trên main thread | Cần AsyncTask/Coroutines/RxJava + LiveData |
+| **Không có Dependency Injection** | Code khó maintain | Nên dùng Hilt |
+| **Không có Navigation Component** | Không có graph cho luồng màn hình | Nên dùng Android Navigation Component |
+| **Không có Unit Test / UI Test** | Chưa đề cập testing | Nên có ít nhất Unit Test cho ViewModel + Repository |
 
 ### 5. Vấn đề về UX / UI
 
 | Vấn đề | Mô tả | Đề xuất |
 |--------|-------|---------|
-| **Chưa có thiết kế offline-first** | Mất mạng là không dùng được | Cơ chế cache + sync khi có network |
-| **Ngôn ngữ giao diện** | Chỉ có tiếng Việt? | Nên hỗ trợ i18n (ít nhất VN + EN) |
-| **Loading / Error state** | Thiết kế chưa đề cập xử lý loading, empty, error state | Cần thêm vào mọi màn hình |
-| **Pagination** | Danh sách dài (sản phẩm, đơn hàng) không có phân trang | Nên thêm limit/offset hoặc Paging 3 |
+| **Offline-first** | Mất mạng là không dùng được | Cơ chế cache + sync |
+| **Ngôn ngữ** | Chỉ có tiếng Việt | Nên hỗ trợ i18n (VN + EN) |
+| **Loading / Error / Empty state** | Chưa được thiết kế | Cần thêm vào mọi màn hình |
+| **Pagination** | Danh sách dài không có phân trang | Nên thêm Paging 3 |
 
 ### 6. Vấn đề về Bảo mật
 
-| Vấn đề | Mô tả | Đề xuất |
-|--------|-------|---------|
-| **Mật khẩu** | Nói dùng SHA-256 + Salt nhưng Room DB local lưu pass là không an toàn nếu có nhiều user | Pass local có thể chấp nhận với đồ án, nhưng thực tế cần backend + JWT |
-| **Phân quyền thô** | Chỉ dùng role string, dễ sai | Nên dùng enum + Permission-based access control |
-| **SQL Injection** | Room an toàn về mặt này, nhưng cần lưu ý nếu có raw query | Sử dụng parameterized queries |
+| Vấn đề | Đề xuất |
+|--------|---------|
+| **Mật khẩu SHA-256 + Salt** | Chấp nhận được với đồ án; thực tế cần backend + JWT |
+| **Phân quyền** | Nên dùng enum + Permission-based thay vì role string |
+| **SQL Injection** | Room đã an toàn, lưu ý khi dùng raw query |
+
+---
+
+## Nhật ký thay đổi thiết kế
+
+| Ngày | Thay đổi | File ảnh hưởng |
+|------|---------|----------------|
+| 28/06/2026 | Tạo implementation-notes.md ban đầu | implementation-notes.md |
+| 28/06/2026 | Đánh giá: thiếu 8 bảng, cần bổ sung | implementation-notes.md |
+| 28/06/2026 | Thêm 3 bảng: ThanhToán, NhậtKýHoạtĐộng, NhânViênPhụcVụ | DATABASE.md |
+| 28/06/2026 | Đổi tên toàn bộ 23 bảng sang tiếng Việt | DATABASE.md |
+| 28/06/2026 | Sửa ERD đầy đủ 23 bảng (3 phần) | DATABASE.md |
+| 28/06/2026 | Thêm biểu đồ Use Case + 32 use case + mô tả chi tiết 3 UC chính | DATABASE.md |
+| 28/06/2026 | Tạo file nhiệm-vụ.md với 5 giai đoạn, ~100 tasks | nhiệm-vụ.md |
+| 28/06/2026 | Cập nhật implementation-notes.md sau các thay đổi | implementation-notes.md |
+| 28/06/2026 | Cập nhật CHUC-NANG.md: 20→23 entities, DAOs, Repos, ViewModels, UI, summary | CHUC-NANG.md |
+| 28/06/2026 | Cập nhật README.md: 20→23 bảng | README.md |
+| 28/06/2026 | Cập nhật LUONG-THUC-TE.md: thêm Payment, ActivityLog vào các luồng | LUONG-THUC-TE.md |
+| 28/06/2026 | Cập nhật VD-LUONG-NGUOI-DUNG.md: thêm Admin xem log, Staff ghi payment+log | VD-LUONG-NGUOI-DUNG.md |
+| 28/06/2026 | Cập nhật GOI-Y-TINH-NANG-KHACH-HANG.md: reference đến bảng ThanhToán | GOI-Y-TINH-NANG-KHACH-HANG.md |
 
 ---
 
@@ -93,10 +121,8 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 ### Cửa hàng thú cưng thực tế cần thêm:
 - **Quản lý giống / nhân giống** (breeding management)
 - **Quản lý chuồng / lồng** (cage management)
-- **Quản lý lịch tiêm chủng định kỳ + gửi thông báo**
 - **Bảo hành thú cưng** (sức khỏe 7-30 ngày sau khi mua)
 - **Hợp đồng mua bán thú cưng** (giấy tờ pháp lý)
-- **Quản lý thuốc / vật tư y tế** (expiry date, lot number)
 - **Dashboard realtime** (số khách trong cửa hàng, công việc đang chờ)
 
 ### Phù hợp với đồ án không?
@@ -109,25 +135,28 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 ## Khuyến Nghị
 
 ### Priority 1 (Bắt buộc để chạy được)
-1. Viết code Entities + DAOs + Database
+1. Viết code Entities + DAOs + Database (23 bảng)
 2. Viết Repositories
 3. Viết ViewModels cho các màn hình chính (Login, Dashboard, Order, Pet, Customer)
 4. UI cơ bản (XML layout) cho các form chính
 5. Đảm bảo CRUD hoạt động đúng
 
 ### Priority 2 (Nên có)
-6. Form Master-Detail: Order + OrderDetail
+6. Form Master-Detail: Order + OrderDetail + ThanhToán
 7. Form Master-Detail: Inventory + InventoryDetail
-8. Statistic / Report (biểu đồ cột đơn giản)
-9. Tích điểm + Phân hạng thành viên
-10. Customer App: Đặt lịch, lịch sử, đánh giá
+8. Form Master-Detail: LịchHẹn + NhânViênPhụcVụ
+9. Statistic / Report (biểu đồ cột đơn giản)
+10. Tích điểm + Phân hạng thành viên
+11. Customer App: Đặt lịch, lịch sử, đánh giá
+12. Ghi NhậtKýHoạtĐộng tự động
 
 ### Priority 3 (Điểm cộng)
-11. Phân quyền chi tiết
-12. Tìm kiếm nâng cao + Lọc
-13. Sao lưu database
-14. Mã hóa mật khẩu
-15. Thông báo push (FCM)
+13. Phân quyền chi tiết
+14. Tìm kiếm nâng cao + Lọc
+15. Sao lưu database
+16. Mã hóa mật khẩu
+17. Thông báo push (FCM)
+18. Thanh toán online (VNPay / Momo)
 
 ---
 
@@ -136,7 +165,10 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | Tiêu chí | Đánh giá |
 |----------|----------|
 | Phân tích nghiệp vụ | ✅ **Tốt** - bao phủ rộng, chi tiết |
-| Thiết kế database | ✅ **Khá tốt** - 20 bảng, FK, constraints |
+| Thiết kế database | ✅ **Rất tốt** - 23 bảng, đã bổ sung 3 bảng còn thiếu |
+| Use Case | ✅ **Đầy đủ** - 32 use case, ma trận role, mô tả chi tiết |
+| Biểu đồ / ERD | ✅ **Đã cập nhật** - ERD 23 bảng + Use Case diagram |
+| Task tracking | ✅ **Có** - nhiệm-vụ.md với 5 giai đoạn |
 | Kiến trúc | ✅ **Phù hợp MVVM** - nhưng thiếu UseCase layer |
 | Code nguồn | ❌ **Chưa có** - cần triển khai |
 | Bảo mật | ⚠️ **Cơ bản** - cần cải thiện nếu production |
@@ -144,4 +176,4 @@ Dự án là một ứng dụng Android quản lý cửa hàng thú cưng với 
 | Khả năng mở rộng | ⚠️ **Có thể tốt hơn** - DI, Navigation, testing |
 | Phù hợp đồ án | ✅ **Vượt yêu cầu** - đủ điểm tối đa nếu code tốt |
 
-> **Tổng thể:** Thiết kế rất tốt và phù hợp cho đồ án. Điểm yếu duy nhất là chưa có code nguồn. Cần tập trung code đúng thiết kế, xử lý tốt các state (loading/success/error) và đảm bảo CRUD + quy trình bán hàng + nhập kho chạy trơn tru.
+> **Tổng thể:** Thiết kế đã được cải thiện đáng kể — từ 20 → 23 bảng, thêm Use Case, ERD, task list. Điểm yếu duy nhất là chưa có code nguồn. Cần tập trung code đúng thiết kế, xử lý tốt các state (loading/success/error) và đảm bảo CRUD + quy trình bán hàng + nhập kho chạy trơn tru.

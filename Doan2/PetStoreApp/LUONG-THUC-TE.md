@@ -60,15 +60,32 @@
 │     │                     │                       │  OrderDao    │
 │     │                     │                       │  + Order     │
 │     │                     │                       │  DetailDao   │
+│     │                     │                       │  + ProductDao │
+│     │                     │                       │  (trừ tồn)   │
+│     │                     │                       │  + ActivityLog│
+│     │                     │                       │  ('TAO_DON') │
 │     │                     │◄──────────────────────│──────────────│
 │     │                     │  Đã lưu đơn #123      │              │
-│     │  (16) Khách thanh   │  (17) Chọn thanh toán │              │
-│     │  toán               │──────────────────────►│─────────────►│
-│     │                     │                       │  Cập nhật    │
-│     │                     │                       │  status='paid'│
+│     │  (16) Khách thanh   │  (17) Ghi nhận thanh  │              │
+│     │  toán               │  toán                 │              │
+│     │──────────────────►  │──────────────────────►│─────────────►│
+│     │                     │                       │  PaymentDao  │
+│     │                     │                       │  .insert()   │
+│     │                     │                       │  (tien_mat/  │
+│     │                     │                       │   chuyen_khoan)│
+│     │                     │                       │  + ActivityLog│
+│     │                     │                       │  ('THANH_TOAN')│
 │     │                     │◄──────────────────────│──────────────│
-│     │                     │  In hóa đơn           │              │
-│     │  (18) Nhận hóa đơn  │                       │              │
+│     │                     │  ✅ Thanh toán thành  │              │
+│     │                     │     công              │              │
+│     │                     │  Cập nhật ĐH status=  │              │
+│     │                     │  'paid'               │              │
+│     │                     │                       │              │
+│     │                     │  (18) In hóa đơn      │              │
+│     │                     │──────────────────────►│─────────────►│
+│     │                     │                       │  Export PDF  │
+│     │                     │◄──────────────────────│──────────────│
+│     │  (19) Nhận hóa đơn  │                       │              │
 │     │◄────────────────────│                       │              │
 │     │                     │                       │              │
 └──────────────────────────────────────────────────────────────────┘
@@ -97,20 +114,26 @@ Dialog chọn sản phẩm:
 └── Nút [Xác nhận] ── thêm vào OrderDetail list
 ```
 
-#### Bước 15: Lưu đơn hàng — ViewModel xử lý
+#### Bước 15: Lưu đơn hàng — ViewModel xử lý (cập nhật)
 ```
-OrderViewModel.placeOrder(customer, productList)
+OrderViewModel.placeOrder(customer, productList, paymentInfo)
   │
   ├── OrderRepository.placeOrder(customer, productList)
   │   │
-  │   ├── orderDao.insert(order)          // insert Order master
+  │   ├── orderDao.insert(order)              // insert Order master
   │   ├── for each product:
-  │   │   ├── orderDetailDao.insert(detail)  // insert OrderDetail
-  │   │   └── productDao.updateQuantity(productId, newQty) // trừ tồn
+  │   │   ├── orderDetailDao.insert(detail)     // insert OrderDetail
+  │   │   └── productDao.updateQuantity(...)    // trừ tồn
+  │   │
+  │   ├── paymentDao.insert(payment)            // ghi giao dịch ThanhToán
+  │   ├── orderDao.updateStatus(orderId, 'paid') // cập nhật trạng thái
+  │   │
+  │   ├── activityLogDao.insert(                // ghi NhậtKýHoạtĐộng
+  │   │     'TAO_DON', 'DonHang', orderId, ...)
   │   │
   │   └── return orderId
   │
-  └── LiveData<OrderResult> ── cập nhật UI: "Đã lưu đơn #123"
+  └── LiveData<OrderResult> ── cập nhật UI: "Đã lưu đơn #ORD123"
 ```
 
 ---
@@ -136,6 +159,7 @@ NHÂN VIÊN KHO            HỆ THỐNG
     │───────────────────────►│────────► InventoryDao
     │                        │         + InventoryDetailDao
     │                        │         + ProductDao (cộng tồn)
+    │                        │         + ActivityLogDao ('NHAP_KHO')
     │◄───────────────────────│─────────│
     │ Hoàn tất phiếu nhập #  │
     │                        │
@@ -221,6 +245,8 @@ Gồm các tab:
 │       │  (7) Xác nhận đặt lịch             │                            │
 │       │──────────────────────────────────►  │──────────► AppointmentDao │
 │       │                                    │  INSERT (status='pending')│
+│       │                                    │  + ActivityLogDao          │
+│       │                                    │    ('TAO_LICH')           │
 │       │◄──────────────────────────────────  │◄──────────│ "Đã đặt lịch"  │
 │       │  ✅ Đặt lịch thành công!            │                            │
 │       │  "Lịch hẹn #1024 ngày 28/05       │                            │
@@ -386,7 +412,8 @@ Gồm các tab:
 │       │                          │                     │
 │       │ (3) Gửi đánh giá        │                     │
 │       │─────────────────────────►│── ReviewDao.insert()│
-│       │                          │                     │
+│       │                          │── ActivityLogDao    │
+│       │                          │   ('DANH_GIA')     │
 │       │◄─────────────────────────│                     │
 │       │  ✅ Cảm ơn bạn đã đánh  │                     │
 │       │     giá! (+10 điểm)     │── LoyaltyPoint.earn()│
@@ -450,7 +477,7 @@ Gồm các tab:
 │                        ▼                                         │
 │           ┌────────────────────────────┐                         │
 │           │     Room Database (SQLite)   │                         │
-│           │  • 20 bảng dùng chung        │                         │
+│           │  • 23 bảng dùng chung        │                         │
 │           │  • Cả Staff & Customer app   │                         │
 │           │    đều truy cập cùng DB      │                         │
 │           └────────────────────────────┘                         │
@@ -470,6 +497,9 @@ Gồm các tab:
 | **Thông báo Push** | Nhắc lịch hẹn, khuyến mãi, xác nhận đơn hàng | CustomerNotification + FCM |
 | **Hồ sơ sức khỏe thú cưng** | Lịch tiêm, tái khám, nhắc hẹn tự động | PetHealthRecord |
 | **Giỏ hàng online** | Thêm/xóa sản phẩm, áp mã giảm giá, thanh toán | Cart + Order |
+| **Thanh toán** | Ghi nhận giao dịch thanh toán, hồn tiền, trace mã GD | Payment |
+| **Nhật ký hoạt động** | Ghi log mọi hành động, phục vụ kiểm tra, truy vết | ActivityLog |
+| **Gán nhân viên phục vụ** | Gán nhân viên cho lịch hẹn, theo dõi năng suất | AppointmentStaff |
 
 ---
 

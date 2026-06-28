@@ -35,7 +35,7 @@
 
 | # | Tính năng | Mô tả ngắn | Liên quan |
 |---|---|---|---|
-| 17 | **📱 Thanh toán online** | Tích hợp VNPay, Momo, ZaloPay | Order.paymentMethod |
+| 17 | **📱 Thanh toán online** | Tích hợp VNPay, Momo, ZaloPay | Payment (bảng ThanhToán) |
 | 18 | **💬 Chat với cửa hàng** | Gửi tin nhắn hỏi về dịch vụ, sản phẩm, lịch hẹn | Chat (table mới) |
 | 19 | **📍 Bản đồ cửa hàng** | Xem vị trí cửa hàng, chỉ đường (Google Maps) | Google Maps API |
 | 20 | **📦 Theo dõi đơn hàng** | Real-time: đã xác nhận → đang giao → đã nhận | Order.status |

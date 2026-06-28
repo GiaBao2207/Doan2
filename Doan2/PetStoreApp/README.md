@@ -21,7 +21,7 @@ Xây dựng trên nền tảng **Android Studio**, ngôn ngữ **Java**, kiến 
 com.petstore.app/
 ├── model/                # Định nghĩa các đối tượng dữ liệu (POJO / Entity)
 ├── data/                 # Tầng dữ liệu
-│   ├── database/         # Room Database, DAOs (20 bảng)
+│   ├── database/         # Room Database, DAOs (23 bảng: thêm Payment, ActivityLog, AppointmentStaff)
 │   ├── repository/       # Repository pattern (trung gian dữ liệu)
 │   └── preference/       # SharedPreferences (lưu phiên đăng nhập,...)
 ├── ui/                   # Tầng giao diện (Activity, Fragment, Adapter)
