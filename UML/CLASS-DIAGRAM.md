@@ -164,7 +164,7 @@ classDiagram
     class NotificationEntity
     class ActivityLogEntity
 
-    UserEntity "1" --> "1" EmployeeProfileEntity : has
+    UserEntity "1" --> "0..1" EmployeeProfileEntity : has
     CustomerEntity "1" --> "many" CustomerAddressEntity : owns
     CustomerEntity "1" --> "many" PetOwnerEntity : manages
     PetEntity "1" --> "many" PetOwnerEntity : shared_with
@@ -174,7 +174,7 @@ classDiagram
     AppointmentServiceEntity "1" --> "many" AppointmentServiceAddonEntity : has
     AppointmentServiceEntity "1" --> "many" AppointmentStaffEntity : assigns
     AppointmentEntity "1" --> "many" AppointmentHistoryEntity : tracks
-    AppointmentEntity "1" --> "1" PetServiceIntakeEntity : intake
+    AppointmentEntity "1" --> "0..1" PetServiceIntakeEntity : intake
     AppointmentServiceEntity "1" --> "many" ServiceJobEntity : executes
     SupplierEntity "1" --> "many" PurchaseReceiptEntity : supplies
     PurchaseReceiptEntity "1" --> "many" PurchaseReceiptItemEntity : contains
@@ -185,8 +185,10 @@ classDiagram
     OrderEntity "1" --> "many" PaymentTransactionEntity : paid_by
     PromotionEntity "1" --> "many" PromotionRedemptionEntity : redeemed
     CustomerEntity "1" --> "many" LoyaltyPointEntity : earns
-    AppointmentServiceEntity "1" --> "1" ReviewEntity : reviewed_once
+    AppointmentServiceEntity "1" --> "0..1" ReviewEntity : reviewed_once
     CustomerEntity "1" --> "many" NotificationEntity : receives
     UserEntity "1" --> "many" ActivityLogEntity : acts
     CustomerEntity "1" --> "many" ActivityLogEntity : acts
 ```
+
+ActivityLogEntity có đúng một actor: UserEntity hoặc CustomerEntity, không đồng thời cả hai.

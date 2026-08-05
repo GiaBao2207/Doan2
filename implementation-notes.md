@@ -23,6 +23,9 @@ Repository hiện tại chỉ là **tài liệu thiết kế**. Chưa có projec
 - `ServiceViewModel` gộp dịch vụ, bảng giá, addon và mapping
 - `InventoryViewModel` gộp phiếu nhập, lô, biến động và điều chỉnh kho
 - `AppointmentDetailViewModel` phụ trách chi tiết lịch và phân công nhân viên
+- `order_items.product_id` và `order_items.appointment_service_id` dùng RESTRICT để giữ tham chiếu nghiệp vụ
+- `payment_transactions.order_id` và `payment_transactions.appointment_id` dùng RESTRICT để giữ transaction theo đúng đối tượng
+- `promotions.target_product_category_id` và `promotions.target_service_id` dùng RESTRICT để giữ target hợp lệ
 - `Employee Management` là một màn hình có 3 tab
 - `Activity Log` có màn hình riêng, dùng `ActivityLogRepository` và `ActivityLogViewModel`
 - Tiền cọc chỉ lưu trong `order_items.item_type = 'deposit_deduction'`

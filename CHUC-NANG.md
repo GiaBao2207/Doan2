@@ -9,11 +9,11 @@
 | 3 | Quản lý lịch làm nhân viên | `employee_schedules` | Admin/Staff | Employee Management | CRUD |
 | 4 | Quản lý khách hàng | `customers`, `customer_addresses` | Admin/Staff | Customer List/Form | CRUD, search |
 | 5 | Quản lý thú cưng | `pets`, `pet_owners`, `pet_categories` | Admin/Staff/Customer | Pet List/Form, My Pets | CRUD, phân quyền xem |
-| 6 | Quản lý dịch vụ | `services`, `service_prices`, `service_addons`, `service_addon_mappings` | Admin/Staff | Service List/Form, Service Addon Mapping | CRUD |
+| 6 | Quản lý dịch vụ | `services`, `service_prices`, `service_addons`, `service_addon_mappings` | Admin/Staff | Service List/Form, Service Price & Addon Config | CRUD |
 | 7 | Quản lý sản phẩm | `products`, `product_categories` | Admin/Staff | Product List/Form | CRUD, search |
 | 8 | Quản lý nhà cung cấp | `suppliers` | Admin/Staff | Supplier | CRUD |
-| 9 | Quản lý phiếu nhập | `purchase_receipts`, `purchase_receipt_items` | Admin/Staff | Purchase Receipt Form | master-detail |
-| 10 | Tra cứu lô hàng và tồn kho | `stock_lots`, `stock_movements` | Admin/Staff | Stock Movement, Product Detail | tra cứu, lọc |
+| 9 | Quản lý phiếu nhập | `purchase_receipts`, `purchase_receipt_items` | Admin/Staff | Purchase Receipt | master-detail |
+| 10 | Tra cứu lô hàng và tồn kho | `stock_lots`, `stock_movements` | Admin/Staff | Stock Movement, Inventory Adjustment | tra cứu, lọc |
 | 11 | Quản lý khuyến mãi | `promotions`, `promotion_redemptions` | Admin/Staff | Promotion | CRUD, kiểm tra lượt dùng |
 | 12 | Quản lý lịch hẹn | `appointments`, `appointment_services`, `appointment_service_addons`, `appointment_histories` | Admin/Staff/Customer | Appointment Calendar/Form/Detail | CRUD, đổi lịch, hủy |
 | 13 | Tiếp nhận và chăm sóc | `pet_service_intakes`, `appointment_staff`, `service_jobs` | Staff | Pet Intake, Assign Staff, Service Progress | check-in, phân công, tiến độ |

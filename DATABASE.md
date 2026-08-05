@@ -948,16 +948,16 @@ CREATE INDEX idx_notifications_customer_read ON notifications(customer_id, is_re
 | `stock_movements` | `product_id` | `products(product_id)` | RESTRICT | CASCADE |
 | `stock_movements` | `stock_lot_id` | `stock_lots(stock_lot_id)` | SET NULL | CASCADE |
 | `stock_movements` | `created_by_user_id` | `users(user_id)` | SET NULL | CASCADE |
-| `promotions` | `target_product_category_id` | `product_categories(product_category_id)` | SET NULL | CASCADE |
-| `promotions` | `target_service_id` | `services(service_id)` | SET NULL | CASCADE |
+| `promotions` | `target_product_category_id` | `product_categories(product_category_id)` | RESTRICT | CASCADE |
+| `promotions` | `target_service_id` | `services(service_id)` | RESTRICT | CASCADE |
 | `orders` | `customer_id` | `customers(customer_id)` | SET NULL | CASCADE |
 | `orders` | `customer_address_id` | `customer_addresses(customer_address_id)` | SET NULL | CASCADE |
 | `orders` | `created_by_user_id` | `users(user_id)` | SET NULL | CASCADE |
 | `order_items` | `order_id` | `orders(order_id)` | CASCADE | CASCADE |
-| `order_items` | `product_id` | `products(product_id)` | SET NULL | CASCADE |
-| `order_items` | `appointment_service_id` | `appointment_services(appointment_service_id)` | SET NULL | CASCADE |
-| `payment_transactions` | `order_id` | `orders(order_id)` | SET NULL | CASCADE |
-| `payment_transactions` | `appointment_id` | `appointments(appointment_id)` | SET NULL | CASCADE |
+| `order_items` | `product_id` | `products(product_id)` | RESTRICT | CASCADE |
+| `order_items` | `appointment_service_id` | `appointment_services(appointment_service_id)` | RESTRICT | CASCADE |
+| `payment_transactions` | `order_id` | `orders(order_id)` | RESTRICT | CASCADE |
+| `payment_transactions` | `appointment_id` | `appointments(appointment_id)` | RESTRICT | CASCADE |
 | `payment_transactions` | `original_payment_id` | `payment_transactions(payment_id)` | RESTRICT | CASCADE |
 | `payment_transactions` | `created_by_user_id` | `users(user_id)` | SET NULL | CASCADE |
 | `promotion_redemptions` | `promotion_id` | `promotions(promotion_id)` | RESTRICT | CASCADE |
