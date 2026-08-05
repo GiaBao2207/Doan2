@@ -30,18 +30,20 @@ flowchart TD
 ```mermaid
 flowchart TD
     A([Bắt đầu]) --> B[Chọn supplier]
-    B --> C[Tạo purchase_receipts draft]
-    C --> D[Nhập purchase_receipt_items]
-    D --> E[Kiểm tra batch expiry quantity]
-    E --> F{Hợp lệ?}
-    F -- Không --> X[Hiển thị lỗi và rollback] --> Z([Kết thúc])
-    F -- Có --> G[Confirm receipt]
-    G --> H[Begin transaction]
+    B --> C[Begin transaction]
+    C --> D[Tạo purchase_receipts draft]
+    D --> E[Nhập purchase_receipt_items]
+    E --> F[Kiểm tra batch expiry quantity]
+    F --> G{Hợp lệ?}
+    G -- Không --> X[Rollback transaction]
+    X --> Y[Hiển thị lỗi]
+    Y --> Z([Kết thúc])
+    G -- Có --> H[Confirm receipt]
     H --> I[Tạo stock_lots]
     I --> J[Tạo stock_movements]
     J --> K[Cập nhật total_amount]
     K --> L[Ghi activity_logs]
-    L --> M{Có lỗi?}
+    L --> M{Có lỗi khi ghi?}
     M -- Có --> N[Rollback transaction] --> Z
     M -- Không --> O[Commit transaction] --> Z
 ```
@@ -104,16 +106,18 @@ flowchart TD
 ```mermaid
 flowchart TD
     A([Bắt đầu]) --> B[Tổng hợp service và addon]
-    B --> C[Tạo order]
-    C --> D[Tạo order_items]
-    D --> E[Trừ cọc bằng deposit_deduction item]
-    E --> F[Thêm sản phẩm bán kèm nếu có]
-    F --> G[Kiểm tra tồn]
-    G --> H{Tồn đủ?}
-    H -- Không --> X[Thông báo lỗi và rollback] --> Z([Kết thúc])
-    H -- Có --> I[Áp dụng promotion]
-    I --> J[Áp dụng loyalty]
-    J --> K[Begin transaction]
+    B --> C[Begin transaction]
+    C --> D[Tạo order]
+    D --> E[Tạo order_items]
+    E --> F[Trừ cọc bằng deposit_deduction item]
+    F --> G[Thêm sản phẩm bán kèm nếu có]
+    G --> H[Kiểm tra tồn]
+    H --> I{Tồn đủ?}
+    I -- Không --> X[Rollback transaction]
+    X --> Y[Hiển thị lỗi]
+    Y --> Z([Kết thúc])
+    I -- Có --> J[Áp dụng promotion]
+    J --> K[Áp dụng loyalty]
     K --> L[Tạo payment_transactions]
     L --> M[Cập nhật tồn]
     M --> N[Ghi stock_movements]

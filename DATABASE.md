@@ -723,8 +723,8 @@ CREATE TABLE promotions (
     status TEXT NOT NULL CHECK (status IN ('active', 'inactive', 'expired')),
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
     updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-    FOREIGN KEY (target_product_category_id) REFERENCES product_categories(product_category_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (target_service_id) REFERENCES services(service_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (target_product_category_id) REFERENCES product_categories(product_category_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (target_service_id) REFERENCES services(service_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     CHECK (end_at >= start_at),
     CHECK (
         (discount_type = 'percent' AND discount_value BETWEEN 1 AND 100) OR
@@ -776,8 +776,8 @@ CREATE TABLE order_items (
     discount_amount INTEGER NOT NULL DEFAULT 0 CHECK (discount_amount >= 0),
     subtotal INTEGER NOT NULL CHECK (subtotal >= 0),
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (appointment_service_id) REFERENCES appointment_services(appointment_service_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (appointment_service_id) REFERENCES appointment_services(appointment_service_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     CHECK (discount_amount <= quantity * unit_price),
     CHECK (
         (item_type = 'product' AND product_id IS NOT NULL AND appointment_service_id IS NULL) OR
@@ -801,8 +801,8 @@ CREATE TABLE payment_transactions (
     created_by_user_id INTEGER,
     processed_at TEXT,
     created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', 'now')),
-    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (original_payment_id) REFERENCES payment_transactions(payment_id) ON DELETE RESTRICT ON UPDATE CASCADE,
     FOREIGN KEY (created_by_user_id) REFERENCES users(user_id) ON DELETE SET NULL ON UPDATE CASCADE,
     CHECK (
