@@ -70,6 +70,15 @@
         <activity
             android:name=".payment.ui.CounterPaymentActivity"
             android:exported="false" />
+        <activity
+            android:name=".customer.ui.CustomerHomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".pet.ui.MyPetsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".service.ui.ServiceDiscoveryActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -62,11 +62,16 @@ Most are skeleton/preparation packages unless real UI source exists.
   - PetHandoverActivity (appointment/ui)
   - CounterPaymentActivity (payment/ui)
 
+- **Customer UI (COMPLETED batch 1, UI-only)**:
+  - CustomerHomeActivity (customer/ui)
+  - MyPetsActivity (pet/ui)
+  - ServiceDiscoveryActivity (service/ui)
+
 All screens follow the UI-only placeholder rule: 0 summary totals, empty states for lists/charts, zero fake data, no Room/DB backend.
 
 ## 7. Current Task
 
-Customer UI planning / implementation phase.
+Customer UI batch 1 completed. Ready for batch 2 planning.
 
 ## 8. In Progress
 
@@ -86,30 +91,27 @@ Customer UI planning / implementation phase.
 - Admin Management screens batch 2 (Inventory, Promotion) (Build PASS).
 - Admin Operations screens batch 3 (Appointment, Report Overview) (Build PASS).
 - Staff Operations batch 1 (Staff Appointment Queue, Service Check-in & Execution) (Build PASS).
-- Staff Operations batch 2 (Pet Handover, Counter Payment) (Build PASS):
-  - PetHandoverActivity (appointment/ui) + activity_pet_handover.xml.
-  - CounterPaymentActivity (payment/ui) + activity_counter_payment.xml.
-  - Vector icons added: ic_account_balance, ic_credit_card.
-  - Manifest declarations updated; launcher unchanged (LoginActivity).
-  - Staff workflow navigation: ServiceCheckInExecutionActivity → PetHandoverActivity → CounterPaymentActivity wired (UI only).
-  - Zero fake data; monetary placeholders use "0 ₫"; no backend/database.
-- Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS):
-  - Fixed Windows drive path separator escaping in `gradle.properties` (`org.gradle.java.home=C\:/...`).
-  - Removed `android:windowLightNavigationBar` from base `values/themes.xml` and `values-night/themes.xml`.
-  - Added `values-v27/themes.xml` for API 27+ navigation bar styling while preserving `minSdk = 24`.
+- Staff Operations batch 2 (Pet Handover, Counter Payment) (Build PASS).
+- Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS).
+- Customer UI batch 1 (Customer Home, My Pets, Service Discovery) (lintDebug PASS, build PASS):
+  - CustomerHomeActivity (customer/ui) + activity_customer_home.xml (Header, 4 quick actions, upcoming appointment empty state, my pets preview empty state, 3 featured service cards, Customer bottom navigation).
+  - MyPetsActivity (pet/ui) + activity_my_pets.xml (Header, title/subtitle, Add Pet CTA, pet empty state, Customer bottom navigation).
+  - ServiceDiscoveryActivity (service/ui) + activity_service_discovery.xml (Top App Bar + Back, search field, category chips, danh mục dịch vụ, danh sách dịch vụ empty state, NO bottom nav).
+  - Vector drawables added: ic_pets, ic_storefront, ic_content_cut, ic_add_circle.
+  - Menu created: menu_customer_bottom_nav.xml.
+  - AndroidManifest.xml updated; launcher unchanged (LoginActivity).
+  - Zero fake business data; UI-only navigation and feedback.
 
 ## 11. Next Action
 
-Design the first Customer UI batch in Stitch:
-- Customer Home
-- My Pets / Pet Management
-- Service Discovery
-
-After Stitch review, implement the batch in Android using Antigravity.
+Review and design the next Customer UI batch in Stitch:
+- Add/Edit Pet
+- Pet Detail
+- Service Detail / Booking entry
 
 ## 12. Not Started
 
-- Customer UI (Customer Home, My Pets / Pet Management, Service Discovery, Booking, Orders, Profile, etc.).
+- Customer UI batch 2 (Add/Edit Pet, Pet Detail, Service Detail / Booking entry, Orders, Profile, etc.).
 - Backend / Data layer: Entity, DAO, Repository, ViewModel, Room, AppDatabase, API, real CRUD, real auth/session, real appointment & payment logic.
 
 ## 13. Agent Rules
