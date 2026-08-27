@@ -93,6 +93,10 @@ Customer UI planning / implementation phase.
   - Manifest declarations updated; launcher unchanged (LoginActivity).
   - Staff workflow navigation: ServiceCheckInExecutionActivity → PetHandoverActivity → CounterPaymentActivity wired (UI only).
   - Zero fake data; monetary placeholders use "0 ₫"; no backend/database.
+- Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS):
+  - Fixed Windows drive path separator escaping in `gradle.properties` (`org.gradle.java.home=C\:/...`).
+  - Removed `android:windowLightNavigationBar` from base `values/themes.xml` and `values-night/themes.xml`.
+  - Added `values-v27/themes.xml` for API 27+ navigation bar styling while preserving `minSdk = 24`.
 
 ## 11. Next Action
 
