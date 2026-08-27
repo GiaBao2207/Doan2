@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic Colors (Keep for backward compatibility) -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Brand Color Tokens (Terra & Sage) -->
+    <color name="color_primary">#A04826</color> <!-- Terracotta -->
+    <color name="color_primary_container">#B25D3A</color>
+    <color name="color_secondary">#3F5C3A</color> <!-- Sage Green -->
+    <color name="color_secondary_container">#D0EAC0</color>
+    <color name="color_accent">#805203</color> <!-- Amber -->
+    <color name="color_accent_container">#F6E0C0</color> <!-- Light Amber container -->
+
+    <!-- Neutral Colors -->
+    <color name="color_background">#FCF9F4</color> <!-- Warm Off-White -->
+    <color name="color_surface">#FFFFFF</color>
+    <color name="color_surface_variant">#F0EDE9</color>
+
+    <!-- Typography Colors -->
+    <color name="text_primary">#221E1B</color> <!-- Charcoal -->
+    <color name="text_secondary">#5A524B</color> <!-- Warm Gray -->
+    <color name="text_disabled">#A8A39F</color>
+    <!-- Aliases for compatibility -->
+    <color name="color_text_primary">#221E1B</color>
+    <color name="color_text_secondary">#5A524B</color>
+
+    <!-- Status Colors -->
+    <color name="color_success">#3F5C3A</color>
+    <color name="color_warning">#805203</color>
+    <color name="color_error">#BA1A1A</color>
+    <color name="color_error_container">#FFDAD6</color> <!-- Light red container -->
+    <color name="color_error_border">#33BA1A1A</color> <!-- Error border (error at 20%) -->
+
+    <!-- Border & Divider Colors -->
+    <color name="divider_color">#0D221E1B</color> <!-- Charcoal at 5% opacity -->
+    <color name="border_color">#335A524B</color> <!-- Warm Gray at 20% opacity (for cards/containers) -->
+    <color name="outline_color">#88736B</color> <!-- Outline token from Design System -->
+    <color name="input_border_normal">#88736B</color> <!-- Distinct border for TextInput normal state -->
+    <color name="brand_paw_container_background">#FFFFFF</color> <!-- Pure true white #FFFFFF (Alpha 1.0) -->
+    <color name="brand_paw_container_bg">#FFFFFF</color> <!-- Pure true white #FFFFFF for standalone Paw Icon container -->
+    <color name="brand_paw_badge_stroke">#1F2D2926</color> <!-- Subtle boundary stroke for circular brand badge -->
+</resources>

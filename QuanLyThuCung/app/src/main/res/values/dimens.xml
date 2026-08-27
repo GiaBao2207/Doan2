@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing System -->
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_sm">8dp</dimen>
+    <dimen name="space_md">16dp</dimen>
+    <dimen name="space_lg">24dp</dimen>
+    <dimen name="space_xl">32dp</dimen>
+
+    <!-- Spacing aliases (spacing_ prefix) -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <!-- Page / Screen Margins -->
+    <dimen name="screen_padding">20dp</dimen>
+
+    <!-- Corner Radius / Shapes -->
+    <dimen name="radius_small">4dp</dimen>
+    <dimen name="radius_medium">8dp</dimen>
+    <dimen name="radius_card">16dp</dimen>
+    <dimen name="radius_button">12dp</dimen>
+    <dimen name="radius_input">12dp</dimen>
+    <dimen name="radius_chip">100dp</dimen>
+
+    <!-- Touch Targets -->
+    <dimen name="touch_target_min">48dp</dimen>
+
+    <!-- Brand Paw Container Sizes -->
+    <dimen name="brand_paw_container_size">64dp</dimen>
+    <dimen name="brand_paw_container_size_compact">40dp</dimen>
+    <dimen name="brand_paw_icon_size">32dp</dimen>
+    <dimen name="brand_paw_icon_size_compact">24dp</dimen>
+
+    <!-- Header logo height (Full Logo, no circular container) -->
+    <dimen name="header_logo_height">54dp</dimen>
+</resources>
