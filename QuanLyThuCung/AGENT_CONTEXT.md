@@ -103,6 +103,7 @@ Customer UI batch 2 completed (Add/Edit Pet, Pet Detail, Service Detail). Ready 
 - Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS).
 - Customer UI batch 1 & 2 Header Branding Fix (lintDebug PASS, build PASS):
   - Corrected header branding in MyPetsActivity, CustomerHomeActivity, and ServiceDiscoveryActivity to use inline brand icon next to app title, removing inappropriate circular paw placeholder cards from branding areas.
+  - Verified consistency: My Pets header uses inline ic_pets + "PetStoreApp" title; empty-state paw illustration in center card preserved; Add/Edit Pet upload area (camera + "Thêm ảnh") untouched.
 - Customer UI batch 2 (Add / Edit Pet, Pet Detail, Service Detail) (lintDebug PASS, build PASS):
   - Visual correction & Stitch synchronization completed:
     - AddEditPetActivity (pet/ui) + activity_add_edit_pet.xml: full-width resilient pill buttons for species (Chó, Mèo, Khác) and gender (Đực, Cái, Không rõ) with sage green selection, conditional other species input, photo upload action area (camera icon), date picker, weight with kg unit, notes multiline input, primary Save CTA, edit mode CTA + delete support, NO bottom nav.
