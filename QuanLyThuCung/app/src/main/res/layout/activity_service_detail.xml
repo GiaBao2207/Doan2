@@ -74,11 +74,11 @@
                     android:layout_width="120dp"
                     android:layout_height="120dp"
                     android:layout_marginBottom="@dimen/spacing_md"
-                    app:cardBackgroundColor="@color/color_surface_variant"
+                    app:cardBackgroundColor="@color/brand_paw_container_background"
                     app:cardCornerRadius="60dp"
                     app:cardElevation="2dp"
-                    app:strokeColor="@color/color_surface"
-                    app:strokeWidth="4dp">
+                    app:strokeColor="@color/border_color"
+                    app:strokeWidth="1dp">
 
                     <FrameLayout
                         android:layout_width="match_parent"
@@ -93,12 +93,11 @@
 
                         <ImageView
                             android:id="@+id/ivServiceDetailPlaceholder"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
                             android:layout_gravity="center"
                             android:contentDescription="Dịch vụ"
-                            android:src="@drawable/ic_service_placeholder"
-                            app:tint="@color/outline_color" />
+                            android:src="@drawable/petstore_paw_icon" />
                     </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>
 
