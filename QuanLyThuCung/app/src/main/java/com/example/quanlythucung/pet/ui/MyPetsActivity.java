@@ -53,13 +53,13 @@ public class MyPetsActivity extends AppCompatActivity {
         MaterialButton btnAddPetHeader = findViewById(R.id.btnAddPetHeader);
         if (btnAddPetHeader != null) {
             btnAddPetHeader.setOnClickListener(v ->
-                    Toast.makeText(this, "Tính năng thêm thú cưng đang được phát triển", Toast.LENGTH_SHORT).show());
+                    startActivity(new Intent(this, AddEditPetActivity.class)));
         }
 
         MaterialButton btnAddPetEmptyState = findViewById(R.id.btnAddPetEmptyState);
         if (btnAddPetEmptyState != null) {
             btnAddPetEmptyState.setOnClickListener(v ->
-                    Toast.makeText(this, "Tính năng thêm thú cưng đang được phát triển", Toast.LENGTH_SHORT).show());
+                    startActivity(new Intent(this, AddEditPetActivity.class)));
         }
     }
 }

@@ -79,6 +79,15 @@
         <activity
             android:name=".service.ui.ServiceDiscoveryActivity"
             android:exported="false" />
+        <activity
+            android:name=".pet.ui.AddEditPetActivity"
+            android:exported="false" />
+        <activity
+            android:name=".pet.ui.PetDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".service.ui.ServiceDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

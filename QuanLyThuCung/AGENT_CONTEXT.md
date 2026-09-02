@@ -62,16 +62,19 @@ Most are skeleton/preparation packages unless real UI source exists.
   - PetHandoverActivity (appointment/ui)
   - CounterPaymentActivity (payment/ui)
 
-- **Customer UI (COMPLETED batch 1, UI-only)**:
+- **Customer UI (COMPLETED batch 1 & 2, UI-only)**:
   - CustomerHomeActivity (customer/ui)
   - MyPetsActivity (pet/ui)
   - ServiceDiscoveryActivity (service/ui)
+  - AddEditPetActivity (pet/ui)
+  - PetDetailActivity (pet/ui)
+  - ServiceDetailActivity (service/ui)
 
 All screens follow the UI-only placeholder rule: 0 summary totals, empty states for lists/charts, zero fake data, no Room/DB backend.
 
 ## 7. Current Task
 
-Customer UI batch 1 completed. Ready for batch 2 planning.
+Customer UI batch 2 completed (Add/Edit Pet, Pet Detail, Service Detail). Ready for Customer UI batch 3 planning.
 
 ## 8. In Progress
 
@@ -93,25 +96,26 @@ Customer UI batch 1 completed. Ready for batch 2 planning.
 - Staff Operations batch 1 (Staff Appointment Queue, Service Check-in & Execution) (Build PASS).
 - Staff Operations batch 2 (Pet Handover, Counter Payment) (Build PASS).
 - Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS).
-- Customer UI batch 1 (Customer Home, My Pets, Service Discovery) (lintDebug PASS, build PASS):
-  - CustomerHomeActivity (customer/ui) + activity_customer_home.xml (Header, 4 quick actions, upcoming appointment empty state, my pets preview empty state, 3 featured service cards, Customer bottom navigation).
-  - MyPetsActivity (pet/ui) + activity_my_pets.xml (Header, title/subtitle, Add Pet CTA, pet empty state, Customer bottom navigation).
-  - ServiceDiscoveryActivity (service/ui) + activity_service_discovery.xml (Top App Bar + Back, search field, category chips, danh mục dịch vụ, danh sách dịch vụ empty state, NO bottom nav).
-  - Vector drawables added: ic_pets, ic_storefront, ic_content_cut, ic_add_circle.
-  - Menu created: menu_customer_bottom_nav.xml.
+- Customer UI batch 1 (Customer Home, My Pets, Service Discovery) (lintDebug PASS, build PASS).
+- Customer UI batch 2 (Add / Edit Pet, Pet Detail, Service Detail) (lintDebug PASS, build PASS):
+  - AddEditPetActivity (pet/ui) + activity_add_edit_pet.xml (Photo area, basic info section, species chips with sage selection, conditional other species input, breed, gender chips, date picker, weight with kg unit, notes, primary Save CTA, edit mode CTA + delete support, NO bottom nav).
+  - PetDetailActivity (pet/ui) + activity_pet_detail.xml (Top App Bar, profile header, info card with neutral placeholders, notes empty state, service history empty state, primary Booking CTA, secondary Edit CTA, NO bottom nav).
+  - ServiceDetailActivity (service/ui) + activity_service_detail.xml (Top App Bar, neutral hero, info rows, neutral description, suitable-pet chips, neutral notes/notice, primary Booking CTA, NO bottom nav).
+  - Vector drawables & selectors added: ic_add_a_photo, ic_edit_note, ic_history, sl_chip_background_species, sl_chip_text_species, sl_chip_stroke_species.
+  - MyPetsActivity wired to AddEditPetActivity; PetDetailActivity wired to AddEditPetActivity in edit mode.
   - AndroidManifest.xml updated; launcher unchanged (LoginActivity).
   - Zero fake business data; UI-only navigation and feedback.
 
 ## 11. Next Action
 
-Review and design the next Customer UI batch in Stitch:
-- Add/Edit Pet
-- Pet Detail
-- Service Detail / Booking entry
+Review and design Customer UI batch 3 in Stitch:
+- Choose Pet / Booking setup
+- Choose Date & Time
+- Booking Confirmation
 
 ## 12. Not Started
 
-- Customer UI batch 2 (Add/Edit Pet, Pet Detail, Service Detail / Booking entry, Orders, Profile, etc.).
+- Customer UI batch 3 (Choose Pet / Booking setup, Choose Date & Time, Booking Confirmation, Orders, Profile, etc.).
 - Backend / Data layer: Entity, DAO, Repository, ViewModel, Room, AppDatabase, API, real CRUD, real auth/session, real appointment & payment logic.
 
 ## 13. Agent Rules
