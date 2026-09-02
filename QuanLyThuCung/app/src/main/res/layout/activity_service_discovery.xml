@@ -30,20 +30,13 @@
             android:src="@drawable/ic_arrow_back"
             app:tint="@color/text_primary" />
 
-        <com.google.android.material.card.MaterialCardView
-            style="@style/Widget.PetStore.BrandPawContainer"
-            android:layout_width="@dimen/brand_paw_container_size_compact"
-            android:layout_height="@dimen/brand_paw_container_size_compact"
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_marginEnd="@dimen/spacing_sm"
-            app:cardCornerRadius="20dp">
-
-            <ImageView
-                android:layout_width="@dimen/brand_paw_icon_size_compact"
-                android:layout_height="@dimen/brand_paw_icon_size_compact"
-                android:layout_gravity="center"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/petstore_paw_icon" />
-        </com.google.android.material.card.MaterialCardView>
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_pets"
+            app:tint="@color/color_primary" />
 
         <TextView
             android:layout_width="0dp"

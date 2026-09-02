@@ -38,10 +38,10 @@ Most are skeleton/preparation packages unless real UI source exists.
 - Focused TextInput: primary terracotta.
 - Standalone Paw Icon: circular container, inner fill #FFFFFF, centered, no inner square.
 - Full Logo: no circular container.
-- Image Placeholder Rules:
+- Branding vs Image Placeholder Rules:
+  - Header / Top App Bar branding uses clean app branding (inline brand icon + "PetStoreApp" title). Never use the circular Paw placeholder container as header branding.
+  - Circular Paw Logo placeholder is strictly reserved for future data-image fallbacks (Pet Detail, Service Detail, future product images, etc.).
   - Add/Edit Pet "Thêm ảnh" remains camera/upload action UI.
-  - Standardized Paw Logo placeholder for all future data-image areas when no real image data exists (Pet Detail, Service Detail, future products, etc.).
-  - Paw Logo placeholder is circular, centered, inner fill #FFFFFF, subtle stroke, no inner square.
   - Real data images replace placeholders when data becomes available.
 
 ## 6. Implemented UI Status
@@ -101,7 +101,8 @@ Customer UI batch 2 completed (Add/Edit Pet, Pet Detail, Service Detail). Ready 
 - Staff Operations batch 1 (Staff Appointment Queue, Service Check-in & Execution) (Build PASS).
 - Staff Operations batch 2 (Pet Handover, Counter Payment) (Build PASS).
 - Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS).
-- Customer UI batch 1 (Customer Home, My Pets, Service Discovery) (lintDebug PASS, build PASS).
+- Customer UI batch 1 & 2 Header Branding Fix (lintDebug PASS, build PASS):
+  - Corrected header branding in MyPetsActivity, CustomerHomeActivity, and ServiceDiscoveryActivity to use inline brand icon next to app title, removing inappropriate circular paw placeholder cards from branding areas.
 - Customer UI batch 2 (Add / Edit Pet, Pet Detail, Service Detail) (lintDebug PASS, build PASS):
   - Visual correction & Stitch synchronization completed:
     - AddEditPetActivity (pet/ui) + activity_add_edit_pet.xml: full-width resilient pill buttons for species (Chó, Mèo, Khác) and gender (Đực, Cái, Không rõ) with sage green selection, conditional other species input, photo upload action area (camera icon), date picker, weight with kg unit, notes multiline input, primary Save CTA, edit mode CTA + delete support, NO bottom nav.
