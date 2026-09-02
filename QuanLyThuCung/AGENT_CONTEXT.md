@@ -98,13 +98,14 @@ Customer UI batch 2 completed (Add/Edit Pet, Pet Detail, Service Detail). Ready 
 - Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS).
 - Customer UI batch 1 (Customer Home, My Pets, Service Discovery) (lintDebug PASS, build PASS).
 - Customer UI batch 2 (Add / Edit Pet, Pet Detail, Service Detail) (lintDebug PASS, build PASS):
-  - AddEditPetActivity (pet/ui) + activity_add_edit_pet.xml (Photo area, basic info section, species chips with sage selection, conditional other species input, breed, gender chips, date picker, weight with kg unit, notes, primary Save CTA, edit mode CTA + delete support, NO bottom nav).
-  - PetDetailActivity (pet/ui) + activity_pet_detail.xml (Top App Bar, profile header, info card with neutral placeholders, notes empty state, service history empty state, primary Booking CTA, secondary Edit CTA, NO bottom nav).
-  - ServiceDetailActivity (service/ui) + activity_service_detail.xml (Top App Bar, neutral hero, info rows, neutral description, suitable-pet chips, neutral notes/notice, primary Booking CTA, NO bottom nav).
-  - Vector drawables & selectors added: ic_add_a_photo, ic_edit_note, ic_history, sl_chip_background_species, sl_chip_text_species, sl_chip_stroke_species.
-  - MyPetsActivity wired to AddEditPetActivity; PetDetailActivity wired to AddEditPetActivity in edit mode.
-  - AndroidManifest.xml updated; launcher unchanged (LoginActivity).
-  - Zero fake business data; UI-only navigation and feedback.
+  - Visual correction & Stitch synchronization completed:
+    - AddEditPetActivity (pet/ui) + activity_add_edit_pet.xml: full-width resilient pill buttons for species (Chó, Mèo, Khác) and gender (Đực, Cái, Không rõ) with sage green selection, conditional other species input, photo area, date picker, weight with kg unit, notes multiline input, primary Save CTA, edit mode CTA + delete support, NO bottom nav.
+    - PetDetailActivity (pet/ui) + activity_pet_detail.xml: Top App Bar with brand title and more options, pet profile hero with neutral pet placeholder icon ic_pet_placeholder (brand paw icon removed from content placeholder), info card with neutral placeholders, notes empty state, service history empty state, primary Booking CTA, secondary Edit CTA, NO bottom nav.
+    - ServiceDetailActivity (service/ui) + activity_service_detail.xml: Top App Bar matching Stitch (Service Detail), service hero with neutral service placeholder icon ic_service_placeholder (brand paw icon removed from content placeholder), info rows, neutral description, suitable-pet chips, neutral notes/notice, primary Booking CTA, NO bottom nav.
+    - Vector drawables added: ic_pet_placeholder, ic_service_placeholder, ic_add_a_photo, ic_edit_note, ic_history, sl_chip_background_species, sl_chip_text_species, sl_chip_stroke_species.
+    - MyPetsActivity wired to AddEditPetActivity; PetDetailActivity wired to AddEditPetActivity in edit mode.
+    - AndroidManifest.xml declared; launcher unchanged (LoginActivity).
+    - Zero fake business data; UI-only navigation and feedback.
 
 ## 11. Next Action
 

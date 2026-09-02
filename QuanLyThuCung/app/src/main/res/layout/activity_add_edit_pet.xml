@@ -181,56 +181,72 @@
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroupSpecies"
+                    <!-- Species Chips Row -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_md"
-                        app:singleLine="true"
-                        app:singleSelection="true">
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipDog"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSpeciesDog"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_marginEnd="6dp"
                             android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
                             android:text="Chó"
-                            android:textAlignment="center"
+                            android:textAllCaps="false"
                             android:textColor="@color/sl_chip_text_species"
-                            app:chipBackgroundColor="@color/sl_chip_background_species"
-                            app:chipCornerRadius="@dimen/radius_chip"
-                            app:chipStrokeColor="@color/sl_chip_stroke_species"
-                            app:chipStrokeWidth="1dp" />
+                            android:textSize="14sp"
+                            app:backgroundTint="@color/sl_chip_background_species"
+                            android:checkable="true"
+                            app:cornerRadius="22dp"
+                            app:strokeColor="@color/sl_chip_stroke_species"
+                            app:strokeWidth="1dp" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipCat"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSpeciesCat"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_marginEnd="6dp"
                             android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
                             android:text="Mèo"
-                            android:textAlignment="center"
+                            android:textAllCaps="false"
                             android:textColor="@color/sl_chip_text_species"
-                            app:chipBackgroundColor="@color/sl_chip_background_species"
-                            app:chipCornerRadius="@dimen/radius_chip"
-                            app:chipStrokeColor="@color/sl_chip_stroke_species"
-                            app:chipStrokeWidth="1dp" />
+                            android:textSize="14sp"
+                            app:backgroundTint="@color/sl_chip_background_species"
+                            android:checkable="true"
+                            app:cornerRadius="22dp"
+                            app:strokeColor="@color/sl_chip_stroke_species"
+                            app:strokeWidth="1dp" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipOtherSpecies"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSpeciesOther"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="44dp"
                             android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
                             android:text="Khác"
-                            android:textAlignment="center"
+                            android:textAllCaps="false"
                             android:textColor="@color/sl_chip_text_species"
-                            app:chipBackgroundColor="@color/sl_chip_background_species"
-                            app:chipCornerRadius="@dimen/radius_chip"
-                            app:chipStrokeColor="@color/sl_chip_stroke_species"
-                            app:chipStrokeWidth="1dp" />
-                    </com.google.android.material.chip.ChipGroup>
+                            android:textSize="14sp"
+                            app:backgroundTint="@color/sl_chip_background_species"
+                            android:checkable="true"
+                            app:cornerRadius="22dp"
+                            app:strokeColor="@color/sl_chip_stroke_species"
+                            app:strokeWidth="1dp" />
+                    </LinearLayout>
 
                     <!-- Conditional input: Loài thú cưng * (visible only when Khác selected) -->
                     <LinearLayout
@@ -336,56 +352,72 @@
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/chipGroupGender"
+                    <!-- Gender Chips Row -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/spacing_md"
-                        app:singleLine="true"
-                        app:singleSelection="true">
+                        android:orientation="horizontal">
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipMale"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGenderMale"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_marginEnd="6dp"
                             android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
                             android:text="Đực"
-                            android:textAlignment="center"
+                            android:textAllCaps="false"
                             android:textColor="@color/sl_chip_text_species"
-                            app:chipBackgroundColor="@color/sl_chip_background_species"
-                            app:chipCornerRadius="@dimen/radius_chip"
-                            app:chipStrokeColor="@color/sl_chip_stroke_species"
-                            app:chipStrokeWidth="1dp" />
+                            android:textSize="14sp"
+                            app:backgroundTint="@color/sl_chip_background_species"
+                            android:checkable="true"
+                            app:cornerRadius="22dp"
+                            app:strokeColor="@color/sl_chip_stroke_species"
+                            app:strokeWidth="1dp" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipFemale"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGenderFemale"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="44dp"
+                            android:layout_marginEnd="6dp"
                             android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
                             android:text="Cái"
-                            android:textAlignment="center"
+                            android:textAllCaps="false"
                             android:textColor="@color/sl_chip_text_species"
-                            app:chipBackgroundColor="@color/sl_chip_background_species"
-                            app:chipCornerRadius="@dimen/radius_chip"
-                            app:chipStrokeColor="@color/sl_chip_stroke_species"
-                            app:chipStrokeWidth="1dp" />
+                            android:textSize="14sp"
+                            app:backgroundTint="@color/sl_chip_background_species"
+                            android:checkable="true"
+                            app:cornerRadius="22dp"
+                            app:strokeColor="@color/sl_chip_stroke_species"
+                            app:strokeWidth="1dp" />
 
-                        <com.google.android.material.chip.Chip
-                            android:id="@+id/chipGenderUnknown"
-                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnGenderUnknown"
+                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="44dp"
                             android:layout_weight="1"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:padding="0dp"
                             android:text="Không rõ"
-                            android:textAlignment="center"
+                            android:textAllCaps="false"
                             android:textColor="@color/sl_chip_text_species"
-                            app:chipBackgroundColor="@color/sl_chip_background_species"
-                            app:chipCornerRadius="@dimen/radius_chip"
-                            app:chipStrokeColor="@color/sl_chip_stroke_species"
-                            app:chipStrokeWidth="1dp" />
-                    </com.google.android.material.chip.ChipGroup>
+                            android:textSize="14sp"
+                            app:backgroundTint="@color/sl_chip_background_species"
+                            android:checkable="true"
+                            app:cornerRadius="22dp"
+                            app:strokeColor="@color/sl_chip_stroke_species"
+                            app:strokeWidth="1dp" />
+                    </LinearLayout>
 
                     <!-- Row: Ngày sinh + Cân nặng -->
                     <LinearLayout

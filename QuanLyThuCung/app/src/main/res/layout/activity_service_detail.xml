@@ -33,7 +33,7 @@
             android:layout_weight="1"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:text="Chi tiết dịch vụ"
+            android:text="Service Detail"
             android:textColor="@color/color_primary"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -97,7 +97,7 @@
                             android:layout_height="48dp"
                             android:layout_gravity="center"
                             android:contentDescription="Dịch vụ"
-                            android:src="@drawable/ic_pets"
+                            android:src="@drawable/ic_service_placeholder"
                             app:tint="@color/outline_color" />
                     </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>

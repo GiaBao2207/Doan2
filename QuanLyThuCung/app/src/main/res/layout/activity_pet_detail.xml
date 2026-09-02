@@ -102,7 +102,7 @@
                             android:layout_height="48dp"
                             android:layout_gravity="center"
                             android:contentDescription="Thú cưng"
-                            android:src="@drawable/ic_pets"
+                            android:src="@drawable/ic_pet_placeholder"
                             app:tint="@color/outline_color" />
                     </FrameLayout>
                 </com.google.android.material.card.MaterialCardView>
