@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quanlythucung.R;
 import com.example.quanlythucung.customer.ui.CustomerHomeActivity;
+import com.example.quanlythucung.service.ui.ServiceDiscoveryActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -38,8 +39,9 @@ public class MyPetsActivity extends AppCompatActivity {
                     Toast.makeText(this, "Tính năng lịch hẹn đang được phát triển", Toast.LENGTH_SHORT).show();
                     return false;
                 } else if (itemId == R.id.nav_customer_shop) {
-                    Toast.makeText(this, "Cửa hàng sản phẩm đang được phát triển", Toast.LENGTH_SHORT).show();
-                    return false;
+                    startActivity(new Intent(this, ServiceDiscoveryActivity.class));
+                    finish();
+                    return true;
                 } else if (itemId == R.id.nav_customer_account) {
                     Toast.makeText(this, "Tài khoản đang được phát triển", Toast.LENGTH_SHORT).show();
                     return false;

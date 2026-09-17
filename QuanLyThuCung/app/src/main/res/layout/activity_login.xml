@@ -17,16 +17,25 @@
         android:paddingBottom="@dimen/spacing_lg"
         android:gravity="center_horizontal">
 
-        <!-- Logo -->
-        <ImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
+        <!-- Paw Icon Branding (compact circular container — matches auth flow) -->
+        <FrameLayout
+            android:id="@+id/cardPawContainer"
+            android:layout_width="@dimen/brand_paw_container_size"
+            android:layout_height="@dimen/brand_paw_container_size"
             android:layout_marginTop="@dimen/spacing_xs"
-            android:adjustViewBounds="true"
-            android:contentDescription="PetStoreApp Logo"
-            android:scaleType="fitCenter"
-            android:src="@drawable/petstore_logo" />
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:background="@drawable/bg_brand_paw_container">
+
+            <ImageView
+                android:id="@+id/ivPawLogo"
+                android:layout_width="@dimen/brand_paw_icon_size"
+                android:layout_height="@dimen/brand_paw_icon_size"
+                android:layout_gravity="center"
+                android:adjustViewBounds="true"
+                android:contentDescription="PetStoreApp Paw Icon"
+                android:scaleType="fitCenter"
+                android:src="@drawable/petstore_paw_icon" />
+        </FrameLayout>
 
         <!-- Title -->
         <TextView

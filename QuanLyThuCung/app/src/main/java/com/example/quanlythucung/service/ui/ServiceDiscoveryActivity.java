@@ -1,13 +1,15 @@
 package com.example.quanlythucung.service.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.quanlythucung.R;
-import com.google.android.material.button.MaterialButton;
+import com.example.quanlythucung.customer.ui.CustomerHomeActivity;
+import com.example.quanlythucung.pet.ui.MyPetsActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.chip.ChipGroup;
 
 public class ServiceDiscoveryActivity extends AppCompatActivity {
@@ -17,21 +19,36 @@ public class ServiceDiscoveryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service_discovery);
 
-        setupTopBar();
+        setupBottomNavigation();
         setupFilterChips();
-        setupActions();
+        setupNotifications();
     }
 
-    private void setupTopBar() {
-        ImageView btnBack = findViewById(R.id.btnBack);
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
-        }
-
-        ImageView btnNotifications = findViewById(R.id.btnNotifications);
-        if (btnNotifications != null) {
-            btnNotifications.setOnClickListener(v ->
-                    Toast.makeText(this, "Thông báo", Toast.LENGTH_SHORT).show());
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottomNavCustomer);
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_customer_shop);
+            bottomNav.setOnItemSelectedListener(item -> {
+                int itemId = item.getItemId();
+                if (itemId == R.id.nav_customer_shop) {
+                    return true;
+                } else if (itemId == R.id.nav_customer_home) {
+                    startActivity(new Intent(this, CustomerHomeActivity.class));
+                    finish();
+                    return true;
+                } else if (itemId == R.id.nav_customer_pets) {
+                    startActivity(new Intent(this, MyPetsActivity.class));
+                    finish();
+                    return true;
+                } else if (itemId == R.id.nav_customer_appointments) {
+                    Toast.makeText(this, "Tính năng lịch hẹn đang được phát triển", Toast.LENGTH_SHORT).show();
+                    return false;
+                } else if (itemId == R.id.nav_customer_account) {
+                    Toast.makeText(this, "Tài khoản đang được phát triển", Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+                return false;
+            });
         }
     }
 
@@ -56,10 +73,11 @@ public class ServiceDiscoveryActivity extends AppCompatActivity {
         }
     }
 
-    private void setupActions() {
-        MaterialButton btnBackHome = findViewById(R.id.btnBackHome);
-        if (btnBackHome != null) {
-            btnBackHome.setOnClickListener(v -> finish());
+    private void setupNotifications() {
+        android.widget.ImageView btnNotifications = findViewById(R.id.btnNotifications);
+        if (btnNotifications != null) {
+            btnNotifications.setOnClickListener(v ->
+                    Toast.makeText(this, "Thông báo", Toast.LENGTH_SHORT).show());
         }
     }
 }

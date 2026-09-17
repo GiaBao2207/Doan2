@@ -35,8 +35,7 @@
                     android:layout_height="28dp"
                     android:layout_marginEnd="@dimen/spacing_sm"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_pets"
-                    app:tint="@color/color_primary" />
+                    android:src="@drawable/petstore_paw_icon" />
 
                 <TextView
                     android:layout_width="0dp"
@@ -134,8 +133,7 @@
                                 android:layout_height="40dp"
                                 android:layout_gravity="center"
                                 android:contentDescription="Chưa có thú cưng"
-                                android:src="@drawable/ic_pets"
-                                app:tint="@color/color_primary" />
+                                android:src="@drawable/petstore_paw_icon" />
                         </FrameLayout>
 
                         <TextView

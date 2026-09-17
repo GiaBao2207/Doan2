@@ -44,6 +44,15 @@ Most are skeleton/preparation packages unless real UI source exists.
   - Add/Edit Pet "Thêm ảnh" remains camera/upload action UI.
   - Real data images replace placeholders when data becomes available.
 
+## 5a. Global Logo Consistency Rules (ENFORCED)
+
+- **Wide branding areas** (dashboard header with space for full wordmark): use `petstore_logo` (Full Logo = paw symbol + "PetStoreApp" wordmark). Example: Admin Dashboard header.
+- **Compact/inline branding areas** (auth screen top-of-form icon, inline header brand mark next to title text): use `petstore_paw_icon` in `bg_brand_paw_container` or inline (no tint override). Example: Login, Register, ForgotPassword, ResetPassword, ResetPasswordSuccess, CustomerHome/MyPets/ServiceDiscovery header icon.
+- **Data image placeholder** (pet image, service image, empty-state "no pets" illustration): use `petstore_paw_icon` (no tint). Example: PetDetail hero, ServiceDetail hero, CustomerHome empty-state pet card, MyPets empty-state card.
+- **Semantic UI icon** (info-row icon for pet type, quick-action stat card for "My Pets" feature): use `ic_pets` — this is a feature/category icon, not branding. Example: ServiceDetail info-row "Loại thú cưng phù hợp", CustomerHome quick-action "Thú cưng của tôi".
+- **Add/Edit Pet upload area**: keep camera icon + "Thêm ảnh" — do NOT replace with paw icon.
+- **Bottom nav "Thú cưng" tab**: uses `ic_pets` — correct (functional nav icon, not branding).
+
 ## 6. Implemented UI Status
 
 - **Auth UI (COMPLETED, UI-only)**:
@@ -66,7 +75,6 @@ Most are skeleton/preparation packages unless real UI source exists.
   - ServiceCheckInExecutionActivity (service/ui)
   - PetHandoverActivity (appointment/ui)
   - CounterPaymentActivity (payment/ui)
-
 - **Customer UI (COMPLETED batch 1 & 2, UI-only)**:
   - CustomerHomeActivity (customer/ui)
   - MyPetsActivity (pet/ui)
@@ -79,7 +87,7 @@ All screens follow the UI-only placeholder rule: 0 summary totals, empty states 
 
 ## 7. Current Task
 
-Customer UI batch 2 completed (Add/Edit Pet, Pet Detail, Service Detail). Ready for Customer UI batch 3 planning.
+Global logo consistency pass completed. Ready for Customer UI batch 3 planning.
 
 ## 8. In Progress
 
@@ -101,18 +109,15 @@ Customer UI batch 2 completed (Add/Edit Pet, Pet Detail, Service Detail). Ready 
 - Staff Operations batch 1 (Staff Appointment Queue, Service Check-in & Execution) (Build PASS).
 - Staff Operations batch 2 (Pet Handover, Counter Payment) (Build PASS).
 - Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS).
-- Customer UI batch 1 & 2 Header Branding Fix (lintDebug PASS, build PASS):
-  - Corrected header branding in MyPetsActivity, CustomerHomeActivity, and ServiceDiscoveryActivity to use inline brand icon next to app title, removing inappropriate circular paw placeholder cards from branding areas.
-  - Verified consistency: My Pets header uses inline ic_pets + "PetStoreApp" title; empty-state paw illustration in center card preserved; Add/Edit Pet upload area (camera + "Thêm ảnh") untouched.
-- Customer UI batch 2 (Add / Edit Pet, Pet Detail, Service Detail) (lintDebug PASS, build PASS):
-  - Visual correction & Stitch synchronization completed:
-    - AddEditPetActivity (pet/ui) + activity_add_edit_pet.xml: full-width resilient pill buttons for species (Chó, Mèo, Khác) and gender (Đực, Cái, Không rõ) with sage green selection, conditional other species input, photo upload action area (camera icon), date picker, weight with kg unit, notes multiline input, primary Save CTA, edit mode CTA + delete support, NO bottom nav.
-    - PetDetailActivity (pet/ui) + activity_pet_detail.xml: Top App Bar with brand title and more options, pet profile hero with standardized Paw Logo placeholder (#FFFFFF fill, centered paw icon), info card with neutral placeholders, notes empty state, service history empty state, primary Booking CTA, secondary Edit CTA, NO bottom nav.
-    - ServiceDetailActivity (service/ui) + activity_service_detail.xml: Top App Bar matching Stitch (Service Detail), service hero with standardized Paw Logo placeholder (#FFFFFF fill, centered paw icon), info rows, neutral description, suitable-pet chips, neutral notes/notice, primary Booking CTA, NO bottom nav.
-    - Vector drawables added: ic_add_a_photo, ic_edit_note, ic_history, sl_chip_background_species, sl_chip_text_species, sl_chip_stroke_species.
-    - MyPetsActivity wired to AddEditPetActivity; PetDetailActivity wired to AddEditPetActivity in edit mode.
-    - AndroidManifest.xml declared; launcher unchanged (LoginActivity).
-    - Zero fake business data; UI-only navigation and feedback.
+- Customer UI batch 1 & 2 Header Branding Fix (lintDebug PASS, build PASS).
+- Customer UI batch 2 (Add / Edit Pet, Pet Detail, Service Detail) (lintDebug PASS, build PASS).
+- **Global Logo Consistency Pass (lintDebug PASS, build PASS)**:
+  - Audited ALL implemented screens: Auth (5), Admin (8), Staff (4), Customer batch 1 & 2 (6).
+  - Fixed activity_login.xml: replaced bare `petstore_logo` (64dp) with `petstore_paw_icon` in `bg_brand_paw_container` (now consistent with all other auth screens).
+  - Fixed activity_customer_home.xml: header brand icon `ic_pets` → `petstore_paw_icon`; empty-state "no pets" `ic_pets` → `petstore_paw_icon`.
+  - Fixed activity_my_pets.xml: header brand icon `ic_pets` → `petstore_paw_icon`; empty-state `ic_pets` → `petstore_paw_icon`.
+  - Fixed activity_service_discovery.xml: header brand icon `ic_pets` → `petstore_paw_icon`.
+  - Preserved (correct): Admin Dashboard `petstore_logo` (wide header), PetDetail/ServiceDetail `petstore_paw_icon` placeholders, ServiceDetail info-row `ic_pets` (semantic), CustomerHome quick-action stat `ic_pets` (semantic), Add/Edit Pet camera upload area (unchanged), bottom nav `ic_pets` tab (functional nav icon).
 
 ## 11. Next Action
 

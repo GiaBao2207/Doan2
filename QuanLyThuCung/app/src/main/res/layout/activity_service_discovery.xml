@@ -1,336 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_background"
-    android:orientation="vertical">
-
-    <!-- Top App Bar / Header with Back button -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/color_background"
-        android:elevation="1dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/screen_padding"
-        android:paddingTop="@dimen/spacing_md"
-        android:paddingEnd="@dimen/screen_padding"
-        android:paddingBottom="@dimen/spacing_md">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="@dimen/spacing_sm"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Quay lại"
-            android:padding="8dp"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/text_primary" />
-
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="@dimen/spacing_sm"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_pets"
-            app:tint="@color/color_primary" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="sans-serif-medium"
-            android:text="PetStoreApp"
-            android:textColor="@color/color_primary"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/btnNotifications"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Thông báo"
-            android:padding="8dp"
-            android:src="@drawable/ic_notifications"
-            app:tint="@color/color_primary" />
-    </LinearLayout>
+    android:background="@color/color_background">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:paddingBottom="90dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingStart="@dimen/screen_padding"
-            android:paddingEnd="@dimen/screen_padding"
-            android:paddingBottom="@dimen/spacing_xl">
+            android:orientation="vertical">
 
-            <!-- Header Section -->
+            <!-- Top App Bar / Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_md"
-                android:layout_marginBottom="@dimen/spacing_md"
-                android:orientation="vertical">
+                android:background="@color/color_background"
+                android:elevation="1dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/screen_padding"
+                android:paddingTop="@dimen/spacing_md"
+                android:paddingEnd="@dimen/screen_padding"
+                android:paddingBottom="@dimen/spacing_md">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="@dimen/spacing_sm"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/petstore_paw_icon" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:fontFamily="sans-serif-medium"
-                    android:text="Dịch vụ"
-                    android:textColor="@color/text_primary"
-                    android:textSize="28sp"
+                    android:text="PetStoreApp"
+                    android:textColor="@color/color_primary"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Khám phá dịch vụ chăm sóc phù hợp cho thú cưng"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="15sp" />
+                <ImageView
+                    android:id="@+id/btnNotifications"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Thông báo"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_notifications"
+                    app:tint="@color/color_primary" />
             </LinearLayout>
 
-            <!-- Search Field -->
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilSearchService"
-                style="@style/Widget.PetStore.TextInput"
+            <!-- Main Content Container -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_md"
-                app:hintEnabled="false"
-                app:startIconDrawable="@drawable/ic_search"
-                app:startIconTint="@color/text_secondary">
+                android:orientation="vertical"
+                android:paddingStart="@dimen/screen_padding"
+                android:paddingEnd="@dimen/screen_padding"
+                android:paddingBottom="@dimen/spacing_xl">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etSearchService"
+                <!-- Page Header -->
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Tìm kiếm dịch vụ..."
-                    android:imeOptions="actionSearch"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_secondary"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:layout_marginBottom="@dimen/spacing_lg"
+                    android:orientation="vertical">
 
-            <!-- Category Filters Horizontal Chips -->
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_lg"
-                android:overScrollMode="never"
-                android:scrollbars="none">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Dịch vụ thú cưng"
+                        android:textColor="@color/text_primary"
+                        android:textSize="26sp"
+                        android:textStyle="bold" />
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Khám phá các dịch vụ chăm sóc thú cưng"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="15sp" />
+                </LinearLayout>
+
+                <!-- Search Bar -->
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.PetStore.Card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_md"
+                    app:cardCornerRadius="12dp"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/spacing_md"
+                        android:paddingTop="12dp"
+                        android:paddingEnd="@dimen/spacing_md"
+                        android:paddingBottom="12dp">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="@dimen/spacing_sm"
+                            android:contentDescription="Tìm kiếm"
+                            android:src="@drawable/ic_search"
+                            app:tint="@color/text_secondary" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Tìm dịch vụ..."
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Filter Chips -->
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/chipGroupCategories"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/spacing_lg"
                     app:selectionRequired="true"
-                    app:singleLine="true"
                     app:singleSelection="true">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipAll"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        style="@style/Widget.PetStore.Chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="Tất cả"
-                        android:textColor="@color/text_primary"
-                        app:chipBackgroundColor="@color/color_secondary_container"
-                        app:chipCornerRadius="@dimen/radius_chip"
-                        app:chipStrokeWidth="0dp" />
+                        android:text="Tất cả" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipSpa"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        style="@style/Widget.PetStore.Chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Spa &amp; Grooming"
-                        android:textColor="@color/text_primary"
-                        app:chipBackgroundColor="@color/color_surface"
-                        app:chipCornerRadius="@dimen/radius_chip"
-                        app:chipStrokeColor="@color/border_color"
-                        app:chipStrokeWidth="1dp" />
+                        android:text="Spa &amp; Grooming" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipBoarding"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        style="@style/Widget.PetStore.Chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Lưu chuồng"
-                        android:textColor="@color/text_primary"
-                        app:chipBackgroundColor="@color/color_surface"
-                        app:chipCornerRadius="@dimen/radius_chip"
-                        app:chipStrokeColor="@color/border_color"
-                        app:chipStrokeWidth="1dp" />
+                        android:text="Lưu trú" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipHealth"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
+                        style="@style/Widget.PetStore.Chip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Khám bệnh"
-                        android:textColor="@color/text_primary"
-                        app:chipBackgroundColor="@color/color_surface"
-                        app:chipCornerRadius="@dimen/radius_chip"
-                        app:chipStrokeColor="@color/border_color"
-                        app:chipStrokeWidth="1dp" />
+                        android:text="Sức khỏe" />
                 </com.google.android.material.chip.ChipGroup>
-            </HorizontalScrollView>
-
-            <!-- Section: DANH MỤC DỊCH VỤ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/spacing_lg"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/Widget.PetStore.SectionHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/spacing_md"
-                    android:text="DANH MỤC DỊCH VỤ"
-                    android:textColor="@color/outline_color"
-                    android:textSize="13sp" />
-
-                <HorizontalScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:overScrollMode="never"
-                    android:scrollbars="none">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <!-- Item: Spa -->
-                        <LinearLayout
-                            android:layout_width="88dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/spacing_md"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:background="@drawable/bg_stat_icon_secondary">
-
-                                <ImageView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_gravity="center"
-                                    android:contentDescription="Spa"
-                                    android:src="@drawable/ic_content_cut"
-                                    app:tint="@color/color_secondary" />
-                            </FrameLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/spacing_xs"
-                                android:gravity="center"
-                                android:text="Spa"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <!-- Item: Lưu chuồng -->
-                        <LinearLayout
-                            android:layout_width="88dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/spacing_md"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:background="@drawable/bg_stat_icon_accent">
-
-                                <ImageView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_gravity="center"
-                                    android:contentDescription="Lưu chuồng"
-                                    android:src="@drawable/ic_home"
-                                    app:tint="@color/color_accent" />
-                            </FrameLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/spacing_xs"
-                                android:gravity="center"
-                                android:text="Lưu chuồng"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <!-- Item: Khám bệnh -->
-                        <LinearLayout
-                            android:layout_width="88dp"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:orientation="vertical">
-
-                            <FrameLayout
-                                android:layout_width="64dp"
-                                android:layout_height="64dp"
-                                android:background="@drawable/bg_stat_icon_primary">
-
-                                <ImageView
-                                    android:layout_width="32dp"
-                                    android:layout_height="32dp"
-                                    android:layout_gravity="center"
-                                    android:contentDescription="Khám bệnh"
-                                    android:src="@drawable/ic_medical_services"
-                                    app:tint="@color/color_primary" />
-                            </FrameLayout>
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/spacing_xs"
-                                android:gravity="center"
-                                android:text="Khám bệnh"
-                                android:textColor="@color/text_primary"
-                                android:textSize="13sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </HorizontalScrollView>
-            </LinearLayout>
-
-            <!-- Section: DANH SÁCH DỊCH VỤ -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/Widget.PetStore.SectionHeader"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/spacing_md"
-                    android:text="DANH SÁCH DỊCH VỤ"
-                    android:textColor="@color/outline_color"
-                    android:textSize="13sp" />
 
                 <!-- Empty State Container -->
                 <com.google.android.material.card.MaterialCardView
@@ -361,8 +197,8 @@
                                 android:layout_width="40dp"
                                 android:layout_height="40dp"
                                 android:layout_gravity="center"
-                                android:contentDescription="Chưa có dịch vụ"
-                                android:src="@drawable/ic_pets"
+                                android:contentDescription="Dịch vụ"
+                                android:src="@drawable/ic_storefront"
                                 app:tint="@color/color_primary" />
                         </FrameLayout>
 
@@ -372,7 +208,7 @@
                             android:layout_marginBottom="@dimen/spacing_sm"
                             android:fontFamily="sans-serif-medium"
                             android:gravity="center"
-                            android:text="Chưa có dịch vụ"
+                            android:text="Chưa có dịch vụ nào"
                             android:textColor="@color/text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold" />
@@ -380,25 +216,29 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="@dimen/spacing_lg"
                             android:gravity="center"
                             android:text="Các dịch vụ khả dụng sẽ xuất hiện tại đây."
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btnBackHome"
-                            style="@style/Widget.PetStore.Button.Secondary"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:paddingStart="@dimen/spacing_lg"
-                            android:paddingEnd="@dimen/spacing_lg"
-                            android:text="Quay lại trang chủ" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
-            </LinearLayout>
 
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavCustomer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/color_background"
+        app:elevation="8dp"
+        app:itemBackground="@drawable/bg_bottom_nav_item"
+        app:itemIconTint="@color/sl_bottom_nav_icon"
+        app:itemTextColor="@color/sl_bottom_nav_icon"
+        app:labelVisibilityMode="labeled"
+        app:menu="@menu/menu_customer_bottom_nav" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
