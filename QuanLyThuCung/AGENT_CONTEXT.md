@@ -51,7 +51,7 @@ Most are skeleton/preparation packages unless real UI source exists.
 - **Data image placeholder** (pet image, service image, empty-state "no pets" illustration): use `petstore_paw_icon` (no tint). Example: PetDetail hero, ServiceDetail hero, CustomerHome empty-state pet card, MyPets empty-state card.
 - **Semantic UI icon** (info-row icon for pet type, quick-action stat card for "My Pets" feature): use `ic_pets` — this is a feature/category icon, not branding. Example: ServiceDetail info-row "Loại thú cưng phù hợp", CustomerHome quick-action "Thú cưng của tôi".
 - **Add/Edit Pet upload area**: keep camera icon + "Thêm ảnh" — do NOT replace with paw icon.
-- **Bottom nav "Thú cưng" tab**: uses `ic_pets` — correct (functional nav icon, not branding).
+- **Bottom nav "Thú cưng" tab**: uses `ic_nav_pets` — clean, visually balanced paw vector icon optimized for small 24dp bottom navigation (tinted via `sl_bottom_nav_icon`).
 
 ## 6. Implemented UI Status
 
@@ -87,7 +87,7 @@ All screens follow the UI-only placeholder rule: 0 summary totals, empty states 
 
 ## 7. Current Task
 
-Global logo consistency pass completed. Ready for Customer UI batch 3 planning.
+Customer UI "Thú cưng" bottom navigation icon consistency completed. Ready for Customer UI batch 3 planning.
 
 ## 8. In Progress
 
@@ -111,13 +111,13 @@ Global logo consistency pass completed. Ready for Customer UI batch 3 planning.
 - Gradle & Theme Lint Build Blockers Fix (lintDebug PASS, build PASS).
 - Customer UI batch 1 & 2 Header Branding Fix (lintDebug PASS, build PASS).
 - Customer UI batch 2 (Add / Edit Pet, Pet Detail, Service Detail) (lintDebug PASS, build PASS).
-- **Global Logo Consistency Pass (lintDebug PASS, build PASS)**:
-  - Audited ALL implemented screens: Auth (5), Admin (8), Staff (4), Customer batch 1 & 2 (6).
-  - Fixed activity_login.xml: replaced bare `petstore_logo` (64dp) with `petstore_paw_icon` in `bg_brand_paw_container` (now consistent with all other auth screens).
-  - Fixed activity_customer_home.xml: header brand icon `ic_pets` → `petstore_paw_icon`; empty-state "no pets" `ic_pets` → `petstore_paw_icon`.
-  - Fixed activity_my_pets.xml: header brand icon `ic_pets` → `petstore_paw_icon`; empty-state `ic_pets` → `petstore_paw_icon`.
-  - Fixed activity_service_discovery.xml: header brand icon `ic_pets` → `petstore_paw_icon`.
-  - Preserved (correct): Admin Dashboard `petstore_logo` (wide header), PetDetail/ServiceDetail `petstore_paw_icon` placeholders, ServiceDetail info-row `ic_pets` (semantic), CustomerHome quick-action stat `ic_pets` (semantic), Add/Edit Pet camera upload area (unchanged), bottom nav `ic_pets` tab (functional nav icon).
+- Global Logo Consistency Pass (lintDebug PASS, build PASS).
+- **Customer Bottom Nav "Thú cưng" Icon Consistency (lintDebug PASS, build PASS)**:
+  - Audited ALL Customer root screens with bottom navigation: CustomerHomeActivity (`activity_customer_home.xml`), MyPetsActivity (`activity_my_pets.xml`), ServiceDiscoveryActivity (`activity_service_discovery.xml`).
+  - Created cleaner paw vector icon `ic_nav_pets.xml` optimized for 24dp bottom navigation bar sizing and visual balance with sibling nav icons (`ic_home`, `ic_calendar`, `ic_storefront`, `ic_person`).
+  - Preserved standard selected/unselected tint selector `sl_bottom_nav_icon` (`#E07A5F` active, `#8A8A8A` inactive).
+  - Updated shared menu resource `menu_customer_bottom_nav.xml` for `nav_customer_pets` from `ic_pets` to `ic_nav_pets` ensuring 100% consistent rendering across all Customer bottom-nav screens.
+  - Preserved unrelated navigation icons and semantic non-nav icons.
 
 ## 11. Next Action
 

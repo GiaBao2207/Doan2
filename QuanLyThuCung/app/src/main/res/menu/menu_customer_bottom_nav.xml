@@ -6,7 +6,7 @@
         android:title="Trang chủ" />
     <item
         android:id="@+id/nav_customer_pets"
-        android:icon="@drawable/ic_pets"
+        android:icon="@drawable/ic_nav_pets"
         android:title="Thú cưng" />
     <item
         android:id="@+id/nav_customer_appointments"
